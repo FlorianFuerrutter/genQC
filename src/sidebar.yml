@@ -1,0 +1,4 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
