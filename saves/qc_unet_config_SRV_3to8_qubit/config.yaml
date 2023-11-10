@@ -1,0 +1,58 @@
+target: genQC.pipeline.diffusion_pipeline.DiffusionPipeline
+params:
+  scheduler:
+    target: genQC.scheduler.scheduler_ddim.DDIMScheduler
+    params:
+      device: cpu
+      num_train_timesteps: 1000
+      beta_start: 0.0001
+      beta_end: 0.02
+      beta_schedule: cos_alpha
+      input_perturbation: 0.1
+      eta: 1
+  model:
+    target: genQC.models.unet_qc.QC_Cond_UNet
+    save_path: null
+    params:
+      model_features:
+      - 128
+      - 128
+      - 256
+      clr_dim: 4
+      num_clrs: 4
+      t_emb_size: 256
+      cond_emb_size: 512
+      num_heads:
+      - 8
+      - 8
+      - 2
+      num_res_blocks:
+      - 2
+      - 2
+      - 4
+      transformer_depths:
+      - 1
+      - 2
+      - 1
+  text_encoder:
+    target: genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder
+    save_path: null
+    params:
+      arch: ViT-B-32
+      version: laion2b_s34b_b79k
+      device: cpu
+      max_length: 77
+      freeze: true
+      layer: penultimate
+  device: cpu
+  enable_guidance_train: true
+  guidance_train_p: 0.1
+  cached_text_enc: true
+  add_config:
+    dataset:
+      comment: 'Generated with ''from_datasets'' with 6 datasets. Qubits: [3, 4, 5,6, 7, 8].'
+      params:
+        gate_pool:
+        - qiskit.circuit.library.standard_gates.h.HGate
+        - qiskit.circuit.library.standard_gates.x.CXGate
+        pad_constant: 3

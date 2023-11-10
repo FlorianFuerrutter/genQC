@@ -1,20 +1,74 @@
 project:
   type: website
-
 format:
   html:
-    theme: cosmo
+    theme:
+      light: simplex
+      # dark: darkl
     css: styles.css
     toc: true
+    code-copy: true
+    code-overflow: wrap
+    grid:
+          sidebar-width: 350px
+          body-width: 1100px
+          margin-width: 250px
 
 website:
-  twitter-card: true
+  favicon: assets/logo.png
+  twitter-card: false
   open-graph: true
   repo-actions: [issue]
+  back-to-top-navigation: true
   navbar:
-    background: primary
+    logo: assets/logo.png
+    background: "#5cb4c1"
+    # foreground: "#674ea7"
     search: true
+    left:       
+      - href: "https://arxiv.org/abs/2311.02041"
+        text: Paper-arxiv
+    right:
+      - icon: github
+        href: "https://github.com/FlorianFuerrutter/genQC"  
+    
   sidebar:
-    style: floating
+    search: true
+    contents:
+    - text: "genQC · Generative Quantum Circuits"
+      href: index.ipynb
 
-metadata-files: [nbdev.yml, sidebar.yml]
+    - section: Examples
+      contents: examples/*
+
+    - section: Pipeline
+      contents: pipeline/*
+
+    - section: Scheduler
+      contents: scheduler/*
+
+    - section: Inference
+      contents: inference/*
+
+    - section: Models
+      contents: models/*
+
+    - section: Dataset
+      contents: dataset/*
+      
+    - section: Platform
+      contents: 
+      - auto: platform/*
+      - section: Simulation
+        contents: platform/simulation/*
+    
+    - section: Miscellaneous functions
+      contents: /*
+
+    collapse-level: 2
+    style: "floating"
+    background: "#dde8ea"
+    foreground: "#674ea7"
+
+metadata-files: [nbdev.yml] 
+
