@@ -5,7 +5,7 @@
 <a><img src="https://badgen.net/badge/icon/awesome?icon=awesome&label" alt="awesome"></a>
 <a><img src="https://badgen.net/badge/generative/models/orange" alt="generative-models"></a>
 <a><img src="https://badgen.net/badge/diffusion/models/pink" alt="diffusion-models"></a>
-<a><img src="https://img.shields.io/badge/python-3.10-red" alt="python-3.10"></a>
+<a><img src="https://img.shields.io/badge/python-3.9-red" alt="python-3.9"></a>
 </p>
 
 Code repository for generating quantum circuits with diffuison models.
@@ -20,8 +20,7 @@ model weights we use the
 [OpenCLIP](https://github.com/mlfoundations/open_clip) library, which
 will download (and cache) the CLIP model on first usage of our pipeline.
 In case you prefer reading a documentation rather than notebooks or code
-see
-[florianfuerrutter.github.io/genQC/](https://florianfuerrutter.github.io/genQC/).
+see [\[Documentation\]](https://florianfuerrutter.github.io/genQC/).
 
 The repo inlcudes:
 
@@ -66,14 +65,20 @@ qc_list[0].draw("mpl")
 
 #### Included examples
 
-Examples are provided in the directory `src/examples/`.
+Example notebooks are provided in the directory `src/examples/`.
 
-- [0_hello_circuit](examples/0_hello_circuit.ipynb): how to sample a
-  circuit (conditioned on a SRV)
-- [1_editing_and_masking](examples/1_editing_and_masking.ipynb):
+- `0_hello_circuit`
+  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/hello_circuit.html)
+  [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/0_hello_circuit.ipynb):
+  how to sample a circuit (conditioned on a SRV)
+- `1_editing_and_masking`
+  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/editing_and_masking.html)
+  [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/1_editing_and_masking.ipynb):
   presents editing and masking
-- [2_unitary_compilation](examples/2_unitary_compilation.ipynb): compile
-  unitariy and transpile circuit
+- `2_unitary_compilation`
+  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/unitary_compilation.html)
+  [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/2_unitary_compilation.ipynb):
+  compile unitaries and transpile circuits
 
 ## Installation:
 
@@ -102,9 +107,10 @@ for specific cuda support
 
 #### 3. Run example
 
-You can run the provided
-[0_hello_circuit](examples/0_hello_circuit.ipynb) example to test your
-installation.
+You can run the provided `0_hello_circuit`
+[\[doc\]](https://florianfuerrutter.github.io/genQC/examples/hello_circuit.html)
+[\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/0_hello_circuit.ipynb)
+example to test your installation.
 
 ## License
 

@@ -16,7 +16,7 @@ format:
 
 website:
   favicon: assets/logo.png
-  twitter-card: false
+  # twitter-card: false
   open-graph: true
   repo-actions: [issue]
   back-to-top-navigation: true
