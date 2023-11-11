@@ -23,6 +23,7 @@ website:
   repo-actions: [issue]
   back-to-top-navigation: true
   page-navigation: true
+  
   navbar:
     logo: "assets/logo.png"
     background: "#5cb4c1"
@@ -35,33 +36,39 @@ website:
       - icon: github
         href: "https://github.com/FlorianFuerrutter/genQC"  
         text: code repository
+        
   sidebar:
-    collapse-level: 1
+    collapse-level: 2
     style: "floating"
     background: "#dde8ea"
     foreground: "#674ea7"
+    
     contents:
     - text: "genQC · Generative Quantum Circuits"
       href: index.ipynb
     - section: Examples
       contents: examples/*
-    - section: Pipeline
-      contents: pipeline/*
-    - section: Scheduler
-      contents: scheduler/*
-    - section: Inference
-      contents: inference/*
-    - section: Models
-      contents: models/*
-    - section: Dataset
-      contents: dataset/* 
-    - section: Platform
+      
+    - section: Lib
       contents: 
-      - auto: platform/*
-      - section: Simulation
-        contents: platform/simulation/*  
-    - section: Miscellaneous functions
-      contents: /*
+      - section: Pipeline
+        contents: pipeline/*
+      - section: Scheduler
+        contents: scheduler/*
+      - section: Inference
+        contents: inference/*
+      - section: Models
+        contents: models/*
+      - section: Dataset
+        contents: dataset/* 
+      - section: Platform
+        contents: 
+        - auto: platform/*
+        - section: Simulation
+          contents: platform/simulation/*  
+      - section: Miscellaneous functions
+        contents: 
+        - auto: /*
 
 metadata-files: [nbdev.yml] 
 

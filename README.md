@@ -11,7 +11,7 @@
 Code repository for generating quantum circuits with diffuison models.
 [\[Paper\]](https://arxiv.org/abs/2311.02041)
 
-![](assets/inference.png)
+![](https://github.com/FlorianFuerrutter/genQC/blob/main/src/assets/inference.png?raw=true)
 
 ## The codebase
 
