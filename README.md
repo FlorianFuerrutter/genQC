@@ -8,7 +8,7 @@
 <a><img src="https://img.shields.io/badge/python-3.9-red" alt="python-3.9"></a>
 </p>
 
-Code repository for generating quantum circuits with diffuison models.
+Code repository for generating quantum circuits with diffusion models.
 [\[Paper\]](https://arxiv.org/abs/2311.02041)
 
 ![](https://github.com/FlorianFuerrutter/genQC/blob/main/src/assets/inference.png?raw=true)
@@ -36,7 +36,9 @@ The repo inlcudes:
 #### Minimal example
 
 A minimal example to generate a 5 qubit circuit conditioned on a SRV of
-$[1,1,1,2,2]$:
+$[1,1,1,2,2]$. You can try it out on your own with our demo
+[\[huggingface-space\]](https://huggingface.co/spaces/Floki00/genQC), no
+coding required.
 
 ``` python
 from genQC.pipeline.diffusion_pipeline import DiffusionPipeline
