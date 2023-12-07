@@ -4,7 +4,7 @@
 #------------------------------------
 # Python
 
-import math, itertools, functools, copy, asyncio, time, importlib, datetime, importlib, os, dataclasses
+import math, itertools, functools, copy, asyncio, time, importlib, datetime, importlib, os, dataclasses, platform
 from datetime import datetime
 from PIL import Image
 from dataclasses import dataclass, asdict, is_dataclass

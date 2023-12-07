@@ -186,6 +186,36 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
         U = U[:, :, :bit_exp, :bit_exp]   # [b, Re/Im, 2^n, 2^n]
                
         return x, y, U
+
+    def cut_padding_Bucket_collate_fn_compilation_params(self, b):     
+        """this function is called for training for every batch, order in b is store dict"""    
+        
+        b = b[0] # {'x': 'tensor', 'y': 'numpy', 'params': 'tensor', 'U': 'tensor', 'z': 'tensor'}
+        
+        x = b[0]
+        y = b[1]  
+        p = b[2]
+        U = b[3]
+        z = b[4]
+        
+        #---------------
+        
+        z_0 = torch.max(z[:, 0]) # space
+        z_1 = torch.max(z[:, 1]) # time
+                   
+        #round time to next multiple of cut_multiple for conv layers!
+        z_1 = (torch.ceil(z_1 / self.cut_multiple) * self.cut_multiple).to(torch.int32)
+              
+        #---------------      
+        
+        x = x[:, :z_0, :z_1]  # cut down to max [b, bits, time] of batch
+
+        p = p[:, :, :z_1]
+        
+        bit_exp = 2**z_0
+        U = U[:, :, :bit_exp, :bit_exp]   # [b, Re/Im, 2^n, 2^n]
+               
+        return x, y, p, U
     
     #-----------------------------------
     # MAX PADDING, x are passes as sampled list (batch), std collate them
@@ -244,7 +274,41 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
             Us[i] = U[:, :bit_exp, :bit_exp]
          
         return xs, ys, Us   
+
+    def cut_padding_collate_fn_compilation_params(self, b):
+        """this function is called for training for every batch, order in b is store dict"""    
+        # {'x': 'tensor', 'y': 'numpy', 'params': 'tensor', 'U': 'tensor', 'z': 'tensor'}
         
+        z_0 = max(x[4][0] for x in b)  # space
+        z_1 = max(x[4][1] for x in b)  # time
+        
+        #round time to next multiple of cut_multiple for conv layers!
+        z_1 = (torch.ceil(z_1 / self.cut_multiple) * self.cut_multiple).to(torch.int32)
+
+        bit_exp = 2**z_0
+        
+        #---------------      
+
+        x_sample = b[0][0]
+        xs       = torch.zeros((len(b), z_0, z_1), dtype=x_sample.dtype, device=x_sample.device)
+
+        y_sample = b[0][1]
+        ys       = torch.zeros((len(b), *y_sample.shape), dtype=y_sample.dtype, device=y_sample.device)
+
+        p_sample = b[0][2]
+        ps       = torch.zeros((len(b), p_sample.shape[-2], z_1), dtype=p_sample.dtype, device=p_sample.device)
+        
+        U_sample = b[0][3]
+        Us       = torch.zeros((len(b), 2, bit_exp, bit_exp), dtype=U_sample.dtype, device=U_sample.device)
+        
+        for i,(x,y,p,U,z) in enumerate(b):
+            xs[i] = x[:z_0, :z_1]
+            ys[i] = y
+            ps[i] = p[:, :z_1]
+            Us[i] = U[:, :bit_exp, :bit_exp]
+         
+        return xs, ys, ps, Us   
+    
     #-----------------------------------
 
     def get_dataloaders(self, batch_size, text_encoder, p_valid=0.1, y_on_cpu=False):
@@ -317,6 +381,12 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
         else:
             assert isinstance(max_samples, (list, np.ndarray))
             max_samples = np.array(max_samples, dtype=int)
+
+        if isinstance(balance_maxes, int):
+            balance_maxes = [balance_maxes] * len(datasets)
+        else:
+            assert isinstance(balance_maxes, (list, np.ndarray))
+            balance_maxes = np.array(balance_maxes, dtype=int)
         
         for i, (dataset, balance_max) in tqdm(enumerate(zip(datasets,balance_maxes)), total=len(datasets)):
             # do x_y_preprocess now, we can't balance all together with mixed conditions
@@ -369,14 +439,28 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
 
             dataset = dataset.to("cpu") #helps with gpu mem overflowing
         #-----------------
+
+        has_U = "U" in parameters["store_dict"]
+        has_p = "params" in parameters["store_dict"]
         
         if bucket_batch_size > 0:
-            #----------------          
-            # parameters["collate_fn"] = Mixed_Cached_OpenClip_Dataset.flexPadAttn_TimeOnly_padding_collate_fn.__name__
-            parameters["collate_fn"] = Mixed_Cached_OpenClip_Dataset.cut_padding_Bucket_collate_fn.__name__
-            
-            #----------------
-            
+            collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_Bucket_collate_fn.__name__
+            if has_U: 
+                collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_Bucket_collate_fn_compilation.__name__
+                if has_p: 
+                    collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_Bucket_collate_fn_compilation_params.__name__
+        
+        else:
+            collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_collate_fn.__name__   
+            if has_U: 
+                collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_collate_fn_compilation.__name__
+                if has_p: 
+                    collate_fn_name = Mixed_Cached_OpenClip_Dataset.cut_padding_collate_fn_compilation_params.__name__
+
+        parameters["collate_fn"] = collate_fn_name
+        
+        #-----------------
+        if bucket_batch_size > 0:
             for i, (xi,yi,zi, ci) in enumerate(zip(xs, ys, zs, cs)):  #cut rest of batch        
                 b_mult = int(np.floor(xi.shape[0] / bucket_batch_size) * bucket_batch_size)  
                 
@@ -384,27 +468,20 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
                 zs[i] = zi[None, :b_mult].reshape((b_mult//bucket_batch_size, bucket_batch_size, *zi.shape[1:]))
                 
                 t = parameters["store_dict"]["y"]
-                if v == "tensor" or v == "numpy": ys[i] = yi[None, :b_mult].reshape((b_mult//bucket_batch_size, bucket_batch_size, *yi.shape[1:]))    
+                if v == "tensor" or v == "numpy": 
+                    ys[i] = yi[None, :b_mult].reshape((b_mult//bucket_batch_size, bucket_batch_size, *yi.shape[1:]))    
                 else: raise NotImplementedError("")
             
                 #----
                 #For U, etc
                 add_ind = 0
                 for k,v in parameters["store_dict"].items(): 
-                    if k != "x" and k != "y" and k != "z":
-                        
-                        if k == "U": parameters["collate_fn"] = Mixed_Cached_OpenClip_Dataset.cut_padding_Bucket_collate_fn_compilation.__name__
-                        
-                        if v == "tensor" or v == "numpy": cs[i][add_ind] = ci[add_ind][None, :b_mult].reshape((b_mult//bucket_batch_size, bucket_batch_size, *ci[add_ind].shape[1:]))   
-                        else: raise NotImplementedError("")
-                        
+                    if k != "x" and k != "y" and k != "z":                             
+                        if v == "tensor" or v == "numpy": 
+                            cs[i][add_ind] = ci[add_ind][None, :b_mult].reshape((b_mult//bucket_batch_size, bucket_batch_size, *ci[add_ind].shape[1:]))   
+                        else: raise NotImplementedError("")                      
                         add_ind += 1                      
-                 
-        elif "U" in parameters["store_dict"]:
-            parameters["collate_fn"] = Mixed_Cached_OpenClip_Dataset.cut_padding_collate_fn_compilation.__name__
-        else:
-            parameters["collate_fn"] = Mixed_Cached_OpenClip_Dataset.cut_padding_collate_fn.__name__
-        
+                      
         x = torch.cat(xs)
         y = ys                 # torch.cat(ys) is wrong,  y is list of numpy or str!! not a tensor
         z = torch.cat(zs)
@@ -424,28 +501,41 @@ class Mixed_Cached_OpenClip_Dataset(Cached_OpenClip_Dataset):
                 if v == "tensor" and k == "U":    # hardcoded U padding !!
                                            
                     n = sum([ci[add_ind].shape[0] for ci in c])
-                    if bucket_batch_size > 0:                   
-                        shape = (n, bucket_batch_size, 2, 2**max_qubits, 2**max_qubits)
-                    else:
-                        shape = (n, 2, 2**max_qubits, 2**max_qubits)
+                    if bucket_batch_size > 0: shape = (n, bucket_batch_size, 2, 2**max_qubits, 2**max_qubits)
+                    else:                     shape = (n,                    2, 2**max_qubits, 2**max_qubits)
                             
                     # allocating zeros is better memory wise than torch.cat(ci_s) and F.pad(ci, pad, "constant", 0)
                     mem = np.prod(shape) * c[0][add_ind].element_size() * 1e-9
-                    print(f"[INFO]: allocate memory for U {shape} on {c[0][add_ind].device} approx. {mem:.3f} GB")
+                    print(f"[INFO]: allocate memory for {k} {shape} on {c[0][add_ind].device} approx. {mem:.3f} GB")
                     ci_s = torch.zeros(shape, device=c[0][add_ind].device)                 
                   
                     run_i = 0
                     for i,ci in enumerate(c):
-                        ci = ci[add_ind]
-                                              
-                        if bucket_batch_size > 0:  
-                            ci_s[run_i:run_i+ci.shape[0], :, :, :ci.shape[-2], :ci.shape[-1]] = ci
-                            
-                        else:
-                            ci_s[run_i:run_i+ci.shape[0], :, :ci.shape[-2], :ci.shape[-1]] = ci
-                        
+                        ci = ci[add_ind]                                              
+                        if bucket_batch_size > 0:  ci_s[run_i:run_i+ci.shape[0], :, :, :ci.shape[-2], :ci.shape[-1]] = ci                          
+                        else:                      ci_s[run_i:run_i+ci.shape[0],    :, :ci.shape[-2], :ci.shape[-1]] = ci                 
                         run_i += ci.shape[0]
-                                                         
+
+                elif v == "tensor" and k == "params": # hardcoded paramter padding !!
+
+                    max_params = max(ci[add_ind].shape[-2] for ci in c)
+                    
+                    n = sum(ci[add_ind].shape[0] for ci in c)
+                    if bucket_batch_size > 0: shape = (n, bucket_batch_size, max_params, max_gates)
+                    else:                     shape = (n,                    max_params, max_gates)
+
+                    # allocating zeros is better memory wise than torch.cat(ci_s) and F.pad(ci, pad, "constant", 0)
+                    mem = np.prod(shape) * c[0][add_ind].element_size() * 1e-9
+                    print(f"[INFO]: allocate memory for {k} {shape} on {c[0][add_ind].device} approx. {mem:.3f} GB")
+                    ci_s = torch.zeros(shape, device=c[0][add_ind].device)                 
+                  
+                    run_i = 0
+                    for i,ci in enumerate(c):
+                        ci = ci[add_ind]                                              
+                        if bucket_batch_size > 0:  ci_s[run_i:run_i+ci.shape[0], :, :ci.shape[-2], :ci.shape[-1]] = ci                          
+                        else:                      ci_s[run_i:run_i+ci.shape[0],    :ci.shape[-2], :ci.shape[-1]] = ci                 
+                        run_i += ci.shape[0]
+                
                 elif v == "numpy": raise NotImplementedError("")   
                 else:              raise NotImplementedError("")           
                 

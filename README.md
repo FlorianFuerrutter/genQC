@@ -10,6 +10,7 @@
 
 Code repository for generating quantum circuits with diffusion models.
 [\[Paper\]](https://arxiv.org/abs/2311.02041)
+[\[Demo\]](https://huggingface.co/spaces/Floki00/genQC)
 
 ![](https://github.com/FlorianFuerrutter/genQC/blob/main/src/assets/inference.png?raw=true)
 
@@ -58,7 +59,7 @@ qc_list, _, svr_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
 
 ``` python
 print(f"is SRV {svr_list[0]}")
-qc_list[0].draw("mpl")
+qc_list[0].draw("mpl", style="clifford")
 ```
 
     is SRV [1, 1, 1, 2, 2]
@@ -72,19 +73,26 @@ Example notebooks are provided in the directory `src/examples/`.
 - `0_hello_circuit`
   [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/hello_circuit.html)
   [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/0_hello_circuit.ipynb):
-  how to sample a circuit (conditioned on a SRV)
+  How to sample a circuit (conditioned on a SRV)
 - `1_editing_and_masking`
   [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/editing_and_masking.html)
   [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/1_editing_and_masking.ipynb):
-  presents editing and masking
+  Presents editing and masking of circuits
 - `2_unitary_compilation`
   [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/unitary_compilation.html)
   [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/2_unitary_compilation.ipynb):
-  compile unitaries and transpile circuits
+  Compile unitaries and transpile circuits
+- `3_dataset_and_fineTune`
+  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/dataset_and_fineTune.html)
+  [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/3_dataset_and_fineTune.ipynb):
+  How to create a dataset and fine-tune a pre-trained model
 
-## Installation:
+## Installation
 
-#### 1. Clone
+The installation of genQC is done via `pip` within a few minutes,
+depending on your downloading speed.
+
+#### 1. Clone the repository
 
 ``` sh
 git clone https://github.com/FlorianFuerrutter/genQC.git
@@ -101,18 +109,25 @@ the clone directory:
 pip install -e .
 ```
 
-Note, this will install missing requirements automatically:
-`[torch numpy matplotlib scipy pandas omegaconf qiskit tqdm joblib open_clip_torch ipywidgets pylatexenc]`.
-You may want to install some of them manually beforehand, e.g. pytorch
-for specific cuda support
+Note, this will install missing requirements automatically. You may want
+to install some of them manually beforehand, e.g. pytorch for specific
+cuda support, see
 [pytorch.org/get-started/locally](https://pytorch.org/get-started/locally/).
+
+**Requirements:** `genQC` depends on `python` (min. version 3.9) and the
+librarys: `torch`, `numpy`, `matplotlib`, `scipy`, `pandas`,
+`omegaconf`, `qiskit`, `tqdm`, `joblib`, `open_clip_torch`, `ipywidgets`
+and `pylatexenc`. All can be installed with `pip`. In `src/RELEASES.md`
+[\[doc\]](https://florianfuerrutter.github.io/genQC/RELEASES.html) and
+the release descriptions specific tested-on versions are listed.
 
 #### 3. Run example
 
 You can run the provided `0_hello_circuit`
 [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/hello_circuit.html)
 [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/0_hello_circuit.ipynb)
-example to test your installation.
+example to test your installation. On a computer with a moderate GPU
+this inference example notebook should run under half a minute.
 
 ## License
 
