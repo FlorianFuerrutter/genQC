@@ -65,12 +65,12 @@ def generate_srv_tensors(pipeline, prompt, samples, system_size, num_of_qubits, 
 
 # %% ../../src/inference/infer_srv.ipynb 7
 def convert_tensors_to_srvs(out_tensor, gate_pool, sort_srv=False, place_barrier=False, n_jobs=1): 
-    qc_list, error_cnt = convert_tensors_to_circuits(out_tensor, gate_pool, place_barrier)
+    qc_list, error_cnt = convert_tensors_to_circuits(out_tensor, gate_pool=gate_pool, place_barrier=place_barrier)
     
     srv_list = []
     
     #---------------------------------------------
-    # This is a bottle-neck for more qubits!! (very slow already for 9 qubits)
+    # This is a bottle-neck for more qubits, speed up with async
     
     if n_jobs > 1:
         assert sort_srv == False
@@ -89,18 +89,18 @@ def convert_tensors_to_srvs(out_tensor, gate_pool, sort_srv=False, place_barrier
     return qc_list, error_cnt, srv_list
 
 # %% ../../src/inference/infer_srv.ipynb 9
-def get_srv_accuracy(svr_list, target_srv):
-    if not isinstance(svr_list  , (torch.Tensor, torch.IntTensor, torch.FloatTensor, torch.LongTensor)):   svr_list = torch.tensor(svr_list)
-    if not isinstance(target_srv, (torch.Tensor, torch.IntTensor, torch.FloatTensor, torch.LongTensor)): target_srv = torch.tensor(target_srv, device=svr_list.device)
+def get_srv_accuracy(srv_list, target_srv):
+    if not isinstance(srv_list  , (torch.Tensor, torch.IntTensor, torch.FloatTensor, torch.LongTensor)):   srv_list = torch.tensor(srv_list)
+    if not isinstance(target_srv, (torch.Tensor, torch.IntTensor, torch.FloatTensor, torch.LongTensor)): target_srv = torch.tensor(target_srv, device=srv_list.device)
     
-    svr_uniques, svr_uniques_cnt = torch.unique(svr_list, dim=0, return_counts=True)
+    srv_uniques, srv_uniques_cnt = torch.unique(srv_list, dim=0, return_counts=True)
     
-    if svr_uniques.numel() == 0: return 0
+    if srv_uniques.numel() == 0: return 0
 
-    comp  = torch.all(target_srv==svr_uniques, dim=1)
+    comp  = torch.all(target_srv==srv_uniques, dim=1)
     index = comp.nonzero().squeeze() 
         
-    if index.dim() == 0: correct_srv_percentage = svr_uniques_cnt[index]/svr_uniques_cnt.sum()           
+    if index.dim() == 0: correct_srv_percentage = srv_uniques_cnt[index]/srv_uniques_cnt.sum()           
     else:                correct_srv_percentage = 0 
  
     return correct_srv_percentage

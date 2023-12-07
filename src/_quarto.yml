@@ -48,7 +48,7 @@ website:
       href: index.ipynb
     - section: Examples
       contents: examples/*
-      
+    
     - section: Lib
       contents: 
       - section: Pipeline
@@ -68,7 +68,11 @@ website:
           contents: platform/simulation/*  
       - section: Miscellaneous functions
         contents: 
-        - auto: /*
+        - auto: /*.ipynb
+        
+    - text: "Release notes"
+      href: RELEASES.md
+
 
 metadata-files: [nbdev.yml] 
 

@@ -126,8 +126,11 @@ class Qc_Config_Dataset(Config_Dataset):
         enc_tensor = self.x[0]
         
         while enc_tensor.dim()>2: enc_tensor=enc_tensor[0]
+
+        params = None
+        if hasattr(self, "params"): params=self.params[0]
         
-        qc = decode_circuit(enc_tensor, self.gate_pool)
+        qc = decode_circuit(enc_tensor, self.gate_pool, params_tensor=params)
  
         t = self.store_dict["y"]
         if   t == "tensor"     : label = self.y[0].cpu().tolist()

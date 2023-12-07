@@ -35,10 +35,10 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         
         model, _, _ = open_clip.create_model_and_transforms(arch, device=torch.device(device), pretrained=version)
         del model.visual
-                
-        self.model  = model.to(device)           
-        self.device = device
         
+        self.model = model
+        self.to(device)
+               
         assert max_length <= 77   # max set by the clip 
         self.max_length = max_length
         
@@ -54,9 +54,18 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         
     def freeze(self):
         self.model = self.model.eval()
-        for param in self.parameters():
+        
+        for param in self.parameters(): 
+            param.requires_grad = False    
+            
+        for param in self.model.parameters(): 
             param.requires_grad = False
-
+    
+    def to(self, device):
+        self.model  = self.model.to(device)           
+        self.device = device
+        return self
+        
     @torch.no_grad()
     def tokenize_and_push_to_device(self, text, to_device=True):
         tokens = open_clip.tokenize(text)

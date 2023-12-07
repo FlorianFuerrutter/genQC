@@ -21,18 +21,22 @@ def get_rnd_gatepool_subset(gate_pool, min_sub_gate_pool_cnt=2):
     return sub_gate_pool
 
 # %% ../../src/inference/infer_misc.ipynb 6
-def convert_tensors_to_circuits(out_tensor, gate_pool, place_barrier=False): 
+def convert_tensors_to_circuits(out_tensor, gate_pool, params_tensor=None, place_barrier=False): 
     error_cnt = 0
     qc_list   = []
-               
-    #TODO: para this loop
-        
-    for i,enc_tensor in enumerate(out_tensor):   
-        try:
-            qc = decode_circuit(enc_tensor, gate_pool, place_barrier)
 
-        except:
+    if not exists(params_tensor):
+        params_tensor = [None]*out_tensor.shape[0]
+    
+    #TODO: para this loop
+   
+    for i,(enc_tensor,p) in enumerate(zip(out_tensor, params_tensor)):   
+        try:
+            qc = decode_circuit(enc_tensor=enc_tensor, gate_pool=gate_pool, place_barrier=place_barrier, params_tensor=p)
+
+        except Exception as e:
             error_cnt += 1
+            # print(e)
             continue
                  
         qc_list.append(qc)  
