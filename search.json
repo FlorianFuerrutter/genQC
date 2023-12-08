@@ -1,0 +1,688 @@
+[
+  {
+    "objectID": "models/frozen_open_clip.html",
+    "href": "models/frozen_open_clip.html",
+    "title": "Frozen OpenCLIP",
+    "section": "",
+    "text": "source\n\n\n\n FrozenOpenCLIPEmbedder_config (arch:str, version:str, device:str,\n                                max_length:int, freeze:bool, layer:str)\n\n\nsource\n\n\n\n\n FrozenOpenCLIPEmbedder (arch='ViT-H-14', version='laion2b_s32b_b79k',\n                         device='cpu', max_length=77, freeze=True,\n                         layer='penultimate')\n\nLoads and freezes the OpenCLIP transformer encoder for text prompts.\n\na = FrozenOpenCLIPEmbedder()\n\n\np=\"[1, 2, 2]\"\na.tokenize_and_push_to_device(p)\n\ntensor([[49406,   314,   272,   267,   273,   267,   273,   316, 49407,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,\n             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,\n             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0]])\n\n\n\na.tokenize_and_push_to_device(\"\").shape\n\ntorch.Size([1, 77])\n\n\n\nc = a.tokenize_and_push_to_device([\"1,1,2\", \"2,2,2\"])\nenc = a(c)\nenc.shape, enc\n\n(torch.Size([2, 77, 1024]),\n tensor([[[-0.3134, -0.4476, -0.0082,  ...,  0.2542, -0.0324, -0.2960],\n          [ 0.0668, -1.2381,  0.9908,  ...,  0.1785,  0.1592, -0.4320],\n          [ 0.6988, -0.2168, -1.2912,  ...,  2.1063, -0.0302, -0.5666],\n          ...,\n          [ 0.4703, -1.4072, -0.4847,  ..., -0.1257, -0.1650,  0.1206],\n          [ 0.5117, -1.3949, -0.4672,  ..., -0.4288, -0.2166,  0.2904],\n          [ 0.1480, -2.1998, -1.1187,  ...,  0.0823, -0.4157,  0.6236]],\n \n         [[-0.3134, -0.4476, -0.0082,  ...,  0.2542, -0.0324, -0.2960],\n          [-0.1180, -1.6322,  1.2987,  ..., -0.1378, -0.1529, -0.3377],\n          [-0.7251, -0.8167, -0.9966,  ...,  2.2262, -0.2325, -0.0138],\n          ...,\n          [ 0.3887, -1.3395, -0.5868,  ..., -0.1621, -0.0594,  0.1253],\n          [ 0.4360, -1.3350, -0.5684,  ..., -0.4643, -0.1131,  0.2847],\n          [ 0.1691, -2.1725, -1.1441,  ...,  0.0633, -0.3175,  0.7041]]]))\n\n\n\nopen_clip.decode(c[1])\n\n'&lt;start_of_text&gt;2 , 2 , 2 &lt;end_of_text&gt;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'"
+  },
+  {
+    "objectID": "models/frozen_open_clip.html#clip-model",
+    "href": "models/frozen_open_clip.html#clip-model",
+    "title": "Frozen OpenCLIP",
+    "section": "",
+    "text": "source\n\n\n\n FrozenOpenCLIPEmbedder_config (arch:str, version:str, device:str,\n                                max_length:int, freeze:bool, layer:str)\n\n\nsource\n\n\n\n\n FrozenOpenCLIPEmbedder (arch='ViT-H-14', version='laion2b_s32b_b79k',\n                         device='cpu', max_length=77, freeze=True,\n                         layer='penultimate')\n\nLoads and freezes the OpenCLIP transformer encoder for text prompts.\n\na = FrozenOpenCLIPEmbedder()\n\n\np=\"[1, 2, 2]\"\na.tokenize_and_push_to_device(p)\n\ntensor([[49406,   314,   272,   267,   273,   267,   273,   316, 49407,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,\n             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,\n             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,     0]])\n\n\n\na.tokenize_and_push_to_device(\"\").shape\n\ntorch.Size([1, 77])\n\n\n\nc = a.tokenize_and_push_to_device([\"1,1,2\", \"2,2,2\"])\nenc = a(c)\nenc.shape, enc\n\n(torch.Size([2, 77, 1024]),\n tensor([[[-0.3134, -0.4476, -0.0082,  ...,  0.2542, -0.0324, -0.2960],\n          [ 0.0668, -1.2381,  0.9908,  ...,  0.1785,  0.1592, -0.4320],\n          [ 0.6988, -0.2168, -1.2912,  ...,  2.1063, -0.0302, -0.5666],\n          ...,\n          [ 0.4703, -1.4072, -0.4847,  ..., -0.1257, -0.1650,  0.1206],\n          [ 0.5117, -1.3949, -0.4672,  ..., -0.4288, -0.2166,  0.2904],\n          [ 0.1480, -2.1998, -1.1187,  ...,  0.0823, -0.4157,  0.6236]],\n \n         [[-0.3134, -0.4476, -0.0082,  ...,  0.2542, -0.0324, -0.2960],\n          [-0.1180, -1.6322,  1.2987,  ..., -0.1378, -0.1529, -0.3377],\n          [-0.7251, -0.8167, -0.9966,  ...,  2.2262, -0.2325, -0.0138],\n          ...,\n          [ 0.3887, -1.3395, -0.5868,  ..., -0.1621, -0.0594,  0.1253],\n          [ 0.4360, -1.3350, -0.5684,  ..., -0.4643, -0.1131,  0.2847],\n          [ 0.1691, -2.1725, -1.1441,  ...,  0.0633, -0.3175,  0.7041]]]))\n\n\n\nopen_clip.decode(c[1])\n\n'&lt;start_of_text&gt;2 , 2 , 2 &lt;end_of_text&gt;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'"
+  },
+  {
+    "objectID": "models/frozen_open_clip.html#cached-model",
+    "href": "models/frozen_open_clip.html#cached-model",
+    "title": "Frozen OpenCLIP",
+    "section": "Cached model",
+    "text": "Cached model\nModel takes now also (batched) scalar int values that are defined to unique conditions like \\([1,2,2]=4\\). If input is now such int the output is the cached pre-embedded tensor. If a non int, like a token string is passed we just do the normal embedding live.\n\nsource\n\nCachedFrozenOpenCLIPEmbedder\n\n CachedFrozenOpenCLIPEmbedder (arch='ViT-H-14',\n                               version='laion2b_s32b_b79k', device='cpu',\n                               max_length=77, freeze=True,\n                               layer='penultimate')\n\nAdds caching support to FrozenOpenCLIPEmbedder.\n\na = CachedFrozenOpenCLIPEmbedder()\np = [\"1,1,2\", \"2,2,2\"]\n\na.generate_cache(p)\n\n\n\n\n[INFO]: caching trying to allocate memory (2, 77, 1024) on cpu approx. 0.001 GB\n\n\n\nc_cached   = torch.tensor([0,0,1], device=a.device)\nc_uncached = a.tokenize_and_push_to_device([\"1,1,2\", \"1,1,2\", \"2,2,2\"])\n\nenc_cached   = a(c_cached)\nenc_uncached = a(c_uncached)\n\nenc_cached.shape, enc_uncached.shape, torch.allclose(enc_cached, enc_uncached, atol=1e-5)\n\n(torch.Size([3, 77, 1024]), torch.Size([3, 77, 1024]), True)"
+  },
+  {
+    "objectID": "models/unitary_encoder.html",
+    "href": "models/unitary_encoder.html",
+    "title": "Encoder for unitaries",
+    "section": "",
+    "text": "source\n\n\n\n Unitary_encoder_config (cond_emb_size:int, model_features:list[int],\n                         num_heads:int, transformer_depths:list[int],\n                         dropout:float)\n\n\nsource\n\n\n\n\n Unitary_encoder (cond_emb_size, model_features=None, num_heads=8,\n                  transformer_depths=[4, 4], dropout=0.1)\n\nEncoder for unitary conditions."
+  },
+  {
+    "objectID": "models/unitary_encoder.html#model-definition",
+    "href": "models/unitary_encoder.html#model-definition",
+    "title": "Encoder for unitaries",
+    "section": "",
+    "text": "source\n\n\n\n Unitary_encoder_config (cond_emb_size:int, model_features:list[int],\n                         num_heads:int, transformer_depths:list[int],\n                         dropout:float)\n\n\nsource\n\n\n\n\n Unitary_encoder (cond_emb_size, model_features=None, num_heads=8,\n                  transformer_depths=[4, 4], dropout=0.1)\n\nEncoder for unitary conditions."
+  },
+  {
+    "objectID": "models/transformers.html",
+    "href": "models/transformers.html",
+    "title": "Transformers",
+    "section": "",
+    "text": "source\n\n\n\n BasisSelfAttnBlock (ch, num_heads, dropout=0)\n\nA self attention block, i.e. a transformer encoder.\n\nsource\n\n\n\n\n BasisCrossAttnBlock (ch, cond_emb_size, num_heads, dropout=0.0)\n\nA cross attention block, i.e. a transformer decoder."
+  },
+  {
+    "objectID": "models/transformers.html#attention-blocks",
+    "href": "models/transformers.html#attention-blocks",
+    "title": "Transformers",
+    "section": "",
+    "text": "source\n\n\n\n BasisSelfAttnBlock (ch, num_heads, dropout=0)\n\nA self attention block, i.e. a transformer encoder.\n\nsource\n\n\n\n\n BasisCrossAttnBlock (ch, cond_emb_size, num_heads, dropout=0.0)\n\nA cross attention block, i.e. a transformer decoder."
+  },
+  {
+    "objectID": "models/transformers.html#spatial-residual-transformers",
+    "href": "models/transformers.html#spatial-residual-transformers",
+    "title": "Transformers",
+    "section": "Spatial residual transformers",
+    "text": "Spatial residual transformers\n\nsource\n\nSpatialTransformerSelfAttn\n\n SpatialTransformerSelfAttn (ch, num_heads, depth, dropout=0.0)\n\nA spatial residual transformer, only uses self-attention.\n\nsource\n\n\nSpatialTransformer\n\n SpatialTransformer (ch, cond_emb_size, num_heads, depth, dropout=0.0)\n\nA spatial residual transformer, uses self- and cross-attention on conditional input."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "",
+    "text": "Code repository for generating quantum circuits with diffusion models. [Paper] [Demo]"
+  },
+  {
+    "objectID": "index.html#the-codebase",
+    "href": "index.html#the-codebase",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "The codebase",
+    "text": "The codebase\nAll weights and functions are contained within this repo. For the CLIP model weights we use the OpenCLIP library, which will download (and cache) the CLIP model on first usage of our pipeline. In case you prefer reading a documentation rather than notebooks or code see [Documentation].\nThe repo inlcudes:\n\nsaves/ the configs and weights of the pre-trained models.\ngenQC/ a full release of our used diffusion pipeline.\nsrc/examples examples how to reproduce some figures of the Paper.\nsrc/ the source notebooks for nbdev."
+  },
+  {
+    "objectID": "index.html#examples",
+    "href": "index.html#examples",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "Examples",
+    "text": "Examples\n\nMinimal example\nA minimal example to generate a 5 qubit circuit conditioned on a SRV of \\([1,1,1,2,2]\\). You can try it out on your own with our demo [huggingface-space], no coding required.\n\nfrom genQC.pipeline.diffusion_pipeline import DiffusionPipeline\nfrom genQC.inference.infer_srv import generate_srv_tensors, convert_tensors_to_srvs\n\nmodel_path = \"../saves/qc_unet_config_SRV_3to8_qubit/\"\npipeline   = DiffusionPipeline.from_config_file(model_path, \"cpu\")  \npipeline.scheduler.set_timesteps(20) \n\nout_tensor           = generate_srv_tensors(pipeline, \"Generate SRV: [1,1,1,2,2]\", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=7.5) \nqc_list, _, svr_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)\n\n[INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cpu.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cpu.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\n\n\n\nprint(f\"is SRV {svr_list[0]}\")\nqc_list[0].draw(\"mpl\", style=\"clifford\")\n\nis SRV [1, 1, 1, 2, 2]\n\n\n\n\n\n\n\nIncluded examples\nExample notebooks are provided in the directory src/examples/.\n\n0_hello_circuit [doc] [notebook]: How to sample a circuit (conditioned on a SRV)\n1_editing_and_masking [doc] [notebook]: Presents editing and masking of circuits\n2_unitary_compilation [doc] [notebook]: Compile unitaries and transpile circuits\n3_dataset_and_fineTune [doc] [notebook]: How to create a dataset and fine-tune a pre-trained model"
+  },
+  {
+    "objectID": "index.html#installation",
+    "href": "index.html#installation",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "Installation",
+    "text": "Installation\nThe installation of genQC is done via pip within a few minutes, depending on your downloading speed.\n\n1. Clone the repository\ngit clone https://github.com/FlorianFuerrutter/genQC.git\ncd genQC\n\n\n2. Install genQC\nThis library is build using jupyter notebooks and nbdev. To install the library use in the clone directory:\npip install -e .\nNote, this will install missing requirements automatically. You may want to install some of them manually beforehand, e.g. pytorch for specific cuda support, see pytorch.org/get-started/locally.\nRequirements: genQC depends on python (min. version 3.9) and the librarys: torch, numpy, matplotlib, scipy, pandas, omegaconf, qiskit, tqdm, joblib, open_clip_torch, ipywidgets and pylatexenc. All can be installed with pip. In src/RELEASES.md [doc] and the release descriptions specific tested-on versions are listed.\n\n\n3. Run example\nYou can run the provided 0_hello_circuit [doc] [notebook] example to test your installation. On a computer with a moderate GPU this inference example notebook should run under half a minute."
+  },
+  {
+    "objectID": "index.html#license",
+    "href": "index.html#license",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "License",
+    "text": "License\nThe code and weights in this repository are released under the MIT License."
+  },
+  {
+    "objectID": "index.html#bibtex",
+    "href": "index.html#bibtex",
+    "title": "genQC · Generative Quantum Circuits",
+    "section": "BibTeX",
+    "text": "BibTeX\nWe kindly ask you to cite our paper if any of the previous material was useful for your work.\n@article{fuerrutter2023quantum,\n      title={Quantum circuit synthesis with diffusion models}, \n      author={Florian Fürrutter and Gorka Muñoz-Gil and Hans J. Briegel},\n      year={2023},\n      eprint={2311.02041},\n      publisher = {arXiv},\n      archivePrefix={arXiv},\n      primaryClass={quant-ph},\n      url = {https://arxiv.org/abs/2311.02041},\n      doi = {/10.48550/arXiv.2311.02041},\n}"
+  },
+  {
+    "objectID": "pipeline/diffusion_pipeline.html",
+    "href": "pipeline/diffusion_pipeline.html",
+    "title": "Diffusion Pipeline",
+    "section": "",
+    "text": "source\n\nDiffusionPipeline\n\n DiffusionPipeline (scheduler:genQC.scheduler.scheduler.Scheduler,\n                    model:torch.nn.modules.module.Module,\n                    text_encoder:torch.nn.modules.module.Module,\n                    device:torch.device, enable_guidance_train=True,\n                    guidance_train_p=0.1, cached_text_enc=True)\n\nA Pipeline for diffusion models. Implements train and inference functions. Diffusion parameters are defined inside a Scheduler object.\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "config_loader.html",
+    "href": "config_loader.html",
+    "title": "Config loader",
+    "section": "",
+    "text": "Code using omegaconf to handle IO."
+  },
+  {
+    "objectID": "config_loader.html#io",
+    "href": "config_loader.html#io",
+    "title": "Config loader",
+    "section": "IO",
+    "text": "IO\n\nsource\n\nclass_to_str\n\n class_to_str (cls)\n\n\nsource\n\n\nload_config\n\n load_config (file_path)\n\n\nsource\n\n\nconfig_to_dict\n\n config_to_dict (config)\n\n\nsource\n\n\nsave_dataclass_yaml\n\n save_dataclass_yaml (data_obj, file_path)\n\n\nsource\n\n\nsave_dict_yaml\n\n save_dict_yaml (dict_obj, file_path)\n\nTest\n\n@dataclass\nclass MyConfig:    \n    target:str = class_to_str(OmegaConf)\n    clr_dim: int = 80\n    features: list[int]=None\n    \nc = MyConfig()\nc.features = [1,2,3]\n\nOmegaConf.structured(c)\n\n{'target': 'omegaconf.omegaconf.OmegaConf', 'clr_dim': 80, 'features': [1, 2, 3]}"
+  },
+  {
+    "objectID": "config_loader.html#object-config-load",
+    "href": "config_loader.html#object-config-load",
+    "title": "Config loader",
+    "section": "Object config load",
+    "text": "Object config load\nMostly taken from: https://github.com/Stability-AI/stablediffusion\n\nsource\n\nget_obj_from_str\n\n get_obj_from_str (string, reload=False)\n\n\nsource\n\n\ninstantiate_from_config\n\n instantiate_from_config (config)\n\n\nsource\n\n\nload_model_from_config\n\n load_model_from_config (config, ckpt, device)"
+  },
+  {
+    "objectID": "platform/simulation/qcircuit_sim.html",
+    "href": "platform/simulation/qcircuit_sim.html",
+    "title": "Qiskit: quantum circuit simulation",
+    "section": "",
+    "text": "source\n\n\n\n get_number_of_gate_params (gate_cls)\n\n\nsource\n\n\n\n\n gate_pool_to_gate_classes (gate_pool:list[qiskit.circuit.gate.Gate])\n\nCreates a vocabulary from a gate pool.\n\nsource\n\n\n\n\n schmidt_rank_vector\n                      (densityMatrix:qiskit.quantum_info.states.densitymat\n                      rix.DensityMatrix)\n\nReturn the SRV of a qi.DensityMatrix.\n\nsource\n\n\n\n\n rnd_circuit (num_of_qubits, num_of_gates,\n              gate_pool:list[qiskit.circuit.gate.Gate], rng)\n\nCreate a random circuit.\n\nsource\n\n\n\n\n optimize_circuit (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,\n                   gate_pool:list[qiskit.circuit.gate.Gate],\n                   optimization_level=2)\n\nUse qiskit.compiler.transpile to optimize a circuit.\n\ngs = [ql.HGate, ql.CXGate, ql.CRXGate]\nqc = rnd_circuit(num_of_qubits=3, num_of_gates=8, gate_pool=gs, rng=np.random.default_rng())\nsvr = schmidt_rank_vector(qi.DensityMatrix(qc))\ndisplay(f\"Rand: svr={svr}    num_gates={len(qc.data)}\", qc.draw('mpl'))\n\nqc = optimize_circuit(qc, gs)\nsvr = schmidt_rank_vector(qi.DensityMatrix(qc))\ndisplay(f\"Opti: svr={svr}    num_gates={len(qc.data)}\", qc.draw('mpl'))\n\n'Rand: svr=[1, 1, 1]    num_gates=8'\n\n\n\n\n\n'Opti: svr=[1, 1, 1]    num_gates=8'\n\n\n\n\n\n\nsource\n\n\n\n\n plot_svr_stat (num_of_qubits, min_gates, max_gates, gs, samples,\n                sort=False, opt=True, rng=Generator(PCG64) at\n                0x7FC59D9A7F20)\n\nSRV distrubtion for random sampling\n\n# gs = [ql.HGate, ql.SGate, ql.TGate, ql.CXGate]  # approx universal set\n# gs = [ql.HGate, ql.CCXGate]                     # approx universal set\ngs = [ql.HGate, ql.CXGate]\n\nplot_svr_stat(num_of_qubits=3, min_gates=6, max_gates=8, gs=gs, samples=int(1e3),  rng=np.random.default_rng())\n\n[1, 1, 1]: 58.2%\n[2, 2, 1]: 11.5%\n[2, 2, 2]: 11.3%\n[1, 2, 2]: 9.6%\n[2, 1, 2]: 9.4%"
+  },
+  {
+    "objectID": "platform/simulation/qcircuit_sim.html#circuit",
+    "href": "platform/simulation/qcircuit_sim.html#circuit",
+    "title": "Qiskit: quantum circuit simulation",
+    "section": "",
+    "text": "source\n\n\n\n get_number_of_gate_params (gate_cls)\n\n\nsource\n\n\n\n\n gate_pool_to_gate_classes (gate_pool:list[qiskit.circuit.gate.Gate])\n\nCreates a vocabulary from a gate pool.\n\nsource\n\n\n\n\n schmidt_rank_vector\n                      (densityMatrix:qiskit.quantum_info.states.densitymat\n                      rix.DensityMatrix)\n\nReturn the SRV of a qi.DensityMatrix.\n\nsource\n\n\n\n\n rnd_circuit (num_of_qubits, num_of_gates,\n              gate_pool:list[qiskit.circuit.gate.Gate], rng)\n\nCreate a random circuit.\n\nsource\n\n\n\n\n optimize_circuit (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,\n                   gate_pool:list[qiskit.circuit.gate.Gate],\n                   optimization_level=2)\n\nUse qiskit.compiler.transpile to optimize a circuit.\n\ngs = [ql.HGate, ql.CXGate, ql.CRXGate]\nqc = rnd_circuit(num_of_qubits=3, num_of_gates=8, gate_pool=gs, rng=np.random.default_rng())\nsvr = schmidt_rank_vector(qi.DensityMatrix(qc))\ndisplay(f\"Rand: svr={svr}    num_gates={len(qc.data)}\", qc.draw('mpl'))\n\nqc = optimize_circuit(qc, gs)\nsvr = schmidt_rank_vector(qi.DensityMatrix(qc))\ndisplay(f\"Opti: svr={svr}    num_gates={len(qc.data)}\", qc.draw('mpl'))\n\n'Rand: svr=[1, 1, 1]    num_gates=8'\n\n\n\n\n\n'Opti: svr=[1, 1, 1]    num_gates=8'\n\n\n\n\n\n\nsource\n\n\n\n\n plot_svr_stat (num_of_qubits, min_gates, max_gates, gs, samples,\n                sort=False, opt=True, rng=Generator(PCG64) at\n                0x7FC59D9A7F20)\n\nSRV distrubtion for random sampling\n\n# gs = [ql.HGate, ql.SGate, ql.TGate, ql.CXGate]  # approx universal set\n# gs = [ql.HGate, ql.CCXGate]                     # approx universal set\ngs = [ql.HGate, ql.CXGate]\n\nplot_svr_stat(num_of_qubits=3, min_gates=6, max_gates=8, gs=gs, samples=int(1e3),  rng=np.random.default_rng())\n\n[1, 1, 1]: 58.2%\n[2, 2, 1]: 11.5%\n[2, 2, 2]: 11.3%\n[1, 2, 2]: 9.6%\n[2, 1, 2]: 9.4%"
+  },
+  {
+    "objectID": "platform/simulation/qcircuit_sim.html#svr-test-cases",
+    "href": "platform/simulation/qcircuit_sim.html#svr-test-cases",
+    "title": "Qiskit: quantum circuit simulation",
+    "section": "SVR Test cases",
+    "text": "SVR Test cases\n\ndef test_srv(system_dims, init, target):\n    vec = qi.Statevector(init, dims=system_dims)\n    vec *= 1/np.sqrt(vec.trace())\n    srv = schmidt_rank_vector(qi.DensityMatrix(vec)) \n    assert srv == target, f\"srv: {srv}\"\n    print(f\"passed test, svr: {srv}\")\n    display(vec.draw('latex', prefix='|\\\\psi\\\\rangle = '))\n\n\n#---------------- |0+&gt; = |00&gt;+|01&gt;\nsystem_dims = (2,2)\ninit = np.zeros(np.prod(system_dims), dtype=complex)\ninit[0] = 1\ninit[1] = 1\ntest_srv(system_dims, init, [1, 1])\n\n#----------------Bell, |00&gt;+|11&gt;\nsystem_dims = (2,2)\ninit = np.zeros(np.prod(system_dims), dtype=complex)\ninit[0] = 1\ninit[3] = 1\ntest_srv(system_dims, init, [2, 2])\n  \n#----------------GHZ, |000&gt;+|111&gt;\nsystem_dims = (2,2,2)\ninit = np.zeros(np.prod(system_dims), dtype=complex)\ninit[0] = 1\ninit[7] = 1\ntest_srv(system_dims, init, [2,2,2])\n \n#----------------Sym, |000&gt;+|111&gt;+|222&gt;\nsystem_dims = (3,3,3)\ninit = np.zeros(np.prod(system_dims), dtype=complex)\ninit[0]  = 1\ninit[13] = 1\ninit[26] = 1\ntest_srv(system_dims, init, [3,3,3])\n      \n#----------------Wikipedia example, |000&gt;+|101&gt;+|210&gt;+|311&gt;\nsystem_dims = (4,4,4)\ninit = np.zeros(np.prod(system_dims), dtype=complex)\ninit[0]  = 1\ninit[17] = 1\ninit[36] = 1\ninit[53] = 1\ntest_srv(system_dims, init, [2, 2, 4])\n\npassed test, svr: [1, 1]\npassed test, svr: [2, 2]\npassed test, svr: [2, 2, 2]\npassed test, svr: [3, 3, 3]\npassed test, svr: [2, 2, 4]\n\n\n\\[|\\psi\\rangle = \\frac{\\sqrt{2}}{2} |00\\rangle+\\frac{\\sqrt{2}}{2} |01\\rangle\\]\n\n\n\\[|\\psi\\rangle = \\frac{\\sqrt{2}}{2} |00\\rangle+\\frac{\\sqrt{2}}{2} |11\\rangle\\]\n\n\n\\[|\\psi\\rangle = \\frac{\\sqrt{2}}{2} |000\\rangle+\\frac{\\sqrt{2}}{2} |111\\rangle\\]\n\n\n$$\\[\\begin{align}\n\n|\\psi\\rangle =\n\\begin{bmatrix}\n\\frac{\\sqrt{3}}{3} & 0 & 0 & 0 & \\cdots & 0 & 0 & \\frac{\\sqrt{3}}{3}  \\\\\n\\end{bmatrix}\n\\\\\n\\text{dims=(3, 3, 3)}\n\\end{align}\\]$$\n\n\n$$\\[\\begin{align}\n\n|\\psi\\rangle =\n\\begin{bmatrix}\n\\frac{1}{2} & 0 & 0 & 0 & \\cdots & 0 & 0 & 0  \\\\\n\\end{bmatrix}\n\\\\\n\\text{dims=(4, 4, 4)}\n\\end{align}\\]$$"
+  },
+  {
+    "objectID": "platform/qcircuit_dataset_construction.html",
+    "href": "platform/qcircuit_dataset_construction.html",
+    "title": "Quantum circuit dataset construction",
+    "section": "",
+    "text": "Functions to construct a dataset. Here we define the tokenization (encoding and decoding)."
+  },
+  {
+    "objectID": "platform/qcircuit_dataset_construction.html#tokenizer-encoding-and-decoding",
+    "href": "platform/qcircuit_dataset_construction.html#tokenizer-encoding-and-decoding",
+    "title": "Quantum circuit dataset construction",
+    "section": "Tokenizer: encoding and decoding",
+    "text": "Tokenizer: encoding and decoding\n\nsource\n\nget_target_control_qubits\n\n get_target_control_qubits\n                            (qc:qiskit.circuit.quantumcircuit.QuantumCircu\n                            it, gate:qiskit.circuit.gate.Gate)\n\n\nsource\n\n\nencode_circuit\n\n encode_circuit (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,\n                 num_of_qubits, gate_classes:dict, max_gates:int,\n                 sign_labels={'control_qubits': -1, 'target_qubits': 1},\n                 return_params=False)\n\n\nsource\n\n\ndecode_circuit\n\n decode_circuit (enc_tensor:torch.Tensor,\n                 gate_pool:list[qiskit.circuit.gate.Gate],\n                 place_barrier=True, sign_labels={'control_qubits': -1,\n                 'target_qubits': 1}, params_tensor=None)"
+  },
+  {
+    "objectID": "platform/qcircuit_dataset_construction.html#dataset-generation",
+    "href": "platform/qcircuit_dataset_construction.html#dataset-generation",
+    "title": "Quantum circuit dataset construction",
+    "section": "Dataset generation",
+    "text": "Dataset generation\n\nTotally random SRV circuits\n\nsource\n\n\nget_rnd_encoded_circuit\n\n get_rnd_encoded_circuit (num_of_qubits, min_gates, max_gates, gate_pool,\n                          gate_classes, rng, optimized=True,\n                          return_params=False)\n\n\nsource\n\n\nget_rnd_encoded_circuits\n\n get_rnd_encoded_circuits (samples, num_of_qubits=3, min_gates=3,\n                           max_gates=10, gate_pool=[&lt;class 'qiskit.circuit\n                           .library.standard_gates.h.HGate'&gt;, &lt;class 'qisk\n                           it.circuit.library.standard_gates.x.CXGate'&gt;],\n                           optimized=True, silent=False,\n                           return_params=False)\n\n\ngate_pool=[ql.HGate, ql.CXGate, ql.CU3Gate, ql.CRXGate]\n\nprint(\"Encode:\")\nenc_t, y, params = get_rnd_encoded_circuits(samples=1, num_of_qubits=3, min_gates=6, max_gates=6, gate_pool=gate_pool, optimized=True, return_params=True)\n\nfor enc_i, y_i, params_i in zip(enc_t, y, params):\n    print(f\"{enc_i=}\")\n    print(f\"{y_i=}\")\n    print(f\"{params_i=}\")\n\nprint(\"Decode:\")\nqc = decode_circuit(enc_t[0], gate_pool=gate_pool, params_tensor=params[0])\ndisplay(qc.draw(\"mpl\"))\n\nEncode:\nenc_i=tensor([[-2,  0, -2,  3,  3,  0],\n        [ 2,  1,  2, -3, -3,  0],\n        [ 0,  0,  0,  0,  0,  1]], dtype=torch.int32)\ny_i=[2, 2, 1]\nparams_i=tensor([[0.0000, 0.0000, 0.0000, 2.2710, 4.8585, 0.0000],\n        [0.0000, 0.0000, 0.0000, 0.0304, 1.1044, 0.0000],\n        [0.0000, 0.0000, 0.0000, 3.0486, 4.9504, 0.0000]])\nDecode:\n\n\n\n\n\n\n\n\n\nsource\n\n\ngen_qc_dataset\n\n gen_qc_dataset (samples, num_of_qubits, min_gates, max_gates, gate_pool,\n                 optimized, silent=False)\n\n\n\nSpecific random SRV circuit\n\nsource\n\n\nget_specific_rnd_srv_circuit\n\n get_specific_rnd_srv_circuit (srv, requested_length, gate_pool,\n                               max_i=2000, silent=True,\n                               fix_length_after_optimizing=True,\n                               requested_length_tolerance=0)\n\n\n\nUnitary dataset\n\nsource\n\n\ngen_compilation_rndGates_dataset\n\n gen_compilation_rndGates_dataset (samples, num_of_qubits, min_gates,\n                                   max_gates, gate_pool,\n                                   min_sub_gate_pool_cnt=1, silent=False)\n\nSamples rnd circuit with a rnd subset of gates and return qc with gate label and unitary\n\ngate_pool=[ql.HGate, ql.CXGate, ql.ZGate, ql.XGate, ql.CCXGate]\n\nenc_t, y, U = gen_compilation_rndGates_dataset(samples=1, num_of_qubits=3, min_gates=3, max_gates=4, gate_pool=gate_pool)\n\nnp.set_printoptions(edgeitems=30, linewidth=100000, formatter=dict(float=lambda x: \"%.3g\" % x))\n\nprint(f\"\\ny Label &gt;&gt;&gt; {y[0]} &lt;&lt;&lt;\")\nprint(f\"\\n{enc_t[0]}\")\nprint(f\"\\n{U[0]}\")\nprint(\"\\nDecoded:\")\nqc = decode_circuit(enc_t[0], gate_pool=gate_pool)\ndisplay(qc.draw(\"mpl\"))\n\n\n\n\ngenerated unique circuits: 1\n\ny Label &gt;&gt;&gt; Compile using: ['x'] &lt;&lt;&lt;\n\ntensor([[0, 0, 0, 0],\n        [4, 0, 0, 0],\n        [0, 4, 4, 4]], dtype=torch.int32)\n\n[[0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]\n [1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]]\n\nDecoded:\n\n\n\n\n\n\n\nGraph states dataset\n\n#place all h on all bist then only cz"
+  },
+  {
+    "objectID": "metrics.html",
+    "href": "metrics.html",
+    "title": "Metrics",
+    "section": "",
+    "text": "Definition of metrics used during training.\n\nsource\n\nMetric\n\n Metric (name:str, device)\n\nBase metric class.\n\nsource\n\n\nMean\n\n Mean (name:str, device)\n\nMean metric, used for loss ..\n\nsource\n\n\nAccuracy\n\n Accuracy (name:str, device)\n\nAccuracy metric.\nExample usage:\n\na = Accuracy(\"mean\", \"cpu\")\nprint(a, a.empty)\n\na.update_state(torch.Tensor([3,2,2,1]), torch.Tensor([1,2,2,1]))\nprint(a, a.empty)\n\na.update_state(torch.Tensor([1,2,2,3]), torch.Tensor([1,2,2,3]))\nprint(a, a.empty)\n\na.reset_state()\nprint(a, a.empty)\n\nmean=nan True\nmean=0.75 False\nmean=0.875 False\nmean=nan True\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "scheduler/scheduler_ddpm.html",
+    "href": "scheduler/scheduler_ddpm.html",
+    "title": "DDPMScheduler",
+    "section": "",
+    "text": "Denoising diffusion probabilistic models (DDPM): reverse beta is fixed and diagonal.\n\nsource\n\nDDPMScheduler\n\n DDPMScheduler (device:Union[str,torch.device],\n                num_train_timesteps:int=1000, beta_start:float=0.0001,\n                beta_end:float=0.02, beta_schedule:str='linear',\n                input_perturbation=0.1)\n\nA Scheduler implementing (DDPM)\n\nsource\n\n\nDDPMSchedulerOutput\n\n DDPMSchedulerOutput (prev_sample:torch.FloatTensor,\n                      pred_original_sample:Optional[torch.FloatTensor]=Non\n                      e)\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "scheduler/scheduler_ddim.html",
+    "href": "scheduler/scheduler_ddim.html",
+    "title": "DDIMScheduler",
+    "section": "",
+    "text": "Denoising diffusion implicit models (DDIM).\n\nsource\n\nDDIMScheduler\n\n DDIMScheduler (device:Union[str,torch.device],\n                num_train_timesteps:int=1000, beta_start:float=0.0001,\n                beta_end:float=0.02, beta_schedule:str='linear',\n                input_perturbation=0.1, eta:float=0)\n\nA Scheduler implementing (DDIM).\n\nsource\n\n\nDDIMSchedulerOutput\n\n DDIMSchedulerOutput (prev_sample:torch.FloatTensor,\n                      pred_original_sample:Optional[torch.FloatTensor]=Non\n                      e)\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "RELEASES.html",
+    "href": "RELEASES.html",
+    "title": "Arxiv submission release - 07.12.2023",
+    "section": "",
+    "text": "Arxiv submission release - 07.12.2023\n\nDescription:\nFirst release of the codebase accompanying the paper Quantum circuit synthesis with diffusion models.\nIncluded are the configs and weights of the pre-trained models used in the paper, genQC our diffusion pipeline and example notebooks.\n\n\nTested on:\nRelease is tested on the specific versions:\n\nWindows 10 with cuda 12.1\nnbdev==2.3.12 (for notebook development)\npython 3.11\n\nLibs:\ntorch==2.1.1+cu121\nnumpy==1.26.2\nmatplotlib==3.8.2\nscipy==1.11.4\npandas==2.1.3\nomegaconf==2.3.0\nqiskit==0.45.1\ntqdm==4.66.1\njoblib==1.3.2\nopen-clip-torch==2.23.0\nipywidgets==8.0.4\npylatexenc==2.10\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "dataset/cached_qc_dataset.html",
+    "href": "dataset/cached_qc_dataset.html",
+    "title": "Cached quantum circuit dataset",
+    "section": "",
+    "text": "Quantum circuit dataset that caches the y prompts using the CLIP encoder. This speeds up training significantly!\n\nsource\n\nCached_OpenClip_Dataset\n\n Cached_OpenClip_Dataset (device:torch.device=device(type='cpu'),\n                          **parameters)\n\nAdds .caching to the Quantum circuit dataset class.\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "dataset/config_dataset.html",
+    "href": "dataset/config_dataset.html",
+    "title": "Config dataset",
+    "section": "",
+    "text": "source\n\nConfig_Dataset_config\n\n Config_Dataset_config (store_dict:dict)\n\nConfig dataclass used for storage.\n\nsource\n\n\nConfig_Dataset\n\n Config_Dataset (device:torch.device=device(type='cpu'), **parameters)\n\nBase class for datasets, manages loading and saving.\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "examples/unitary_compilation.html",
+    "href": "examples/unitary_compilation.html",
+    "title": "Compile unitaries",
+    "section": "",
+    "text": "In this notebook we want use the unitary compilation model.\nfrom genQC.imports import *\nfrom genQC.pipeline.diffusion_pipeline import DiffusionPipeline\nfrom qiskit import QuantumCircuit\nfrom genQC.inference.infer_compilation import generate_comp_tensors, get_gate_and_U_acc\nfrom genQC.printing import display_colums\nimport genQC.platform.qcircuit_dataset_construction as data_const\nimport qiskit.quantum_info as qi\nimport genQC.util as util\nimport ast\ndevice = util.infer_torch_device()  # use cuda if we can\nutil.MemoryCleaner.purge_mem()      # clean existing memory alloc\n\n[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul.\ndef str_cond_to_gate_indices(y):   # helper function, used to check if only allowed gates were used by the model!\n    assert y[:15] == \"Compile using: \"\n    c            = ast.literal_eval(y[15:]) \n    gate_classes = data_const.gate_pool_to_gate_classes(pipeline.gate_pool)\n    gate_clrs    = [0] + [gate_classes[ic] for ic in c]  # 0 is empty, always allowed!\n    return gate_clrs"
+  },
+  {
+    "objectID": "examples/unitary_compilation.html#setup-and-load",
+    "href": "examples/unitary_compilation.html#setup-and-load",
+    "title": "Compile unitaries",
+    "section": "Setup and load",
+    "text": "Setup and load\nLoad the pre-trained model\n\nmodel_path = \"../../saves/qc_unet_config_Compilation_3_qubit/\"\npipeline   = DiffusionPipeline.from_config_file(model_path, device)\n\n[INFO]: `genQC.models.unet_qc.QC_Compilation_UNet` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\n\n\nSet 20 sample steps and use rescaled guidance-formula.\n\npipeline.guidance_sample_mode = \"rescaled\"\npipeline.scheduler.set_timesteps(20) \ng = 7.5\n\nThe model was trained with a gate pool of:\n\npipeline.gate_pool\n\n[qiskit.circuit.library.standard_gates.h.HGate,\n qiskit.circuit.library.standard_gates.x.CXGate,\n qiskit.circuit.library.standard_gates.z.ZGate,\n qiskit.circuit.library.standard_gates.x.XGate,\n qiskit.circuit.library.standard_gates.x.CCXGate,\n qiskit.circuit.library.standard_gates.swap.SwapGate]"
+  },
+  {
+    "objectID": "examples/unitary_compilation.html#compile-a-unitary",
+    "href": "examples/unitary_compilation.html#compile-a-unitary",
+    "title": "Compile unitaries",
+    "section": "Compile a unitary",
+    "text": "Compile a unitary\nCompile a given unitary \\(U\\). Note, there has to be a solution with the pipeline.gate_pool in order to find the exact solution.\n\ndef compile_and_plot(U, prompt):\n    U_r, U_i = torch.Tensor(np.real(U)), torch.Tensor(np.imag(U))\n    U_tensor = torch.stack([U_r, U_i], dim=0)\n    \n    out_tensor                           = generate_comp_tensors(pipeline, prompt, U_tensor, samples, num_of_qubits, num_of_qubits, max_gates, g, unique=True)\n    _, _, _, _, _, comb_corr_qc, _, _, _ = get_gate_and_U_acc(out_tensor, str_cond_to_gate_indices(prompt), U_tensor, pipeline.gate_pool, num_of_qubits, max_gates)\n    comb_corr_qc                         = sorted(comb_corr_qc, key=lambda x: len(x.data)) #sort to get the shortest solutions\n\n    fig, axs = plt.subplots(1,4, figsize=(18,5), constrained_layout=True)\n    axs[0].set_title(f\"{prompt}\")\n    for qc,ax in zip(comb_corr_qc, axs.flatten()): \n        qc.draw(\"mpl\", plot_barriers=False, ax=ax)\n    plt.show()\n\n\nsamples       = 512\nnum_of_qubits = 3\nmax_gates     = 12\n\n\nprompt = \"Compile using: ['h', 'cx', 'z', 'x', 'ccx', 'swap']\" # model was trained with phrases like this, allow full gate set\nprompt\n\n\"Compile using: ['h', 'cx', 'z', 'x', 'ccx', 'swap']\"\n\n\n\nExercise 1\nInspired from (quantumcomputing.stackexchange.com/questions/13821/generate-a-3-qubit-swap-unitary-in-terms-of-elementary-gates/13826). Note, this unitary WAS in the training set.\n\nU = np.matrix([[1,0,0,0,0,0,0,0],\n               [0,1,0,0,0,0,0,0],\n               [0,0,1,0,0,0,0,0],\n               [0,0,0,0,1,0,0,0],\n               [0,0,0,1,0,0,0,0],\n               [0,0,0,0,0,1,0,0],\n               [0,0,0,0,0,0,1,0],\n               [0,0,0,0,0,0,0,1]], dtype=np.complex128) \n\nassert np.allclose(U.H@U, np.identity(2**num_of_qubits)) and np.allclose(U@U.H, np.identity(2**num_of_qubits)) #check if unitary\n\nPlot correct (exact) compiled circuits:\n\ncompile_and_plot(U, prompt)\n\n\n\n\n\n\nExercise 2\nInspired from (quantumcomputing.stackexchange.com/questions/12439/procedures-and-intuition-for-designing-simple-quantum-circuits/12440). Note, this unitary WAS in the training set.\n\nU = np.matrix([[1,0,0,0,0,0,0,0],\n               [0,0,0,0,0,0,0,1],\n               [0,1,0,0,0,0,0,0],\n               [0,0,1,0,0,0,0,0],\n               [0,0,0,1,0,0,0,0],\n               [0,0,0,0,1,0,0,0],\n               [0,0,0,0,0,1,0,0],\n               [0,0,0,0,0,0,1,0]], dtype=np.complex128) \n\nassert np.allclose(U.H@U, np.identity(2**num_of_qubits)) and np.allclose(U@U.H, np.identity(2**num_of_qubits)) #check if unitary\n\nPlot correct (exact) compiled circuits:\n\ncompile_and_plot(U, prompt)\n\n\n\n\n\n\nExercise 3\nA randomly generated unitary (from a random circuit). This unitary WAS NOT in the training set, it is new to the model!\n\nU = np.matrix([[ 0.70710678,  0.        ,  0.        , 0.        ,  0.70710678,  0.        , 0.        ,  0.        ],\n               [ 0.        , -0.70710678,  0.        , 0.        ,  0.        , -0.70710678, 0.        ,  0.        ],\n               [-0.70710678,  0.        ,  0.        , 0.        ,  0.70710678,  0.        , 0.        ,  0.        ],\n               [ 0.        ,  0.70710678,  0.        , 0.        ,  0.        , -0.70710678, 0.        ,  0.        ],\n               [ 0.        ,  0.        ,  0.70710678, 0.        ,  0.        ,  0.        , 0.        ,  0.70710678],\n               [ 0.        ,  0.        ,  0.        , 0.70710678,  0.        ,  0.        , 0.70710678,  0.        ],\n               [ 0.        ,  0.        , -0.70710678, 0.        ,  0.        ,  0.        , 0.        ,  0.70710678],\n               [ 0.        ,  0.        ,  0.        ,-0.70710678,  0.        ,  0.        , 0.70710678,  0.        ]], dtype=np.complex128)\n\nassert np.allclose(U.H@U, np.identity(2**num_of_qubits)) and np.allclose(U@U.H, np.identity(2**num_of_qubits)) #check if unitary\n\nPlot correct (exact) compiled circuits:\n\ncompile_and_plot(U, prompt)"
+  },
+  {
+    "objectID": "examples/unitary_compilation.html#transpile-and-discover",
+    "href": "examples/unitary_compilation.html#transpile-and-discover",
+    "title": "Compile unitaries",
+    "section": "Transpile and discover",
+    "text": "Transpile and discover\nSet an initial circuit we want to transpile, optimize or use for discovering sub-arrangements:\n\nqc = QuantumCircuit(3)\nqc.h(2)\nqc.cx(0,1)\nqc.cx(2,1)\nqc.h(1)\nqc.x(1)\nqc.h(1)\nqc.x(2)\n\nU = qi.Operator(qc).to_matrix() # the unitary of the circuit\n\n#-----------------------------------------\n\nfig = qc.draw(\"mpl\")\nfig\n\n\n\n\nWe set different gate pool targets to see what the model gives us:\n\ncs_1 = f\"Compile using: {[x().name for x in pipeline.gate_pool]}\", \"all\"\n\ncs_2 = \"Compile using: ['h', 'cx', 'z', 'ccx']\" , \"no x, no swap\"    \ncs_3 = \"Compile using: ['h', 'cx', 'x', 'ccx']\" , \"no z, no swap\"    \ncs_4 = \"Compile using: ['h', 'x', 'ccx']\"       , \"no cx, no z, no swap\" \ncs_5 = \"Compile using: ['h', 'z', 'x', 'ccx']\"  , \"no cx, no swap\"  \n\ncs = [cs_1, cs_2, cs_3, cs_4, cs_5]\ncs\n\n[(\"Compile using: ['h', 'cx', 'z', 'x', 'ccx', 'swap']\", 'all'),\n (\"Compile using: ['h', 'cx', 'z', 'ccx']\", 'no x, no swap'),\n (\"Compile using: ['h', 'cx', 'x', 'ccx']\", 'no z, no swap'),\n (\"Compile using: ['h', 'x', 'ccx']\", 'no cx, no z, no swap'),\n (\"Compile using: ['h', 'z', 'x', 'ccx']\", 'no cx, no swap')]\n\n\n\nsamples       = 512\nnum_of_qubits = 3\nmax_gates     = 12\n\nCompile with the different gate-sets and plot correct (exact) compiled circuits. Note, some of the circuits might look the same but the gate time-sequences are distinct. Qiskit reorders “parallel” gates to make smaller plots.\n\nfor c, note in cs: compile_and_plot(U, c)"
+  },
+  {
+    "objectID": "examples/hello_circuit.html",
+    "href": "examples/hello_circuit.html",
+    "title": "Generate a circuit",
+    "section": "",
+    "text": "A minimal example to generate a circuit. We load a pre-trained (SRV, 3 to 8 qubit) model and condition on a given Schmidt-Rank-Vector (SRV).\nfrom genQC.imports import *\nfrom genQC.pipeline.diffusion_pipeline import DiffusionPipeline\nimport genQC.inference.infer_srv as infer_srv\nimport genQC.util as util\ndevice = util.infer_torch_device()  # use cuda if we can\nutil.MemoryCleaner.purge_mem()      # clean existing memory alloc\n\n[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul.\ndevice\n\ndevice(type='cuda')"
+  },
+  {
+    "objectID": "examples/hello_circuit.html#setup-and-load",
+    "href": "examples/hello_circuit.html#setup-and-load",
+    "title": "Generate a circuit",
+    "section": "Setup and load",
+    "text": "Setup and load\nLoad the pre-trained model\n\nmodel_path = \"../../saves/qc_unet_config_SRV_3to8_qubit/\"\npipeline   = DiffusionPipeline.from_config_file(model_path, device)\n\n[INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\n\n\nCheck on what gates the model was trained\n\npipeline.gate_pool\n\n[qiskit.circuit.library.standard_gates.h.HGate,\n qiskit.circuit.library.standard_gates.x.CXGate]\n\n\nSet 20 sample steps and use rescaled guidance-formula.\n\npipeline.guidance_sample_mode = \"rescaled\"\npipeline.scheduler.set_timesteps(20)"
+  },
+  {
+    "objectID": "examples/hello_circuit.html#inference-sampling",
+    "href": "examples/hello_circuit.html#inference-sampling",
+    "title": "Generate a circuit",
+    "section": "Inference / sampling",
+    "text": "Inference / sampling\nSet our desired condition SRV\n\nsrv           = [2, 1, 2, 1, 2]  # set your target SRV; can be 3 to 8 qubit\nnum_of_qubits = len(srv)          \n\nprompt = f\"Generate SRV: {srv}\"  # model was trained with this phrase\nprompt\n\n'Generate SRV: [2, 1, 2, 1, 2]'\n\n\nDefine sample parameters\n\ng         = 7.5     # guidance scale\nmax_gates = 16      # how many time steps the tensor encoding has\nsamples   = 64      # how many circuits to generate\n\nSample tokenized circuits\n\nout_tensor = infer_srv.generate_srv_tensors(pipeline, prompt, samples, num_of_qubits, num_of_qubits, max_gates, g, no_bar=False)\n\n\n\n\n[INFO]: (generate_srv_tensors) Generated 64 tensors\n\n\nCheck how many distinct tensors we got:\n\nout_tensor.unique(dim=0).shape[0]\n\n64\n\n\nLet’s look what is generated. Note, 3 is the padding token (or empty action).\n\nout_tensor[:2]\n\ntensor([[[ 0,  2,  0,  2,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 2, -2,  1, -2, -2,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3],\n         [-2,  0,  0,  0,  2,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3]],\n\n        [[ 0,  0,  0,  2,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 1, -2,  1, -2,  1,  0, -2,  0,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3],\n         [ 0,  2,  0,  0,  0,  1,  2,  1,  3,  3,  3,  3,  3,  3,  3,  3]]])"
+  },
+  {
+    "objectID": "examples/hello_circuit.html#convert-to-qiskit-circuit",
+    "href": "examples/hello_circuit.html#convert-to-qiskit-circuit",
+    "title": "Generate a circuit",
+    "section": "Convert to qiskit circuit",
+    "text": "Convert to qiskit circuit\nTo get a qiskit circuit we need to do:\n\napply cosine similarity to go from embeddings to token matrices (the function infer_srv.generate_srv_tensors did this already)\nparse token matrix to qiskit and filter out error circuits\ncalculate SRV and plot circuits\n\n\nqc_list, error_cnt, srv_list = infer_srv.convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)\n\nGenerated error circuits (token matrices that don’t correspond to circuits):\n\nerror_cnt\n\n0\n\n\nWhat SRVs did we get:\n\nsrv_list[:4]\n\n[[2, 1, 2, 1, 2], [2, 1, 2, 1, 2], [2, 1, 2, 1, 2], [2, 1, 2, 1, 2]]\n\n\nThat is an accuracy of:\n\nsum(srv==x for x in srv_list)/len(srv_list)\n\n0.921875\n\n\nFinally plot some of the circuits:\n\nfig, axs = plt.subplots(2, 4, figsize=(18,5), constrained_layout=True)\nfor qc,is_svr,ax in zip(qc_list, srv_list, axs.flatten()): \n    qc.draw(\"mpl\", plot_barriers=False, ax=ax, style = \"clifford\")\n    ax.set_title(f\"{'Correct' if is_svr==srv else 'NOT correct'}, is SRV = {is_svr}\")\nplt.show()"
+  },
+  {
+    "objectID": "inference/infer_srv.html",
+    "href": "inference/infer_srv.html",
+    "title": "Inference SRV functions",
+    "section": "",
+    "text": "source\n\n\n\n get_all_srvs (num_of_qubits)\n\n\nsource\n\n\n\n\n generate_srv_tensors (pipeline, prompt, samples, system_size,\n                       num_of_qubits, max_gates, g, no_bar=True,\n                       unique=False, auto_batch_size=512)"
+  },
+  {
+    "objectID": "inference/infer_srv.html#generation",
+    "href": "inference/infer_srv.html#generation",
+    "title": "Inference SRV functions",
+    "section": "",
+    "text": "source\n\n\n\n get_all_srvs (num_of_qubits)\n\n\nsource\n\n\n\n\n generate_srv_tensors (pipeline, prompt, samples, system_size,\n                       num_of_qubits, max_gates, g, no_bar=True,\n                       unique=False, auto_batch_size=512)"
+  },
+  {
+    "objectID": "inference/infer_srv.html#convertion",
+    "href": "inference/infer_srv.html#convertion",
+    "title": "Inference SRV functions",
+    "section": "Convertion",
+    "text": "Convertion\n\nsource\n\nconvert_tensors_to_srvs\n\n convert_tensors_to_srvs (out_tensor, gate_pool, sort_srv=False,\n                          place_barrier=False, n_jobs=1)"
+  },
+  {
+    "objectID": "inference/infer_srv.html#accuracy",
+    "href": "inference/infer_srv.html#accuracy",
+    "title": "Inference SRV functions",
+    "section": "Accuracy",
+    "text": "Accuracy\n\nsource\n\nget_srv_accuracy\n\n get_srv_accuracy (srv_list, target_srv)"
+  },
+  {
+    "objectID": "inference/infer_srv.html#tests",
+    "href": "inference/infer_srv.html#tests",
+    "title": "Inference SRV functions",
+    "section": "Tests",
+    "text": "Tests\n\nsource\n\ntrue_sample_bin_dist\n\n true_sample_bin_dist (samples_per_bin, bin_size)\n\n\nsource\n\n\ntest_srv_clr_distribution_bin_samples\n\n test_srv_clr_distribution_bin_samples (pipeline, samples_per_bin,\n                                        system_size, num_of_qubits,\n                                        max_gates, g, gate_pool,\n                                        silent=False, device='cpu',\n                                        U=None, prompt_mod:&lt;built-\n                                        infunctioncallable&gt;=&lt;function\n                                        &lt;lambda&gt;&gt;, only_diag=False,\n                                        n_jobs=1)\n\n\nsource\n\n\ntest_srv_clr_distribution\n\n test_srv_clr_distribution (pipeline, samples_per_srv, system_size,\n                            num_of_qubits, max_gates, g, gate_pool,\n                            silent=False, device='cpu', U=None,\n                            prompt_mod:&lt;built-\n                            infunctioncallable&gt;=&lt;function &lt;lambda&gt;&gt;,\n                            dist_srvs=None, cond_srvs=None,\n                            only_diag=False, n_jobs=1)\n\n\nsource\n\n\ntest_guidance_dep\n\n test_guidance_dep (pipeline, srvs, samples, system_size, num_of_qubits,\n                    max_gates, gs, gate_pool, prompt_mod:&lt;built-\n                    infunctioncallable&gt;=&lt;function &lt;lambda&gt;&gt;, U=None,\n                    n_jobs=1)\n\n\nsource\n\n\ntest_srv_acc_vs_length\n\n test_srv_acc_vs_length (pipeline, samples, system_size, num_of_qubits,\n                         max_gates, g, gate_pool, prompt_mod:&lt;built-\n                         infunctioncallable&gt;=&lt;function &lt;lambda&gt;&gt;, U=None,\n                         n_jobs=1)\n\n\nsource\n\n\ntest_srv_acc_vs_maxLength\n\n test_srv_acc_vs_maxLength (pipeline, samples_per_bin, system_size,\n                            num_of_qubits, max_gates_list, g, gate_pool,\n                            prompt_mod:&lt;built-\n                            infunctioncallable&gt;=&lt;function &lt;lambda&gt;&gt;,\n                            U=None, n_jobs=1)\n\n\nsource\n\n\ntest_srv_length_distribution\n\n test_srv_length_distribution (pipeline, samples_per_bin, system_size,\n                               num_of_qubits, max_gates, g, gate_pool,\n                               silent=False, U=None, prompt_mod:&lt;built-\n                               infunctioncallable&gt;=&lt;function &lt;lambda&gt;&gt;,\n                               n_jobs=1)"
+  },
+  {
+    "objectID": "inference/infer_srv.html#plot",
+    "href": "inference/infer_srv.html#plot",
+    "title": "Inference SRV functions",
+    "section": "Plot",
+    "text": "Plot\n\nsource\n\nplot_srv_clr_distribution_hist\n\n plot_srv_clr_distribution_hist (values, samples, num_of_qubits,\n                                 save=False, dist_srvs=None,\n                                 cond_srvs=None)\n\n\nsource\n\n\nplot_srv_clr_distribution_bin_accuracy\n\n plot_srv_clr_distribution_bin_accuracy (values, samples, num_of_qubits,\n                                         save=False,\n                                         plot_percentages=False,\n                                         trainSet_srv=None)\n\n\nsource\n\n\nplot_guidance_dep\n\n plot_guidance_dep (srvs, gs, guidance_dep_out, samples, save=False)\n\n\nsource\n\n\nplot_srv_acc_vs_length\n\n plot_srv_acc_vs_length (ent_ls, ent_accs, ent_cnts, ent_labels, samples,\n                         plot_dist=True, save=False)\n\n\nsource\n\n\nplot_srv_acc_vs_maxLength\n\n plot_srv_acc_vs_maxLength (ent_accs, ent_labels, max_gates_list, samples,\n                            plot_dist=True, save=False)"
+  },
+  {
+    "objectID": "inference/infer_misc.html",
+    "href": "inference/infer_misc.html",
+    "title": "Inference miscellaneous functions",
+    "section": "",
+    "text": "source\n\n\n\n get_rnd_gatepool_subset (gate_pool, min_sub_gate_pool_cnt=2)"
+  },
+  {
+    "objectID": "inference/infer_misc.html#misc",
+    "href": "inference/infer_misc.html#misc",
+    "title": "Inference miscellaneous functions",
+    "section": "",
+    "text": "source\n\n\n\n get_rnd_gatepool_subset (gate_pool, min_sub_gate_pool_cnt=2)"
+  },
+  {
+    "objectID": "inference/infer_misc.html#convertion",
+    "href": "inference/infer_misc.html#convertion",
+    "title": "Inference miscellaneous functions",
+    "section": "Convertion",
+    "text": "Convertion\n\nsource\n\nconvert_tensors_to_circuits\n\n convert_tensors_to_circuits (out_tensor, gate_pool, params_tensor=None,\n                              place_barrier=False)"
+  },
+  {
+    "objectID": "inference/infer_compilation.html",
+    "href": "inference/infer_compilation.html",
+    "title": "Inference compilation functions",
+    "section": "",
+    "text": "source\n\n\n\n split_U_to_tensor (U:numpy.ndarray)\n\n\nsource\n\n\n\n\n get_new_unitary_indices (Us, dataset, silent=False)\n\n\nsource\n\n\n\n\n get_new_unitary_indices_batch (Us, dataset, auto_batch_size=32,\n                                silent=False, n_jobs=1)"
+  },
+  {
+    "objectID": "inference/infer_compilation.html#misc",
+    "href": "inference/infer_compilation.html#misc",
+    "title": "Inference compilation functions",
+    "section": "",
+    "text": "source\n\n\n\n split_U_to_tensor (U:numpy.ndarray)\n\n\nsource\n\n\n\n\n get_new_unitary_indices (Us, dataset, silent=False)\n\n\nsource\n\n\n\n\n get_new_unitary_indices_batch (Us, dataset, auto_batch_size=32,\n                                silent=False, n_jobs=1)"
+  },
+  {
+    "objectID": "inference/infer_compilation.html#generation",
+    "href": "inference/infer_compilation.html#generation",
+    "title": "Inference compilation functions",
+    "section": "Generation",
+    "text": "Generation\n\nsource\n\ngenerate_comp_tensors\n\n generate_comp_tensors (pipeline, prompt, U, samples, system_size,\n                        num_of_qubits, max_gates, g, no_bar=True,\n                        unique=False, auto_batch_size=512)"
+  },
+  {
+    "objectID": "inference/infer_compilation.html#accuracy",
+    "href": "inference/infer_compilation.html#accuracy",
+    "title": "Inference compilation functions",
+    "section": "Accuracy",
+    "text": "Accuracy\n\nsource\n\ncheck_correct_gates\n\n check_correct_gates (qc, num_of_qubits, gate_pool, max_gates,\n                      allowed_gate_clrs)\n\n\nsource\n\n\ncheck_correct_unitary_exact\n\n check_correct_unitary_exact (qc, U)\n\n\nsource\n\n\ncheck_correct_unitary_distance\n\n check_correct_unitary_distance (qc, target_U, norms)\n\n\nsource\n\n\nget_gate_and_U_acc\n\n get_gate_and_U_acc (out_tensor, allowed_gate_clrs, U, gate_pool,\n                     num_of_qubits, max_gates, norms=[], no_bar=True)"
+  },
+  {
+    "objectID": "inference/infer_compilation.html#tests",
+    "href": "inference/infer_compilation.html#tests",
+    "title": "Inference compilation functions",
+    "section": "Tests",
+    "text": "Tests\n\nsource\n\ntest_comp_acc\n\n test_comp_acc (pipeline, samples, system_size, gate_pool, num_of_qubits,\n                max_gates, g, str_cond_to_gate_indices:&lt;built-\n                infunctioncallable&gt;, Us, ys, train_dataset=None, norms=[])\n\n\nsource\n\n\ntest_comp_acc_on_testset\n\n test_comp_acc_on_testset (pipeline, samples, num_of_U, system_size,\n                           gate_pool, num_of_qubits, max_gates, g,\n                           str_cond_to_gate_indices:&lt;built-\n                           infunctioncallable&gt;, prompt_mod:&lt;built-\n                           infunctioncallable&gt;, test_dataset,\n                           train_dataset=None, norms=[], fix_y=None)\n\nreturns: acc_s, gate_acc_s, u_acc_s, uniques_cnt_s, error_cnt_s, num_found_circuits_s, task_qc_len_s\n\nsource\n\n\ntest_comp_acc_on_rnd_samples\n\n test_comp_acc_on_rnd_samples (pipeline, samples, num_of_U, system_size,\n                               gate_pool, num_of_qubits, max_gates, g,\n                               str_cond_to_gate_indices:&lt;built-\n                               infunctioncallable&gt;, prompt_mod:&lt;built-\n                               infunctioncallable&gt;, rnd_min_gates,\n                               rnd_max_gates, train_dataset=None,\n                               norms=[], fix_y=None)\n\nreturns: acc_s, gate_acc_s, u_acc_s, uniques_cnt_s, error_cnt_s, num_found_circuits_s, task_qc_len_s\n\n\n\n\n\n\n\n\n\n\nType\nDefault\nDetails\n\n\n\n\npipeline\n\n\n\n\n\nsamples\n\n\n\n\n\nnum_of_U\n\n\n\n\n\nsystem_size\n\n\n\n\n\ngate_pool\n\n\n\n\n\nnum_of_qubits\n\n\n\n\n\nmax_gates\n\n\n\n\n\ng\n\n\n\n\n\nstr_cond_to_gate_indices\ncallable\n\n\n\n\nprompt_mod\ncallable\n\ntakes a single prompt and returns it modified\n\n\nrnd_min_gates\n\n\n\n\n\nrnd_max_gates\n\n\n\n\n\ntrain_dataset\nNoneType\nNone\n\n\n\nnorms\nlist\n[]\n\n\n\nfix_y\nNoneType\nNone"
+  },
+  {
+    "objectID": "inference/infer_compilation.html#plot",
+    "href": "inference/infer_compilation.html#plot",
+    "title": "Inference compilation functions",
+    "section": "Plot",
+    "text": "Plot\n\nsource\n\nplot_hist_overview\n\n plot_hist_overview (out_tuple, num_of_samples_per_U, rnd_min_gates,\n                     rnd_max_gates, max_gates, num_of_qubits)"
+  },
+  {
+    "objectID": "inference/infer_gate_hist.html",
+    "href": "inference/infer_gate_hist.html",
+    "title": "Inference gate distribution",
+    "section": "",
+    "text": "source\n\n\n\n get_tensor_gate_length (clr_tensor, padding_token=0)\n\nCareful with padding tokens!\n\nsource\n\n\n\n\n get_circuit_gate_length (qcs)"
+  },
+  {
+    "objectID": "inference/infer_gate_hist.html#gate-length",
+    "href": "inference/infer_gate_hist.html#gate-length",
+    "title": "Inference gate distribution",
+    "section": "",
+    "text": "source\n\n\n\n get_tensor_gate_length (clr_tensor, padding_token=0)\n\nCareful with padding tokens!\n\nsource\n\n\n\n\n get_circuit_gate_length (qcs)"
+  },
+  {
+    "objectID": "examples/editing_and_masking.html",
+    "href": "examples/editing_and_masking.html",
+    "title": "Editing and masking of circuits",
+    "section": "",
+    "text": "In this notebook we show editing and masking of circuits.\nfrom genQC.imports import *\nfrom genQC.pipeline.diffusion_pipeline import DiffusionPipeline\nfrom genQC.inference.infer_srv import convert_tensors_to_srvs, schmidt_rank_vector\nimport genQC.platform.qcircuit_dataset_construction as data_const\nimport genQC.util as util\nfrom qiskit.quantum_info import DensityMatrix\ndevice = util.infer_torch_device()  # use cuda if we can\nutil.MemoryCleaner.purge_mem()      # clean existing memory alloc\n\n[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul."
+  },
+  {
+    "objectID": "examples/editing_and_masking.html#setup-and-load",
+    "href": "examples/editing_and_masking.html#setup-and-load",
+    "title": "Editing and masking of circuits",
+    "section": "Setup and load",
+    "text": "Setup and load\nLoad the pre-trained model\n\nmodel_path = \"../../saves/qc_unet_config_SRV_3to8_qubit/\"\npipeline   = DiffusionPipeline.from_config_file(model_path, device)\n\n[INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\n\n\nSet 20 sample steps and use rescaled guidance-formula.\n\npipeline.guidance_sample_mode = \"rescaled\"\npipeline.scheduler.set_timesteps(40) \ng = 7.5"
+  },
+  {
+    "objectID": "examples/editing_and_masking.html#editing",
+    "href": "examples/editing_and_masking.html#editing",
+    "title": "Editing and masking of circuits",
+    "section": "1. Editing",
+    "text": "1. Editing\nSample a random circuit with desired parameters as the circuit we want to edit:\n\nsrv_init       = [1, 1, 1, 2, 2]   # psi_0 state\ndesired_length = 5                 # 5 gates initially placed\n\n\ninit_qc = data_const.get_specific_rnd_srv_circuit(srv_init, desired_length, pipeline.gate_pool)\nprint(\"SRV is\", schmidt_rank_vector(DensityMatrix(init_qc)))\ninit_qc.draw(\"mpl\", style=\"clifford\")\n\nSRV is [1, 1, 1, 2, 2]\n\n\n\n\n\nThe editing taks is analogous to image editing, we do img2img with conditioning and copy non-edit areas at every time step. Also called latent_filling.\n\ndef create_edited_circuits(pipeline, samples, qc, prompt, new_length, num_of_qubits, system_size, t_start_index):\n    #-------------------------------------------\n    # set mask - appending mask!\n    old_length = len(qc.data)\n\n    qubit_mask = torch.ones((system_size, new_length), device=device)\n    qubit_mask[:, :old_length] = 0\n    \n    #-------------------------------------------\n    # prepare and encode\n \n    gate_classes = data_const.gate_pool_to_gate_classes(pipeline.gate_pool)\n   \n    emb_org_image = data_const.encode_circuit(qc, system_size, gate_classes, new_length).unsqueeze(0).to(device)\n    emb_org_image = pipeline.model.embedd_clrs(emb_org_image)\n\n    emb_org_images = emb_org_image.repeat(samples, *[1]*(emb_org_image.dim()-1))\n    \n    #-------------------------------------------\n    # prep condition\n    \n    c = pipeline.text_encoder.tokenize_and_push_to_device(str(prompt))\n    c = c.repeat(samples, *[1]*(c.dim()-1))\n\n    #-------------------------------------------\n    # latent fill\n    out_tensor = pipeline.latent_filling(emb_org_images, qubit_mask, c=c, g=g, no_bar=False, t_start_index=t_start_index)\n    out_tensor = pipeline.model.invert_clr(out_tensor)\n    out_tensor = out_tensor[:, :num_of_qubits]\n    out_tensor = torch.unique(out_tensor, dim=0) # we only are interested in unique circuits\n   \n    qc_list, error_cnt, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool, place_barrier=True)\n\n    return qc_list, srv_list\n\n\nsamples    = 16   # how many circuits we sample\nnew_length = 16   # how many gates the model can place \n\nsrv_target    = [2, 2, 2, 2, 2]  # desired target SRV\n\nnum_of_qubits = len(srv_target)\nt_start_index = t_start_index = int(0.05 * pipeline.scheduler.timesteps.shape[0])  # time step index at which we start denoising\n\nprompt = f\"Generate SRV: {srv_target}\"  # model was trained with this phrase\nprompt\n\n'Generate SRV: [2, 2, 2, 2, 2]'\n\n\n\n# returns only distinct circuits\nedited_qc, srv_list = create_edited_circuits(pipeline, samples, init_qc, prompt, new_length, num_of_qubits, num_of_qubits, t_start_index)\n\n\n\n\nPick only correct ones:\n\ncorrect_edited_qc = []\nfor qc,srv in zip(edited_qc, srv_list):\n    if srv==srv_target: correct_edited_qc.append(qc)\nprint(f\"We found {len(correct_edited_qc)} correct distinct solutions.\")\n\nWe found 12 correct distinct solutions.\n\n\nCompare: initial circuit\n\ninit_qc.draw(\"mpl\")\n\n\n\n\nv.s. edited:\n\nprint(\"SRV is\", schmidt_rank_vector(DensityMatrix(correct_edited_qc[0])))\ncorrect_edited_qc[0].draw(\"mpl\", plot_barriers=False)\n\nSRV is [2, 2, 2, 2, 2]\n\n\n\n\n\n\nfig, axs = plt.subplots(2,4, figsize=(18,5), constrained_layout=True)\nfor qc,ax in zip(correct_edited_qc, axs.flatten()): \n    qc.draw(\"mpl\", plot_barriers=False, ax=ax)\nplt.show()"
+  },
+  {
+    "objectID": "examples/editing_and_masking.html#masking",
+    "href": "examples/editing_and_masking.html#masking",
+    "title": "Editing and masking of circuits",
+    "section": "2. Masking",
+    "text": "2. Masking\nFirst we set a desired mask, i.e. a specific layout of a quantum processor.\n\nmax_gates     = 16\nnum_of_qubits = 5\n\nd = 3\n#------\ndef con_set(q1, q2, x, d): \n    qubit_mask[q1, x:x+d] = 1\n    qubit_mask[q2, x:x+d] = 1\n    return x+d\n\n#------\nx = 0\n\nqubit_mask = torch.zeros((num_of_qubits, max_gates), device=device) # mask: ones are getting filled, zeros are fixed !\nx = con_set(0, 1, x, d)\nx = con_set(1, 2, x, d)\nx = con_set(1, 3, x, d)\nx = con_set(3, 4, x, d)\n\n\ndef plot_mask():\n    fig = plt.figure(figsize=(3.7,2), constrained_layout=True)\n    plt.imshow(qubit_mask.cpu(), cmap=\"Greens\")\n    plt.xticks(range(0, qubit_mask.shape[1], 2),fontsize=9)\n    plt.yticks(range(num_of_qubits), fontsize=9)\n    plt.xlabel(\"Gate sequence / time\", fontsize=12)\n    plt.ylabel(\"Qubits\", fontsize=12)\n    plt.show()\nplot_mask()\n\n\n\n\n\ndef get_emb_org_images(pipeline, samples, system_size, max_gates, target_num_gates, target_num_bits, qubit_mask):\n    org_image = torch.zeros((1, system_size, max_gates), device=device, dtype=torch.int32) \n    \n    padd_tok = len(pipeline.gate_pool) + 1\n    padd_pos = (torch.ceil(torch.tensor(target_num_gates) / 4) * 4).to(torch.int32)\n    org_image[:,                :, padd_pos:] = padd_tok\n    org_image[:, target_num_bits:,          ] = padd_tok\n\n    emb_org_image  = pipeline.model.embedd_clrs(org_image)\n    emb_org_images = emb_org_image.repeat(samples, *[1]*(emb_org_image.dim()-1))\n    \n    return emb_org_images\n\n\ndef generate_pattern_SRV(pipeline, prompt, samples, system_size, num_of_qubits, max_gates, qubit_mask, t_start_index=0, target_num_gates=None, target_num_bits=None): \n\n    if not exists(target_num_gates):\n        target_num_gates = max_gates\n\n    if not exists(target_num_bits):\n        target_num_bits = num_of_qubits\n    \n    emb_org_images = get_emb_org_images(pipeline, samples, system_size, max_gates, target_num_gates, target_num_bits, qubit_mask)\n\n    #----------------\n    # prep condition\n\n    c = pipeline.text_encoder.tokenize_and_push_to_device(str(prompt))\n    c = c.repeat(samples, *[1]*(c.dim()-1))\n\n    #----------------\n    # latent fill\n    \n    out_tensor = pipeline.latent_filling(emb_org_images, qubit_mask, c=c, g=g, no_bar=False, t_start_index=t_start_index)\n    out_tensor = pipeline.model.invert_clr(out_tensor)\n    out_tensor = out_tensor[:, :num_of_qubits]\n    out_tensor = torch.unique(out_tensor, dim=0)\n     \n    qc_list, error_cnt, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool, place_barrier=True)\n\n    return qc_list, srv_list\n\nNow generate circuits corresponding to the mask.\n\nsamples    = 512              # how many circuits we sample\nsrv_target = [2, 1, 2, 2, 2]  # desired target SRV\n\nassert len(srv_target)==qubit_mask.shape[0]\n\nprompt = f\"Generate SRV: {srv_target}\"  # model was trained with this phrase\nprompt\n\n'Generate SRV: [2, 1, 2, 2, 2]'\n\n\n\nqc_list, srv_list = generate_pattern_SRV(pipeline, prompt, samples, num_of_qubits, num_of_qubits, max_gates, qubit_mask, t_start_index=1)\n\n\n\n\nPick only correct ones:\n\ncorrect_qc = []\nfor qc,srv in zip(qc_list, srv_list):\n    if srv==srv_target: correct_qc.append(qc)\nprint(f\"We found {len(correct_qc)} correct distinct solutions.\")\n\nWe found 9 correct distinct solutions.\n\n\nLet’s plot them. Mask:\n\nplot_mask()\n\n\n\n\nv.s. solution:\n\nprint(\"SRV is\", schmidt_rank_vector(DensityMatrix(correct_qc[0])))\ncorrect_qc[0].draw(\"mpl\", plot_barriers=False)\n\nSRV is [2, 1, 2, 2, 2]\n\n\n\n\n\n\nfig, axs = plt.subplots(1, min(len(correct_qc), 4), figsize=(18,5), constrained_layout=True)\nfor qc,ax in zip(correct_qc, axs.flatten()): \n    qc.draw(\"mpl\", plot_barriers=False, ax=ax)\nplt.show()"
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html",
+    "href": "examples/dataset_and_finetune.html",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "",
+    "text": "In this notebook we create a (demo) 9-qubit dataset and fine-tune the model with it. Note, we use direct fine-tuning similar as you would train the model from scratch (with a higher learn-rate and larger dataset).\nfrom genQC.imports import *\n\nimport genQC.util as util\nimport genQC.platform.qcircuit_dataset_construction as data_const\nimport genQC.inference.infer_srv as infer_srv\nimport genQC.dataset.dataset_helper as dahe\n\nfrom genQC.pipeline.diffusion_pipeline import DiffusionPipeline\nfrom genQC.dataset.qc_dataset import Qc_Config_Dataset\nfrom genQC.dataset.mixed_cached_qc_dataset import Mixed_Cached_OpenClip_Dataset\ndevice = util.infer_torch_device()  # use cuda if we can, cpu is much slower\nutil.MemoryCleaner.purge_mem()      # clean existing memory alloc\n\n[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul."
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html#setup-and-load",
+    "href": "examples/dataset_and_finetune.html#setup-and-load",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "Setup and load",
+    "text": "Setup and load\n\ndef get_preTrained_pipeline():\n    model_path = \"../../saves/qc_unet_config_SRV_3to8_qubit/\"\n    pipeline   = DiffusionPipeline.from_config_file(model_path, device)  \n    return pipeline\n\nLoad the pre-trained model. Set 20 sample steps and use rescaled guidance-formula.\n\npipeline = get_preTrained_pipeline()\n\npipeline.guidance_sample_mode = \"rescaled\"\npipeline.scheduler.set_timesteps(20) \n\nprint(\"Trained with gates:\", pipeline.gate_pool)\n\n[INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\nTrained with gates: [&lt;class 'qiskit.circuit.library.standard_gates.h.HGate'&gt;, &lt;class 'qiskit.circuit.library.standard_gates.x.CXGate'&gt;]"
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html#generate-9-qubit-circuits-without-fine-tune",
+    "href": "examples/dataset_and_finetune.html#generate-9-qubit-circuits-without-fine-tune",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "Generate 9 qubit circuits without fine-tune",
+    "text": "Generate 9 qubit circuits without fine-tune\nGenerate circuits as explained in the 0_hello_circuit [doc] [notebook] example.\n\nsrv           = [2, 2, 2, 1, 1, 1, 1, 1, 2]  # set your target SRV\nnum_of_qubits = len(srv)          \nassert num_of_qubits == 9\n\nprompt = f\"Generate SRV: {srv}\"  # model was trained with this phrase\nprompt\n\n'Generate SRV: [2, 2, 2, 1, 1, 1, 1, 1, 2]'\n\n\n\ng         = 7.5     # guidance scale\nmax_gates = 16      # how many time steps the tensor encoding has\nsamples   = 64      # how many circuits to generate\n\nout_tensor                   = infer_srv.generate_srv_tensors(pipeline, prompt, samples, num_of_qubits, num_of_qubits, max_gates, g, no_bar=False) \nqc_list, error_cnt, srv_list = infer_srv.convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)  # may take a moment, has to compute partial traces over (2^9)x(2^9) density matrices\nprint(f\"Not valid error circuits: {error_cnt} out of {samples}\")\n\n\n\n\n[INFO]: (generate_srv_tensors) Generated 64 tensors\nNot valid error circuits: 1 out of 64\n\n\n\nacc = infer_srv.get_srv_accuracy(srv_list, srv)\nprint(f\"Accuracy on requested {len(srv)} qubit SRV={srv}, with a model trained on 3 to 8 qubits circuits: {acc:.2f}\")\n\nAccuracy on requested 9 qubit SRV=[2, 2, 2, 1, 1, 1, 1, 1, 2], with a model trained on 3 to 8 qubits circuits: 0.02"
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html#fine-tune-dataset",
+    "href": "examples/dataset_and_finetune.html#fine-tune-dataset",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "Fine-tune dataset",
+    "text": "Fine-tune dataset\nLet’s create a 9 qubit fine-tune training dataset.\n\nSampling random circuits\nWe sample random 9 qubit circuits on which we fine-tune on. Note, there is no balancing over what SRVs are created! The initial model was only trained on 3 to 8 qubit circuits.\n\n# settings for random circuit sampling\nrandom_samples = int(512)                 # how many rnd qcs we sample, here small number to speed up example\nnum_of_qubits  = 9\nmin_gates      = 2\nmax_gates      = 20\ngate_pool      = pipeline.gate_pool  \noptimized      = True                     # if qiskit optimizer is used\n\nx, y = data_const.gen_qc_dataset(samples=random_samples, num_of_qubits=num_of_qubits, min_gates=min_gates, max_gates=max_gates, \n                                gate_pool=gate_pool, optimized=optimized, silent=False)\n\n\n\n\nGenerated unique circuits: 511\n\n\n\ny[0]\n\ntensor([1, 1, 1, 1, 1, 1, 1, 1, 1], dtype=torch.int32)\n\n\n\ny = np.array([f\"Generate SRV: {srv.numpy()}\" for srv in y]) # convert SRV to the trained prompt\ny[0]\n\n'Generate SRV: [1 1 1 1 1 1 1 1 1]'\n\n\nWe get tokenized circuits with SRV:\n\nprint(f\"Example circuit with prompt: \\n{y[-1]} \\n{x[-1]}\")\n\nExample circuit with prompt: \nGenerate SRV: [1 1 1 1 2 1 2 1 1] \ntensor([[ 2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [-2,  0,  0,  0,  0,  0,  0,  0,  0, -2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0, -2,  1,  0,  0,  0,  0,  0,  0,  0,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  0,  0,  2,  1,  2, -2,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  1,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  0, -2,  0,  0,  0,  2,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  0,  0, -2,  0, -2,  0,  0, -2,  0,  0,  0,  0,  0,  0,  0,  0,  0],\n        [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  0,  0,  0,  0,  0,  0,  0,  0]], dtype=torch.int32)\n\n\n\n\nCreate a basic dataset\nDirect fine-tuning is the same as you would train a new model from scratch. First, we create a Qc_Config_Dataset object that handles our dataset.\n\n# meta-data of dataset\nparas = {}\nparas[\"store_dict\"]     = {'x':'tensor', 'y':'numpy'}   #what is in the datset, with type\nparas[\"optimized\"]      = optimized    \nparas[\"dataset_to_gpu\"] = True if device==\"cuda\" else False\nparas[\"random_samples\"] = random_samples\nparas[\"num_of_qubits\"]  = num_of_qubits\nparas[\"min_gates\"]      = min_gates\nparas[\"max_gates\"]      = max_gates\nparas[\"gate_pool\"]      = [dahe.class_to_str(gate) for gate in gate_pool]\n\nMake sure our dataset has no duplicates and shuffle it:\n\nx, y = dahe.uniquify_tensor_dataset(x, y)\nassert x.shape[0] == x.unique(dim=0).shape[0]    # check if no duplicates\n\nx, y = dahe.shuffle_tensor_dataset(x, y)\n\nNow create the Qc_Config_Dataset object:\n\nqc_Config_Dataset = Qc_Config_Dataset(store_device=device, **paras)\nqc_Config_Dataset.x = x\nqc_Config_Dataset.y = y\nqc_Config_Dataset.dataset_to_gpu = True if device.type==\"cuda\" else False \nqc_Config_Dataset.plot_example()\n\nLabel: ``Generate SRV: [1 1 1 1 1 1 1 1 1]``    SRV is: [1, 1, 1, 1, 1, 1, 1, 1, 1]\n\n\n\n\n\n\n# qc_Config_Dataset.plot_distribution() #print the SRV distribution percentages\n\nIf you want to save the dataset to disk, you could use:\nconfig_path = \"YOUR_CONFIG_FILE\"  \nsave_path   = \"YOUR_SAVE_PATH\"    \nqc_Config_Dataset.save_dataset(config_path, save_path)\nwhere config_path file-path to the meta-data file, e.g. \"../../configs/dataset/qc_9bit_fine_tune.yaml\nand save_path file-path prefix where the raw dataset files are stored, e.g. \"../../datasets/q-circuits/qc_9bit_fine_tune\".\nA saved dataset can be loaded with:\nqc_Config_Dataset = Qc_Config_Dataset.from_config_file(config_path, device=device) \n\n\nCreate a cached (mixed) dataset\nTo speed up training we can cache the CLIP embeddings of the y dataset labels before we start fitting. We provide the Cached_OpenClip_Dataset object for this. Here we use a further extension, the Mixed_Cached_OpenClip_Dataset. It has advanced methods to handle padding and combining different task (e.g. compile and SRV) or different number of qubit datasets together (as explained in the appendix of the paper). We use it here to automatically cut and pad our 9 qubit circuits to the longest circuit within one batch.\nSee if the pipeline has already a padding token specified, else define one.\n\ntry:    pad_constant = pipeline.params_config(\"\")[\"add_config\"][\"dataset\"][\"params\"][\"pad_constant\"]  #can NOT be 0 (empty token)! and not any other gate!\nexcept: pad_constant = len(qc_Config_Dataset.gate_pool)+1\n    \nprint(f\"{pad_constant=}\")\n\npad_constant=3\n\n\n\ndataset_list = [qc_Config_Dataset]                  # what datasets to combine\n\nparameters   = asdict(qc_Config_Dataset.params_config)\nparameters[\"num_down_scales\"] = 3                   # defined by the down-scale layers of the UNet\n\nmixed_dataset = Mixed_Cached_OpenClip_Dataset.from_datasets(dataset_list,                 \n                 balance_maxes=[1e8],          # what the maximum prompt (y) balance limit is, can be used to balance SRVs for different qubit numbers                                      \n                 pad_constant=pad_constant,\n                 device=device, \n                 bucket_batch_size=-1,       # if we use bucket padding\n                 max_samples=[1e8],            # if we want to limit the sizes of the dataset_list \n                 **parameters)\n\n\n\n\n - dataset size after balancing 511\n\n\nLet’s see what we are training on:\n\nfig, axs = plt.subplots(1, 2, figsize=(12, 3.6), squeeze=False, constrained_layout=True)  \nplt.sca(axs[0, 0])\nplt.xlabel(r\"$s$\")\nplt.title(\"Dist of space\")\nmin_q, max_q = min(d.num_of_qubits for d in dataset_list), max(d.num_of_qubits for d in dataset_list)\ndata = mixed_dataset.z[:, 0].cpu() \nplt.hist(data, bins=np.arange(min_q, max_q+2) - 0.5, rwidth=0.9)\n\nplt.sca(axs[0, 1])\nplt.xlabel(r\"$t$\")\nplt.title(\"Dist of time\")\nmin_g, max_g = min(d.min_gates for d in dataset_list), max(d.max_gates for d in dataset_list)\ndata = mixed_dataset.z[:, 1].cpu()\nplt.hist(data, bins=np.arange(min_g, max_g+2) - 0.5, rwidth=0.9)\n\nplt.show()\n\n\n\n\nFinally, we can create the dataloader used by the DiffusionPipeline.fit() funtion. This also caches all our prompts.\n\ntuned_pipeline = get_preTrained_pipeline()  # load a fresh pre-trained model we want to train\n\ndataloaders = mixed_dataset.get_dataloaders(batch_size=16, text_encoder=tuned_pipeline.text_encoder.to(device), y_on_cpu=False)  # you can set y_on_cpu=True if you run out of device mem\n\n[INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder` instantiated from given config on cuda.\n[INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.\n[INFO]: Not balancing dataset!  balance_max=None\n[INFO]: Generate cache: converting tensors to str and tokenize\n - to str list\n - tokenize_and_push_to_device\n - generate_cache\n[INFO]: caching trying to allocate memory (148, 77, 512) on cuda approx. 0.023 GB\n[INFO]: Generated cache"
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html#fine-tune",
+    "href": "examples/dataset_and_finetune.html#fine-tune",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "Fine-tune",
+    "text": "Fine-tune\nWe have the dataloader object created and can start fine-tuning. Note, we just use all the diffusion scheduler parameters from the pre-trained config we loaded.\n\ntuned_pipeline.add_config[\"dataset\"] = mixed_dataset.get_config()   # add meta-data of dataset to save it with pipeline\ntuned_pipeline.compile(torch.optim.Adam, nn.MSELoss)\n\n\nepochs = 25      # how many epochs we train on our 9bit dataset\nlr     = 5e-5    # learn rate\n\nsched = functools.partial(torch.optim.lr_scheduler.OneCycleLR, max_lr=lr, total_steps=epochs*len(dataloaders.train))\ntuned_pipeline.fit(epochs, dataloaders, lr=lr, lr_sched=sched)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nIf you want you can save the tuned pipeline with:\nstore_dir = f\"../../saves/fine_tuned_on_9bits/\"\n\ntuned_pipeline.store_pipeline(config_path=store_dir, save_path=store_dir)\nand load it again with the usual:\ntuned_pipeline = DiffusionPipeline.from_config_file(model_path, device)"
+  },
+  {
+    "objectID": "examples/dataset_and_finetune.html#generate-9-qubit-circuits-fine-tuned",
+    "href": "examples/dataset_and_finetune.html#generate-9-qubit-circuits-fine-tuned",
+    "title": "SRV demo-dataset and fine-tune",
+    "section": "Generate 9 qubit circuits fine-tuned",
+    "text": "Generate 9 qubit circuits fine-tuned\nTest again to create a 9 qubit SRV as we did at the start but with the tuned model:\n\nprompt\n\n'Generate SRV: [2, 2, 2, 1, 1, 1, 1, 1, 2]'\n\n\n\ng         = 7.5     # guidance scale\nmax_gates = 16      # how many time steps the tensor encoding has\nsamples   = 64      # how many circuits to generate\n\ntuned_pipeline.guidance_sample_mode = \"rescaled\"\ntuned_pipeline.scheduler.set_timesteps(20) \n\nout_tensor                   = infer_srv.generate_srv_tensors(tuned_pipeline, prompt, samples, num_of_qubits, num_of_qubits, max_gates, g, no_bar=False) \nqc_list, error_cnt, srv_list = infer_srv.convert_tensors_to_srvs(out_tensor, tuned_pipeline.gate_pool) # may take a moment, has to compute partial traces over (2^9)x(2^9) density matrices\nprint(f\"Not valid error circuits: {error_cnt} out of {samples}\")\n\n\n\n\n[INFO]: (generate_srv_tensors) Generated 64 tensors\nNot valid error circuits: 1 out of 64\n\n\n\ntuned_acc = infer_srv.get_srv_accuracy(srv_list, srv)\nprint(f\"Accuracy on requested {len(srv)} qubit SRV={srv}, with a model trained on 3 to 8 qubits qcs: {acc:.2f} and with fine-tuning on 9 qubit qcs: {tuned_acc:.2f}\")\n\nAccuracy on requested 9 qubit SRV=[2, 2, 2, 1, 1, 1, 1, 1, 2], with a model trained on 3 to 8 qubits qcs: 0.02 and with fine-tuning on 9 qubit qcs: 0.05\n\n\nNote, we didn’t fine-tune on a balanced dataset with all possible 9 qubit SRVs, just some random circuits (most, ~50%, of them will be the SRV with all 1s). So we don’t expect a huge boost in accuracy."
+  },
+  {
+    "objectID": "dataset/dataset_helper.html",
+    "href": "dataset/dataset_helper.html",
+    "title": "Dataset helper functions",
+    "section": "",
+    "text": "Some comonly used functions for datasets."
+  },
+  {
+    "objectID": "dataset/dataset_helper.html#checking",
+    "href": "dataset/dataset_helper.html#checking",
+    "title": "Dataset helper functions",
+    "section": "Checking",
+    "text": "Checking\n\nsource\n\ncheck_duplicate_in_dataset\n\n check_duplicate_in_dataset (x, dataset)\n\nCheck if ‘x’ is in ‘dataset’\n\nsource\n\n\ncheck_duplicates_in_dataset\n\n check_duplicates_in_dataset (xs, dataset, return_ind=False, invert=False)\n\nChecks if xs is are dataset. Boolean invert changes if we count duplicates (False) or ones that are not in dataset (True). Uses torch.vmap which copies dataset for every element in xs.\nCheck if this works:\n\nxs = torch.tensor(\n    [[0.7, 1, 0.5], \n     [0.3, 1, 0.5],\n     [  0, 1, 0.5]])\n\nd = torch.tensor([\n    [0.11, 1, 0.5],\n    [0.70, 1, 0.5],      #here a dup\n    [0.71, 1, 0.5],\n    [0.3 , 1, 0.5]])\n\ncheck_duplicates_in_dataset(xs, d, return_ind=True)\n\n(2, tensor([0, 1]))"
+  },
+  {
+    "objectID": "dataset/dataset_helper.html#manipulating",
+    "href": "dataset/dataset_helper.html#manipulating",
+    "title": "Dataset helper functions",
+    "section": "Manipulating",
+    "text": "Manipulating\n\nsource\n\nshuffle_tensor_dataset\n\n shuffle_tensor_dataset (x, y=None, *z)\n\nAssumes numpy or tensor objects with same length.\n\nsource\n\n\nget_unique_elements_indices\n\n get_unique_elements_indices (tensor)\n\nReturns indices of unique_elements in tensor.\n\nsource\n\n\nuniquify_tensor_dataset\n\n uniquify_tensor_dataset (x, y=None, *z)\n\nx has to be tensor, assumes numpy or tensor obj for y and z\n\nsource\n\n\nbalance_tensor_dataset\n\n balance_tensor_dataset (x, y, *z, samples:int=None,\n                         make_unique:bool=True, y_uniques=None,\n                         shuffle_lables:bool=True, add_balance_fn:&lt;built-\n                         infunctioncallable&gt;=None)\n\nAssumes x is tensor and y is tensor or numpy."
+  },
+  {
+    "objectID": "dataset/mixed_cached_qc_dataset.html",
+    "href": "dataset/mixed_cached_qc_dataset.html",
+    "title": "Mixed cached dataset",
+    "section": "",
+    "text": "Dataset that combines and handles multiple cached datasets, e.g. for multiple qubits. Here we also handle paddings.\n\nsource\n\nMixed_Cached_OpenClip_Dataset_config\n\n Mixed_Cached_OpenClip_Dataset_config (store_dict:dict, optimized:bool,\n                                       dataset_to_gpu:bool,\n                                       random_samples:int,\n                                       num_of_qubits:int, min_gates:int,\n                                       max_gates:int, gate_pool:list[str],\n                                       pad_constant:int, collate_fn:str,\n                                       bucket_batch_size:int,\n                                       num_down_scales:int)\n\n\nsource\n\n\nMixed_Cached_OpenClip_Dataset\n\n Mixed_Cached_OpenClip_Dataset (device:torch.device=device(type='cpu'),\n                                **parameters)\n\nDataset that uses multiple cached dataset and combines them with padding, either i) Bucket or ii) Max. Also provides a corresponding collate_fn for training.\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "dataset/qc_dataset.html",
+    "href": "dataset/qc_dataset.html",
+    "title": "Quantum circuit dataset",
+    "section": "",
+    "text": "Dataset for quantum circuits.\n\nsource\n\nQc_Config_Dataset_config\n\n Qc_Config_Dataset_config (store_dict:dict, optimized:bool,\n                           dataset_to_gpu:bool, random_samples:int,\n                           num_of_qubits:int, min_gates:int,\n                           max_gates:int, gate_pool:list[str])\n\n\nsource\n\n\nQc_Config_Dataset\n\n Qc_Config_Dataset (device:torch.device=device(type='cpu'), **parameters)\n\nDataset for quantum circuits, access gate_pool directly and all other paras with .params_config\n\ninit = {k:None for k in Qc_Config_Dataset.req_params}\ninit[\"gate_pool\"]  = [\"qiskit.circuit.library.standard_gates.h.HGate\",\n                      \"qiskit.circuit.library.standard_gates.x.CXGate\"]\ninit[\"store_dict\"] = {\"x\":\"tensor\", \"y\":\"tensor_list\"}\n\na = Qc_Config_Dataset(**init)\na.get_config()\n\n{'target': '__main__.Qc_Config_Dataset',\n 'device': 'cpu',\n 'comment': '',\n 'save_path': None,\n 'save_datetime': '12/06/2023 19:06:49',\n 'params': Qc_Config_Dataset_config(store_dict={'x': 'tensor', 'y': 'tensor_list'}, optimized=None, dataset_to_gpu=None, random_samples=None, num_of_qubits=None, min_gates=None, max_gates=None, gate_pool=['qiskit.circuit.library.standard_gates.h.HGate', 'qiskit.circuit.library.standard_gates.x.CXGate'])}\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "util.html",
+    "href": "util.html",
+    "title": "Util",
+    "section": "",
+    "text": "Miscellaneous util code."
+  },
+  {
+    "objectID": "util.html#memory-utils",
+    "href": "util.html#memory-utils",
+    "title": "Util",
+    "section": "Memory utils",
+    "text": "Memory utils\n\nsource\n\nMemoryCleaner\n\n MemoryCleaner ()\n\nCLass with static methods to clean (gpu) memory."
+  },
+  {
+    "objectID": "util.html#python-utils",
+    "href": "util.html#python-utils",
+    "title": "Util",
+    "section": "Python utils",
+    "text": "Python utils\n\nsource\n\nvirtual\n\n virtual (f:&lt;built-infunctioncallable&gt;)\n\nDecorator to enfore subclass method implementations and raises error at method calls.\n\nclass A():\n    def p1(self, x): print(\"A p1\", x)\n    \n    @virtual\n    def p2(self, x): pass\n \nclass B(A):\n    def p3(self, x): print(\"B p2\", x)\n    \nb = B()\nb.p1(1)\ntry:\n    b.p2(1)\nexcept BaseException as e:\n    print(\"Exception that would be raised: \", e)\n\nA p1 1\nException that would be raised:  Virtual method p2 needs to be implemented by subclass B."
+  },
+  {
+    "objectID": "util.html#torch-utils",
+    "href": "util.html#torch-utils",
+    "title": "Util",
+    "section": "Torch utils",
+    "text": "Torch utils\n\nsource\n\nDataLoaders\n\n DataLoaders (*dls:list[torch.utils.data.dataloader.DataLoader])\n\nCombines train and valid DataLoader.\n\nsource\n\n\ninfer_torch_device\n\n infer_torch_device ()\n\n\ninfer_torch_device()\n\n[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul.\n\n\ndevice(type='cuda')\n\n\n\nsource\n\n\nnumber_of_paramters\n\n number_of_paramters (model:torch.nn.modules.module.Module)\n\n\nsource\n\n\nscale_tensor\n\n scale_tensor (t:torch.Tensor)\n\n[-1,1] to [0,1]\n\nsource\n\n\nnormalize_tensor\n\n normalize_tensor (t:torch.Tensor)\n\n[0,1] to [-1,1]"
+  },
+  {
+    "objectID": "util.html#plot-utils",
+    "href": "util.html#plot-utils",
+    "title": "Util",
+    "section": "Plot utils",
+    "text": "Plot utils\n\nsource\n\nsaveSvg\n\n saveSvg (filename)\n\n\nsource\n\n\nsavePng\n\n savePng (filename)\n\n\nsource\n\n\nsavePdf\n\n savePdf (filename)\n\n\nsource\n\n\nplot_image_grid\n\n plot_image_grid (imgs:Union[list,&lt;built-infunctionarray&gt;,torch.Tensor],\n                  labels:list=None, labels_fs='medium', figsize=(16, 4),\n                  cols=8, cmap='Greys', show_colorbar=False,\n                  **imshow_kwargs)\n\n\nn = 6\nplot_image_grid(torch.randn((n,28,28,1)), [f\"label {i}\" for i in range(n)])\n\n\n\n\n\nsource\n\n\nlatents_to_pil\n\n latents_to_pil (latents:torch.Tensor, channels=None)"
+  },
+  {
+    "objectID": "scheduler/scheduler.html",
+    "href": "scheduler/scheduler.html",
+    "title": "Scheduler",
+    "section": "",
+    "text": "Base class for schedulers.\n\nsource\n\nScheduler\n\n Scheduler ()\n\nBase class for all diffusion schedulers\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "printing.html",
+    "href": "printing.html",
+    "title": "Printing functions",
+    "section": "",
+    "text": "Advanced printing functions.\n\nsource\n\ndisplay_colums\n\n display_colums (display_list, num_col=3)\n\n\na = [torch.rand((3, 3))]*3\na\n\n[tensor([[0.6266, 0.3672, 0.3988],\n         [0.6061, 0.2596, 0.4855],\n         [0.3177, 0.8166, 0.3100]]),\n tensor([[0.6266, 0.3672, 0.3988],\n         [0.6061, 0.2596, 0.4855],\n         [0.3177, 0.8166, 0.3100]]),\n tensor([[0.6266, 0.3672, 0.3988],\n         [0.6061, 0.2596, 0.4855],\n         [0.3177, 0.8166, 0.3100]])]\n\n\nv.s.\n\ndisplay_colums(a) # works only in notebook\n\n\n\n\n\nsource\n\n\nndarray_to_latex\n\n ndarray_to_latex (arr)\n\nReturns a LaTeX {pmatrix*}[r] as a string\n\nsource\n\n\ntensor_to_latex\n\n tensor_to_latex (tensor)\n\nReturns a LaTeX {pmatrix*}[r] as a string\n\ntex = tensor_to_latex(torch.full((3,3), 2))\nprint(tex)\n\n\\begin{pmatrix*}[r]\n  2 & 2 & 2\\\\\n  2 & 2 & 2\\\\\n  2 & 2 & 2\\\\\n\\end{pmatrix*}\n\n\n\nsource\n\n\nprint_markdown\n\n print_markdown (text, print_raw=False)\n\n\nprint_markdown(\"$\\sqrt{2}$, *Test text*\")\n\n\\(\\sqrt{2}\\), Test text\n\n\n\nprint_markdown(f\"${tex}$\")\n\n\\(\\begin{pmatrix*}[r]  2 & 2 & 2\\\\  2 & 2 & 2\\\\  2 & 2 & 2\\\\ \\end{pmatrix*}\\)\n\n\n\nsource\n\n\nprint_table\n\n print_table (col_headings:list, data:&lt;built-infunctionarray&gt;,\n              row_headings=None, print_raw=False)\n\nPrint a table:\n\nh = [\"head1\", \"head2\", \"head3\"]\nr = [\"sample\", \"dataset\"]\nd = np.random.rand(2, 3)\nprint_table(h, d, r)\n\n\n\n\n\nhead1\nhead2\nhead3\n\n\n\n\nsample\n0.32\n0.23\n0.27\n\n\ndataset\n0.74\n0.41\n0.00\n\n\n\n\n\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "platform/qcircuit_metrics.html",
+    "href": "platform/qcircuit_metrics.html",
+    "title": "Quantum circuit metrics",
+    "section": "",
+    "text": "Norms for unitary compilation."
+  },
+  {
+    "objectID": "platform/qcircuit_metrics.html#unitary-distances",
+    "href": "platform/qcircuit_metrics.html#unitary-distances",
+    "title": "Quantum circuit metrics",
+    "section": "Unitary distances",
+    "text": "Unitary distances\n\nsource\n\nUnitary_FrobeniusNorm\n\n Unitary_FrobeniusNorm ()\n\nInitialize self. See help(type(self)) for accurate signature.\n\na = torch.tensor([[1,2], [2, 1]]).float()\nb = torch.tensor([[2,3], [2, 2]]).float()\n\ng = Unitary_FrobeniusNorm\ng.distance(a,b)\n\ntensor(1.5000)"
+  },
+  {
+    "objectID": "platform/qcircuit_evaluation.html",
+    "href": "platform/qcircuit_evaluation.html",
+    "title": "Quantum circuit evaluation",
+    "section": "",
+    "text": "source\n\n\n\n sort_into_bins (x, y, y_uniques)\n\n\nsource\n\n\n\n\n extract_gate_number (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,\n                      gate_pool, max_gates)\n\n\nsource\n\n\n\n\n get_gate_stat_from_tensors (tensors, gate_pool)\n\n\nsource\n\n\n\n\n get_gate_stat_from_circuits (qcs:list, gate_pool, max_gates)"
+  },
+  {
+    "objectID": "platform/qcircuit_evaluation.html#gate-count",
+    "href": "platform/qcircuit_evaluation.html#gate-count",
+    "title": "Quantum circuit evaluation",
+    "section": "",
+    "text": "source\n\n\n\n sort_into_bins (x, y, y_uniques)\n\n\nsource\n\n\n\n\n extract_gate_number (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,\n                      gate_pool, max_gates)\n\n\nsource\n\n\n\n\n get_gate_stat_from_tensors (tensors, gate_pool)\n\n\nsource\n\n\n\n\n get_gate_stat_from_circuits (qcs:list, gate_pool, max_gates)"
+  },
+  {
+    "objectID": "platform/qcircuit_util.html",
+    "href": "platform/qcircuit_util.html",
+    "title": "Quantum circuit utils",
+    "section": "",
+    "text": "source\n\n\n\n get_element_matching_indices (a, b)\n\nCompares (2d) a with b. Returns the indices of b, where a element of a matches with b.\n\nsource\n\n\n\n\n get_entanglement_bins (num_of_qubits)\n\nReturns all SRV sorted in entangle bins which correspond to a number of entangled qubits.\n\nfor srvs,label in zip(*get_entanglement_bins(5)):\n    print(label, \":\", srvs)\n\n0 qubit entangled : [[1, 1, 1, 1, 1]]\n2 qubit entangled : [[1, 1, 1, 2, 2], [1, 1, 2, 1, 2], [1, 1, 2, 2, 1], [1, 2, 1, 1, 2], [1, 2, 1, 2, 1], [1, 2, 2, 1, 1], [2, 1, 1, 1, 2], [2, 1, 1, 2, 1], [2, 1, 2, 1, 1], [2, 2, 1, 1, 1]]\n3 qubit entangled : [[1, 1, 2, 2, 2], [1, 2, 1, 2, 2], [1, 2, 2, 1, 2], [1, 2, 2, 2, 1], [2, 1, 1, 2, 2], [2, 1, 2, 1, 2], [2, 1, 2, 2, 1], [2, 2, 1, 1, 2], [2, 2, 1, 2, 1], [2, 2, 2, 1, 1]]\n4 qubit entangled : [[1, 2, 2, 2, 2], [2, 1, 2, 2, 2], [2, 2, 1, 2, 2], [2, 2, 2, 1, 2], [2, 2, 2, 2, 1]]\n5 qubit entangled : [[2, 2, 2, 2, 2]]"
+  },
+  {
+    "objectID": "platform/qcircuit_util.html#srv",
+    "href": "platform/qcircuit_util.html#srv",
+    "title": "Quantum circuit utils",
+    "section": "",
+    "text": "source\n\n\n\n get_element_matching_indices (a, b)\n\nCompares (2d) a with b. Returns the indices of b, where a element of a matches with b.\n\nsource\n\n\n\n\n get_entanglement_bins (num_of_qubits)\n\nReturns all SRV sorted in entangle bins which correspond to a number of entangled qubits.\n\nfor srvs,label in zip(*get_entanglement_bins(5)):\n    print(label, \":\", srvs)\n\n0 qubit entangled : [[1, 1, 1, 1, 1]]\n2 qubit entangled : [[1, 1, 1, 2, 2], [1, 1, 2, 1, 2], [1, 1, 2, 2, 1], [1, 2, 1, 1, 2], [1, 2, 1, 2, 1], [1, 2, 2, 1, 1], [2, 1, 1, 1, 2], [2, 1, 1, 2, 1], [2, 1, 2, 1, 1], [2, 2, 1, 1, 1]]\n3 qubit entangled : [[1, 1, 2, 2, 2], [1, 2, 1, 2, 2], [1, 2, 2, 1, 2], [1, 2, 2, 2, 1], [2, 1, 1, 2, 2], [2, 1, 2, 1, 2], [2, 1, 2, 2, 1], [2, 2, 1, 1, 2], [2, 2, 1, 2, 1], [2, 2, 2, 1, 1]]\n4 qubit entangled : [[1, 2, 2, 2, 2], [2, 1, 2, 2, 2], [2, 2, 1, 2, 2], [2, 2, 2, 1, 2], [2, 2, 2, 2, 1]]\n5 qubit entangled : [[2, 2, 2, 2, 2]]"
+  },
+  {
+    "objectID": "pipeline/diffusion_pipeline_special.html",
+    "href": "pipeline/diffusion_pipeline_special.html",
+    "title": "Diffusion Pipeline Special",
+    "section": "",
+    "text": "source\n\nDiffusionPipeline_attnPadded\n\n DiffusionPipeline_attnPadded\n                               (scheduler:genQC.scheduler.scheduler.Schedu\n                               ler, model:torch.nn.modules.module.Module, \n                               text_encoder:torch.nn.modules.module.Module\n                               , device:torch.device,\n                               enable_guidance_train=True,\n                               guidance_train_p=0.1, cached_text_enc=True)\n\nA special DiffusionPipeline with attention masking.\n\nsource\n\n\nDiffusionPipeline_Compilation\n\n DiffusionPipeline_Compilation\n                                (scheduler:genQC.scheduler.scheduler.Sched\n                                uler,\n                                model:torch.nn.modules.module.Module, text\n                                _encoder:torch.nn.modules.module.Module,\n                                device:torch.device,\n                                enable_guidance_train=True,\n                                guidance_train_p=0.1,\n                                cached_text_enc=True)\n\nA special DiffusionPipeline that accounts for unitary conditions, i.e. compilation.\n\n\n\n\n Back to top"
+  },
+  {
+    "objectID": "pipeline/pipeline.html",
+    "href": "pipeline/pipeline.html",
+    "title": "Pipeline",
+    "section": "",
+    "text": "Basic PyTorch pipeline for general training."
+  },
+  {
+    "objectID": "pipeline/pipeline.html#helper",
+    "href": "pipeline/pipeline.html#helper",
+    "title": "Pipeline",
+    "section": "Helper",
+    "text": "Helper"
+  },
+  {
+    "objectID": "pipeline/pipeline.html#pipeline",
+    "href": "pipeline/pipeline.html#pipeline",
+    "title": "Pipeline",
+    "section": "Pipeline",
+    "text": "Pipeline\nNote, uses functions that require: python&gt;=3.9\n\nsource\n\nPipeline_IO\n\n Pipeline_IO ()\n\nA class providing basic IO functionality.\n\nsource\n\n\nPipeline\n\n Pipeline (model:torch.nn.modules.module.Module, device:torch.device)\n\nA Pipeline_IO class providing basic pytorch model training functionality."
+  },
+  {
+    "objectID": "models/layers.html",
+    "href": "models/layers.html",
+    "title": "Layers",
+    "section": "",
+    "text": "Common model layers."
+  },
+  {
+    "objectID": "models/layers.html#basic-scaling-blocks",
+    "href": "models/layers.html#basic-scaling-blocks",
+    "title": "Layers",
+    "section": "Basic scaling blocks",
+    "text": "Basic scaling blocks\n\nsource\n\nDownBlock2D\n\n DownBlock2D (in_ch, out_ch, kernel_size=2, stride=2, padding=0,\n              use_conv=True)\n\nA 2d down scale block.\n\nsource\n\n\nUpBlock2D\n\n UpBlock2D (in_ch, out_ch, kernel_size=2, stride=2, padding=0,\n            use_conv=True)\n\nA 2d up scale block."
+  },
+  {
+    "objectID": "models/layers.html#resnet-blocks",
+    "href": "models/layers.html#resnet-blocks",
+    "title": "Layers",
+    "section": "ResNet blocks",
+    "text": "ResNet blocks\n\nsource\n\nResBlock2D\n\n ResBlock2D (in_ch, out_ch, kernel_size, skip=True)\n\nA 2d residual block.\n\nsource\n\n\nResBlock2D_Conditional\n\n ResBlock2D_Conditional (in_ch, out_ch, t_emb_size, kernel_size,\n                         skip=True)\n\nA 2d residual block with input of a time-step \\(t\\) embedding."
+  },
+  {
+    "objectID": "models/layers.html#feedforward-layer",
+    "href": "models/layers.html#feedforward-layer",
+    "title": "Layers",
+    "section": "FeedForward layer",
+    "text": "FeedForward layer\n\nsource\n\nFeedForward\n\n FeedForward (in_ch, out_ch, inner_mult=1)\n\nA small dense feed-forward network as used in transformers."
+  },
+  {
+    "objectID": "models/layers.html#position-embedding-layers",
+    "href": "models/layers.html#position-embedding-layers",
+    "title": "Layers",
+    "section": "Position embedding layers",
+    "text": "Position embedding layers\nCreate sinusoidal position embeddings, same as those from the transformer:\n\n\nsource\n\nPositionalEncoding\n\n PositionalEncoding (d_model:int, dropout:float=0.0, max_len:int=5000)\n\nAn absolute pos encoding layer.\n\nsource\n\n\nTimeEmbedding\n\n TimeEmbedding (d_model:int, dropout:float=0.0, max_len:int=5000)\n\nA time embedding layer\n\nsource\n\n\nPositionalEncodingTransposed\n\n PositionalEncodingTransposed (d_model:int, dropout:float=0.0,\n                               max_len:int=5000)\n\nAn absolute pos encoding layer.\n\nsource\n\n\nPositionalEncoding2D\n\n PositionalEncoding2D (d_model:int, dropout:float=0.0, max_len:int=5000)\n\nA 2D absolute pos encoding layer.\n\na = torch.zeros((1, 4, 3, 4))\nl = PositionalEncoding2D(d_model=4)   \n\nl(a)[0].shape\n\ntorch.Size([4, 3, 4])"
+  },
+  {
+    "objectID": "models/unet_qc.html",
+    "href": "models/unet_qc.html",
+    "title": "Conditional qc-UNet",
+    "section": "",
+    "text": "Quantum circuit U-Net architecture predicting the noise for noisy quantum circuits."
+  },
+  {
+    "objectID": "models/unet_qc.html#blocks",
+    "href": "models/unet_qc.html#blocks",
+    "title": "Conditional qc-UNet",
+    "section": "Blocks",
+    "text": "Blocks\n\nsource\n\nUNet_block\n\n UNet_block (ch_in, ch_out, t_emb_size, cond_emb_size, num_heads=8,\n             num_res_blocks=1, transformer_depth=1)\n\nThe basic block of the U-Net. Is conditioned via cross-attention in SpatialTransformer and addition of the time ebedding in ResBlock2D_Conditional.\n\nsource\n\n\nEncoder\n\n Encoder (model_features, t_emb_size, cond_emb_size, num_heads,\n          num_res_blocks, transformer_depths)\n\nEncoder definition of the U-Net.\n\nsource\n\n\nDecoder\n\n Decoder (model_features, t_emb_size, cond_emb_size, num_heads,\n          num_res_blocks, transformer_depths)\n\nDecoder definition of the U-Net."
+  },
+  {
+    "objectID": "models/unet_qc.html#model-definition",
+    "href": "models/unet_qc.html#model-definition",
+    "title": "Conditional qc-UNet",
+    "section": "Model definition",
+    "text": "Model definition\n\nsource\n\nQC_Cond_UNet_config\n\n QC_Cond_UNet_config (model_features:list[int], clr_dim:int, num_clrs:int,\n                      t_emb_size:int, cond_emb_size:int,\n                      num_heads:list[int], num_res_blocks:list[int],\n                      transformer_depths:list[int])\n\n\nsource\n\n\nQC_Cond_UNet\n\n QC_Cond_UNet (model_features=[32, 32, 64], clr_dim=8, num_clrs=8,\n               t_emb_size=128, cond_emb_size=512, num_heads=[8, 8, 2],\n               num_res_blocks=[2, 2, 4], transformer_depths=[1, 2, 1])\n\nConditional U-Net model for quantum circuits. Implemets embedd_clrs and invert_clr functions to embed and decode color-tensors."
+  },
+  {
+    "objectID": "models/unet_qc.html#unitary-compilation-extension",
+    "href": "models/unet_qc.html#unitary-compilation-extension",
+    "title": "Conditional qc-UNet",
+    "section": "Unitary compilation extension",
+    "text": "Unitary compilation extension\n\nsource\n\nQC_Compilation_UNet_config\n\n QC_Compilation_UNet_config (model_features:list[int], clr_dim:int,\n                             num_clrs:int, t_emb_size:int,\n                             cond_emb_size:int, num_heads:list[int],\n                             num_res_blocks:list[int],\n                             transformer_depths:list[int], unitary_encoder\n                             _config:genQC.models.unitary_encoder.Unitary_\n                             encoder_config)\n\n\nsource\n\n\nQC_Compilation_UNet\n\n QC_Compilation_UNet (model_features=[32, 32, 64], clr_dim=8, num_clrs=8,\n                      t_emb_size=128, cond_emb_size=512, num_heads=[8, 8,\n                      2], num_res_blocks=[2, 2, 4], transformer_depths=[1,\n                      2, 1], unitary_encoder_config=None)\n\nExtension of the QC_Cond_UNet to accept unitary conditions."
+  },
+  {
+    "objectID": "models/config_model.html",
+    "href": "models/config_model.html",
+    "title": "Config model",
+    "section": "",
+    "text": "Model base class that handles loading and storing from/to config-files."
+  },
+  {
+    "objectID": "models/config_model.html#model",
+    "href": "models/config_model.html#model",
+    "title": "Config model",
+    "section": "Model",
+    "text": "Model\n\nsource\n\nConfig_Model\n\n Config_Model ()\n\nA basic nn.Module with IO functionality."
+  }
+]

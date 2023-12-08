@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>genQC - Quantum circuit dataset construction</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../platform/qcircuit_evaluation.html" rel="next">
+<link href="../dataset/qc_dataset.html" rel="prev">
+<link href="../assets/logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="genQC - Quantum circuit dataset construction">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://FlorianFuerrutter.github.io/genQC/platform/qcircuit_dataset_construction_files/figure-html/cell-7-output-3.png">
+<meta property="og:site-name" content="genQC">
+<meta property="og:image:height" content="238">
+<meta property="og:image:width" content="1013">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../assets/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">genQC</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://arxiv.org/abs/2311.02041" rel="" target=""><i class="bi bi-file-text" role="img">
+</i> 
+ <span class="menu-text">paper-arxiv</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/FlorianFuerrutter/genQC" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text">code repository</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Lib</li><li class="breadcrumb-item"><a href="../platform/qcircuit_dataset_construction.html">Platform</a></li><li class="breadcrumb-item"><a href="../platform/qcircuit_dataset_construction.html">Quantum circuit dataset construction</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">genQC · Generative Quantum Circuits</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Examples</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/hello_circuit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generate a circuit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/editing_and_masking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Editing and masking of circuits</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/unitary_compilation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compile unitaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../examples/dataset_and_finetune.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SRV demo-dataset and fine-tune</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Lib</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">Pipeline</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/diffusion_pipeline_special.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline Special</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pipeline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Scheduler</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler_ddim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDIMScheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler_ddpm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDPMScheduler</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/infer_compilation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference compilation functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/infer_gate_hist.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference gate distribution</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/infer_misc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference miscellaneous functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/infer_srv.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Inference SRV functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/config_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/frozen_open_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frozen OpenCLIP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/transformers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/unet_qc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Conditional qc-UNet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/unitary_encoder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Encoder for unitaries</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Dataset</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/cached_qc_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cached quantum circuit dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/config_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/dataset_helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/mixed_cached_qc_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed cached dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/qc_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit dataset</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Platform</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/qcircuit_dataset_construction.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Quantum circuit dataset construction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/qcircuit_evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit evaluation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/qcircuit_metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/qcircuit_util.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit utils</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text">Simulation</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth3 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/simulation/qcircuit_sim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Qiskit: quantum circuit simulation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
+ <span class="menu-text">Miscellaneous functions</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../config_loader.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config loader</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../printing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Printing functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../util.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Util</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../RELEASES.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Release notes</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#tokenizer-encoding-and-decoding" id="toc-tokenizer-encoding-and-decoding" class="nav-link active" data-scroll-target="#tokenizer-encoding-and-decoding">Tokenizer: encoding and decoding</a>
+  <ul class="collapse">
+  <li><a href="#get_target_control_qubits" id="toc-get_target_control_qubits" class="nav-link" data-scroll-target="#get_target_control_qubits">get_target_control_qubits</a></li>
+  <li><a href="#encode_circuit" id="toc-encode_circuit" class="nav-link" data-scroll-target="#encode_circuit">encode_circuit</a></li>
+  <li><a href="#decode_circuit" id="toc-decode_circuit" class="nav-link" data-scroll-target="#decode_circuit">decode_circuit</a></li>
+  </ul></li>
+  <li><a href="#dataset-generation" id="toc-dataset-generation" class="nav-link" data-scroll-target="#dataset-generation">Dataset generation</a>
+  <ul class="collapse">
+  <li><a href="#totally-random-srv-circuits" id="toc-totally-random-srv-circuits" class="nav-link" data-scroll-target="#totally-random-srv-circuits">Totally random SRV circuits</a></li>
+  <li><a href="#get_rnd_encoded_circuit" id="toc-get_rnd_encoded_circuit" class="nav-link" data-scroll-target="#get_rnd_encoded_circuit">get_rnd_encoded_circuit</a></li>
+  <li><a href="#get_rnd_encoded_circuits" id="toc-get_rnd_encoded_circuits" class="nav-link" data-scroll-target="#get_rnd_encoded_circuits">get_rnd_encoded_circuits</a></li>
+  <li><a href="#gen_qc_dataset" id="toc-gen_qc_dataset" class="nav-link" data-scroll-target="#gen_qc_dataset">gen_qc_dataset</a></li>
+  <li><a href="#specific-random-srv-circuit" id="toc-specific-random-srv-circuit" class="nav-link" data-scroll-target="#specific-random-srv-circuit">Specific random SRV circuit</a></li>
+  <li><a href="#get_specific_rnd_srv_circuit" id="toc-get_specific_rnd_srv_circuit" class="nav-link" data-scroll-target="#get_specific_rnd_srv_circuit">get_specific_rnd_srv_circuit</a></li>
+  <li><a href="#unitary-dataset" id="toc-unitary-dataset" class="nav-link" data-scroll-target="#unitary-dataset">Unitary dataset</a></li>
+  <li><a href="#gen_compilation_rndgates_dataset" id="toc-gen_compilation_rndgates_dataset" class="nav-link" data-scroll-target="#gen_compilation_rndgates_dataset">gen_compilation_rndGates_dataset</a></li>
+  <li><a href="#graph-states-dataset" id="toc-graph-states-dataset" class="nav-link" data-scroll-target="#graph-states-dataset">Graph states dataset</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Quantum circuit dataset construction</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>Functions to construct a dataset. Here we define the tokenization (encoding and decoding).</p>
+<section id="tokenizer-encoding-and-decoding" class="level2">
+<h2 class="anchored" data-anchor-id="tokenizer-encoding-and-decoding">Tokenizer: encoding and decoding</h2>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L18" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_target_control_qubits" class="level3">
+<h3 class="anchored" data-anchor-id="get_target_control_qubits">get_target_control_qubits</h3>
+<blockquote class="blockquote">
+<pre><code> get_target_control_qubits
+                            (qc:qiskit.circuit.quantumcircuit.QuantumCircu
+                            it, gate:qiskit.circuit.gate.Gate)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L32" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="encode_circuit" class="level3">
+<h3 class="anchored" data-anchor-id="encode_circuit">encode_circuit</h3>
+<blockquote class="blockquote">
+<pre><code> encode_circuit (qc:qiskit.circuit.quantumcircuit.QuantumCircuit,
+                 num_of_qubits, gate_classes:dict, max_gates:int,
+                 sign_labels={'control_qubits': -1, 'target_qubits': 1},
+                 return_params=False)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L65" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="decode_circuit" class="level3">
+<h3 class="anchored" data-anchor-id="decode_circuit">decode_circuit</h3>
+<blockquote class="blockquote">
+<pre><code> decode_circuit (enc_tensor:torch.Tensor,
+                 gate_pool:list[qiskit.circuit.gate.Gate],
+                 place_barrier=True, sign_labels={'control_qubits': -1,
+                 'target_qubits': 1}, params_tensor=None)</code></pre>
+</blockquote>
+</section>
+</section>
+<section id="dataset-generation" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-generation">Dataset generation</h2>
+<section id="totally-random-srv-circuits" class="level3">
+<h3 class="anchored" data-anchor-id="totally-random-srv-circuits">Totally random SRV circuits</h3>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L100" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_rnd_encoded_circuit" class="level3">
+<h3 class="anchored" data-anchor-id="get_rnd_encoded_circuit">get_rnd_encoded_circuit</h3>
+<blockquote class="blockquote">
+<pre><code> get_rnd_encoded_circuit (num_of_qubits, min_gates, max_gates, gate_pool,
+                          gate_classes, rng, optimized=True,
+                          return_params=False)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L113" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_rnd_encoded_circuits" class="level3">
+<h3 class="anchored" data-anchor-id="get_rnd_encoded_circuits">get_rnd_encoded_circuits</h3>
+<blockquote class="blockquote">
+<pre><code> get_rnd_encoded_circuits (samples, num_of_qubits=3, min_gates=3,
+                           max_gates=10, gate_pool=[&lt;class 'qiskit.circuit
+                           .library.standard_gates.h.HGate'&gt;, &lt;class 'qisk
+                           it.circuit.library.standard_gates.x.CXGate'&gt;],
+                           optimized=True, silent=False,
+                           return_params=False)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gate_pool<span class="op">=</span>[ql.HGate, ql.CXGate, ql.CU3Gate, ql.CRXGate]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Encode:"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>enc_t, y, params <span class="op">=</span> get_rnd_encoded_circuits(samples<span class="op">=</span><span class="dv">1</span>, num_of_qubits<span class="op">=</span><span class="dv">3</span>, min_gates<span class="op">=</span><span class="dv">6</span>, max_gates<span class="op">=</span><span class="dv">6</span>, gate_pool<span class="op">=</span>gate_pool, optimized<span class="op">=</span><span class="va">True</span>, return_params<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> enc_i, y_i, params_i <span class="kw">in</span> <span class="bu">zip</span>(enc_t, y, params):</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>enc_i<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>y_i<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>params_i<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Decode:"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>qc <span class="op">=</span> decode_circuit(enc_t[<span class="dv">0</span>], gate_pool<span class="op">=</span>gate_pool, params_tensor<span class="op">=</span>params[<span class="dv">0</span>])</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>display(qc.draw(<span class="st">"mpl"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Encode:
+enc_i=tensor([[-2,  0, -2,  3,  3,  0],
+        [ 2,  1,  2, -3, -3,  0],
+        [ 0,  0,  0,  0,  0,  1]], dtype=torch.int32)
+y_i=[2, 2, 1]
+params_i=tensor([[0.0000, 0.0000, 0.0000, 2.2710, 4.8585, 0.0000],
+        [0.0000, 0.0000, 0.0000, 0.0304, 1.1044, 0.0000],
+        [0.0000, 0.0000, 0.0000, 3.0486, 4.9504, 0.0000]])
+Decode:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0ba61b257e6345b9823ea4b9852edd47","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="qcircuit_dataset_construction_files/figure-html/cell-7-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L137" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gen_qc_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="gen_qc_dataset">gen_qc_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> gen_qc_dataset (samples, num_of_qubits, min_gates, max_gates, gate_pool,
+                 optimized, silent=False)</code></pre>
+</blockquote>
+</section>
+<section id="specific-random-srv-circuit" class="level3">
+<h3 class="anchored" data-anchor-id="specific-random-srv-circuit">Specific random SRV circuit</h3>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L155" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_specific_rnd_srv_circuit" class="level3">
+<h3 class="anchored" data-anchor-id="get_specific_rnd_srv_circuit">get_specific_rnd_srv_circuit</h3>
+<blockquote class="blockquote">
+<pre><code> get_specific_rnd_srv_circuit (srv, requested_length, gate_pool,
+                               max_i=2000, silent=True,
+                               fix_length_after_optimizing=True,
+                               requested_length_tolerance=0)</code></pre>
+</blockquote>
+</section>
+<section id="unitary-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="unitary-dataset">Unitary dataset</h3>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/qcircuit_dataset_construction.py#L182" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gen_compilation_rndgates_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="gen_compilation_rndgates_dataset">gen_compilation_rndGates_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> gen_compilation_rndGates_dataset (samples, num_of_qubits, min_gates,
+                                   max_gates, gate_pool,
+                                   min_sub_gate_pool_cnt=1, silent=False)</code></pre>
+</blockquote>
+<p>Samples rnd circuit with a rnd subset of gates and return qc with gate label and unitary</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>gate_pool<span class="op">=</span>[ql.HGate, ql.CXGate, ql.ZGate, ql.XGate, ql.CCXGate]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>enc_t, y, U <span class="op">=</span> gen_compilation_rndGates_dataset(samples<span class="op">=</span><span class="dv">1</span>, num_of_qubits<span class="op">=</span><span class="dv">3</span>, min_gates<span class="op">=</span><span class="dv">3</span>, max_gates<span class="op">=</span><span class="dv">4</span>, gate_pool<span class="op">=</span>gate_pool)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(edgeitems<span class="op">=</span><span class="dv">30</span>, linewidth<span class="op">=</span><span class="dv">100000</span>, formatter<span class="op">=</span><span class="bu">dict</span>(<span class="bu">float</span><span class="op">=</span><span class="kw">lambda</span> x: <span class="st">"</span><span class="sc">%.3g</span><span class="st">"</span> <span class="op">%</span> x))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">y Label &gt;&gt;&gt; </span><span class="sc">{</span>y[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> &lt;&lt;&lt;"</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>enc_t[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="sc">{</span>U[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Decoded:"</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>qc <span class="op">=</span> decode_circuit(enc_t[<span class="dv">0</span>], gate_pool<span class="op">=</span>gate_pool)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>display(qc.draw(<span class="st">"mpl"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"bbf2a9e343de4bdfadf2536aed805228","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>generated unique circuits: 1
+
+y Label &gt;&gt;&gt; Compile using: ['x'] &lt;&lt;&lt;
+
+tensor([[0, 0, 0, 0],
+        [4, 0, 0, 0],
+        [0, 4, 4, 4]], dtype=torch.int32)
+
+[[0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j]
+ [0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 0.+0.j 0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]
+ [1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]
+ [0.+0.j 1.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j 0.+0.j]]
+
+Decoded:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="qcircuit_dataset_construction_files/figure-html/cell-11-output-3.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="graph-states-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="graph-states-dataset">Graph states dataset</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#place all h on all bist then only cz</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"0015549f1fa849569e28890bc177c2e3":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_909f981cd976432695b6b1e75e7afb56","max":1,"style":"IPY_MODEL_0ecf8fdd93a34babb273867999ae570d","value":1}},"02e0621cfdb94913bee8927c354b374a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_2c549a4c524f47edb7033299693dd0a6","style":"IPY_MODEL_57de0096a47b452fb5c59a99578e8f9e","value":"100%"}},"057884b79c0a470598c5007fddd0a680":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"083b64b1c2ab4f29859b2c9503f5f38a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_7964f48701a94ccb8db7bdb015b8343a","max":1,"style":"IPY_MODEL_057884b79c0a470598c5007fddd0a680","value":1}},"086d9e84542c4d5d8f5b7721ccebcedb":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"0942138c6b1f44c8bac865e85538a029":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_36f626e49a5b40728c3e9b2299b99cd4","max":1,"style":"IPY_MODEL_ddcb32006ed84d25bd0633d17e93809e","value":1}},"0a634fc58cd548a79002eca6469619f6":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"0b884ca055cd46708f03f5746251ab85":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_a97bf04e73614aafb9ffd52d96768011","style":"IPY_MODEL_69cad521b0174f1fb6eb1c9c3c49b98a","value":"100%"}},"0ce0a15148234afdb17365de147be471":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"0da6a9a13677471790f54a77cd9195e5":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"0ecf8fdd93a34babb273867999ae570d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"10a380bdc1474e77834e4dc86e44faaf":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"161308930d6b4ba7b1d8dabf600c2c83":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"17d25484393f4db58e36597d195be4c9":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"1870bcd884cb46d1873db1f975b69350":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"19f4bdbfa7634955a7452063fc4bbb99":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_50e9f5e7b0ba4cf48ac9a3ffc0618d98","IPY_MODEL_aa34cd7bb7674094b605c5d0fbecd00d","IPY_MODEL_7aa7aef8cb114828a81bb2145952afbc"],"layout":"IPY_MODEL_92b91f59e2924edf8688edd70946b7e2"}},"1b1b08e7b2b84e059f336d5d181ecdc7":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"1c4502af5e1245b5914b00377decac44":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_fb2ecab4c8e6407d858c00230eb49ef4","max":1,"style":"IPY_MODEL_161308930d6b4ba7b1d8dabf600c2c83","value":1}},"1d53f4b12c5e414aa2e559af80386b95":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"1d88ec425fd44e02b643fce3b0293b10":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"24bcb8a50e9f48dabd88a26f54b33029":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"2c549a4c524f47edb7033299693dd0a6":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"2d22e6269fe0445586c72aeb7dc2f17c":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_faaf66d9ee994ff2b95eb8bf7c2e35df","style":"IPY_MODEL_ff518e4efafd4408aace4660827155ed","value":" 1/1 [00:00&lt;00:00, 104.59it/s]"}},"31b3ecd6d12a4144b384f94dbe6a6364":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"36f626e49a5b40728c3e9b2299b99cd4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"3a5fe39a49a4414c9466c0d6734e4270":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"3abf4f2b2ecb490e9f756f410cd1e60f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"3acb5b6a709947d98765e9704cc807b7":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"3c1ab4844df74358a65626f9369cdab4":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_31b3ecd6d12a4144b384f94dbe6a6364","style":"IPY_MODEL_1b1b08e7b2b84e059f336d5d181ecdc7","value":"100%"}},"4154f0b5aba24fbc8474f8b8cc658879":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"48e66bdd7e764b77b98fb616aa65ece3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"48fcadc59030414ab70241bd46bbfa29":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_af90e2901f4941cfb82d22985633a270","style":"IPY_MODEL_24bcb8a50e9f48dabd88a26f54b33029","value":"100%"}},"49d968f3e1dd4a4688f2dfd2053e3a08":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"49f76da5c06f4fb5a2fd0e7c8a097e26":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"4b5e309320234b6a8b8734984726602b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_17d25484393f4db58e36597d195be4c9","style":"IPY_MODEL_0ce0a15148234afdb17365de147be471","value":"100%"}},"4e0930b9b2c34ab39dfe576b0a8b8b7d":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"5022f3d151934b32a09f389c66584dcd":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"50e9f5e7b0ba4cf48ac9a3ffc0618d98":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_95dbb892b4d047d0b8f9bf2d37ffddbd","style":"IPY_MODEL_6c89c8b64a444a82b81f821d56878413","value":"100%"}},"51754be353fe4f16b70f65c057eaece8":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"51b6a2e7bd1e44dda1b39419a92e7b44":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_0a634fc58cd548a79002eca6469619f6","style":"IPY_MODEL_55884c776021451e8e44669760ce548e","value":"100%"}},"52956696e0c244d2a0a901dd4d17945b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"55884c776021451e8e44669760ce548e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"57476ec739fc4880ad51794b1679f8f0":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_e8c6e1cdcd444c70bb2684053f4ab950","style":"IPY_MODEL_4154f0b5aba24fbc8474f8b8cc658879","value":"100%"}},"57de0096a47b452fb5c59a99578e8f9e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"5825b646c1884c1eb45849e5d6e5e301":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_4b5e309320234b6a8b8734984726602b","IPY_MODEL_c02ddf83104442ee9b0246e5ffa0dcd6","IPY_MODEL_e17d61a465a24e25bbba157f9dad8b3a"],"layout":"IPY_MODEL_3acb5b6a709947d98765e9704cc807b7"}},"5fbe1ba797f841e5a1825f54b829b65f":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"64e73ddcb6564b579e5b900baa61c735":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"660e7e49d129453991a24d79a041d53d":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"69075f17b5d44639b01678598fc12664":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"69cad521b0174f1fb6eb1c9c3c49b98a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"6aa4bb7fdd604eea82bc1aa93f540841":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"6c89c8b64a444a82b81f821d56878413":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"7194a10b49b14a0aaf2b8632b9bf06a3":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_c2ae687f635746d38d6303188c07f867","style":"IPY_MODEL_8c4e83b4ff88437eb1c3e2271e566d8f","value":" 1/1 [00:00&lt;00:00, 59.86it/s]"}},"732b682f733a4220a62ccd3ed8cc3cfc":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_660e7e49d129453991a24d79a041d53d","max":1,"style":"IPY_MODEL_dc7977c2674a4788b6f6f5ae5e394b9b","value":1}},"775464ed67134938ab83bd1c4aebd1b8":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_1d88ec425fd44e02b643fce3b0293b10","max":1,"style":"IPY_MODEL_10a380bdc1474e77834e4dc86e44faaf","value":1}},"7964f48701a94ccb8db7bdb015b8343a":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"7aa7aef8cb114828a81bb2145952afbc":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_b0e81ff4e05d44f889d84609f1cb1563","style":"IPY_MODEL_7f2ba4d35e5d4029ac5cf3dcbfcde713","value":" 1/1 [00:00&lt;00:00, 49.41it/s]"}},"7f2ba4d35e5d4029ac5cf3dcbfcde713":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"8054f5b9dfbe4134a1bbdea5ea28080c":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"84de673445574607a4442781e3544a3c":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_49f76da5c06f4fb5a2fd0e7c8a097e26","max":1,"style":"IPY_MODEL_52956696e0c244d2a0a901dd4d17945b","value":1}},"852f404918c849d69b7406562c808576":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_a26e4cff52c24acd8b17d2cf2422929a","style":"IPY_MODEL_a58234ea9e0e4b59a6c1d0b36f9747b1","value":" 1/1 [00:00&lt;00:00, 157.49it/s]"}},"88e6282ae60d473e9a92b2518e778e4a":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"8c4e83b4ff88437eb1c3e2271e566d8f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"8cee0a7f821e424cbff7a265c167a4ad":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"8e10ab511eb744ec85dd26904ceb49f3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"909f981cd976432695b6b1e75e7afb56":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"92b91f59e2924edf8688edd70946b7e2":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"95dbb892b4d047d0b8f9bf2d37ffddbd":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"961d1370247542699ae950e20261bb8e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"98665333d2dc4d60b5be86289ccad240":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_0b884ca055cd46708f03f5746251ab85","IPY_MODEL_083b64b1c2ab4f29859b2c9503f5f38a","IPY_MODEL_2d22e6269fe0445586c72aeb7dc2f17c"],"layout":"IPY_MODEL_c203cfc03f5a4507aa7a1f0e0af2428e"}},"9fde706be5b24d74aec14968d7ebfb1b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_cd9096c25cb44835868c4e6024649769","IPY_MODEL_0942138c6b1f44c8bac865e85538a029","IPY_MODEL_cf9232dca9274d71a04a7f1334d747d4"],"layout":"IPY_MODEL_ad7d4fe382d442e1977b1b8eb2839039"}},"a12e5f36c744406b90a69a42b010d2ba":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_02e0621cfdb94913bee8927c354b374a","IPY_MODEL_0015549f1fa849569e28890bc177c2e3","IPY_MODEL_a38ca3a1be27436d9f99bd0acf85231d"],"layout":"IPY_MODEL_5022f3d151934b32a09f389c66584dcd"}},"a26e4cff52c24acd8b17d2cf2422929a":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"a38ca3a1be27436d9f99bd0acf85231d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_ae22b315d0ed4bc0a66d3315ca621852","style":"IPY_MODEL_c84083de33bd4559b10c4ea607f7b8a6","value":" 1/1 [00:00&lt;00:00, 72.05it/s]"}},"a58234ea9e0e4b59a6c1d0b36f9747b1":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"a64dc6587a824941aff845dcc0029486":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_48e66bdd7e764b77b98fb616aa65ece3","max":1,"style":"IPY_MODEL_1d53f4b12c5e414aa2e559af80386b95","value":1}},"a7ce671c09364c8ea98bb321426e486f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_4e0930b9b2c34ab39dfe576b0a8b8b7d","style":"IPY_MODEL_961d1370247542699ae950e20261bb8e","value":" 1/1 [00:00&lt;00:00, 69.40it/s]"}},"a8a1245c0969445c8784845c182feda0":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"a97bf04e73614aafb9ffd52d96768011":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"aa34cd7bb7674094b605c5d0fbecd00d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_8e10ab511eb744ec85dd26904ceb49f3","max":1,"style":"IPY_MODEL_64e73ddcb6564b579e5b900baa61c735","value":1}},"ad7d4fe382d442e1977b1b8eb2839039":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"ae22b315d0ed4bc0a66d3315ca621852":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"af6fb457f0cd4fa191fa021ed1373e3c":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_6aa4bb7fdd604eea82bc1aa93f540841","style":"IPY_MODEL_bdaa750ca3684382aca31776f99ae320","value":"100%"}},"af826b782a20456cbcc071184a9662ab":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"af90e2901f4941cfb82d22985633a270":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"b0752f4168534b64b236c39535fe4601":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_3c1ab4844df74358a65626f9369cdab4","IPY_MODEL_775464ed67134938ab83bd1c4aebd1b8","IPY_MODEL_a7ce671c09364c8ea98bb321426e486f"],"layout":"IPY_MODEL_ef0de7e1028241db9a7758c0fb94d130"}},"b0e81ff4e05d44f889d84609f1cb1563":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"b42c67c0bf924b2eb0804d1dfb90c0dd":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_51754be353fe4f16b70f65c057eaece8","style":"IPY_MODEL_a8a1245c0969445c8784845c182feda0","value":" 1/1 [00:00&lt;00:00, 165.40it/s]"}},"bac50950383e49998fd6c1b73a6285dd":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_57476ec739fc4880ad51794b1679f8f0","IPY_MODEL_732b682f733a4220a62ccd3ed8cc3cfc","IPY_MODEL_b42c67c0bf924b2eb0804d1dfb90c0dd"],"layout":"IPY_MODEL_3a5fe39a49a4414c9466c0d6734e4270"}},"bd0cc5cfdcf3448d991de44a55cc0ed2":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"bdaa750ca3684382aca31776f99ae320":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"c02ddf83104442ee9b0246e5ffa0dcd6":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_88e6282ae60d473e9a92b2518e778e4a","max":1,"style":"IPY_MODEL_3abf4f2b2ecb490e9f756f410cd1e60f","value":1}},"c203cfc03f5a4507aa7a1f0e0af2428e":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"c20989ccfb18473cab160d5839676691":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_af826b782a20456cbcc071184a9662ab","style":"IPY_MODEL_1870bcd884cb46d1873db1f975b69350","value":" 1/1 [00:00&lt;00:00, 133.59it/s]"}},"c2ae687f635746d38d6303188c07f867":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"c84083de33bd4559b10c4ea607f7b8a6":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"cd9096c25cb44835868c4e6024649769":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_f4f56f1e8c424c3b802cac1e1dbf4eed","style":"IPY_MODEL_8cee0a7f821e424cbff7a265c167a4ad","value":"100%"}},"cf9232dca9274d71a04a7f1334d747d4":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_0da6a9a13677471790f54a77cd9195e5","style":"IPY_MODEL_69075f17b5d44639b01678598fc12664","value":" 1/1 [00:00&lt;00:00, 129.91it/s]"}},"d1344d6bf51e43ff9f714ddf98a34dfe":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_48fcadc59030414ab70241bd46bbfa29","IPY_MODEL_1c4502af5e1245b5914b00377decac44","IPY_MODEL_852f404918c849d69b7406562c808576"],"layout":"IPY_MODEL_5fbe1ba797f841e5a1825f54b829b65f"}},"dc7977c2674a4788b6f6f5ae5e394b9b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"ddcb32006ed84d25bd0633d17e93809e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"df9e83fa4e154886acd51fb14f4320f7":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_51b6a2e7bd1e44dda1b39419a92e7b44","IPY_MODEL_84de673445574607a4442781e3544a3c","IPY_MODEL_7194a10b49b14a0aaf2b8632b9bf06a3"],"layout":"IPY_MODEL_8054f5b9dfbe4134a1bbdea5ea28080c"}},"e17d61a465a24e25bbba157f9dad8b3a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_086d9e84542c4d5d8f5b7721ccebcedb","style":"IPY_MODEL_49d968f3e1dd4a4688f2dfd2053e3a08","value":" 1/1 [00:00&lt;00:00, 153.08it/s]"}},"e8c6e1cdcd444c70bb2684053f4ab950":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"ef0de7e1028241db9a7758c0fb94d130":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"f303fdf2e7e549d994d5d0aa9f4fdc7e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_af6fb457f0cd4fa191fa021ed1373e3c","IPY_MODEL_a64dc6587a824941aff845dcc0029486","IPY_MODEL_c20989ccfb18473cab160d5839676691"],"layout":"IPY_MODEL_bd0cc5cfdcf3448d991de44a55cc0ed2"}},"f4f56f1e8c424c3b802cac1e1dbf4eed":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"faaf66d9ee994ff2b95eb8bf7c2e35df":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"fb2ecab4c8e6407d858c00230eb49ef4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"ff518e4efafd4408aace4660827155ed":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}}},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dataset/qc_dataset.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Quantum circuit dataset</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../platform/qcircuit_evaluation.html" class="pagination-link">
+        <span class="nav-page-text">Quantum circuit evaluation</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
