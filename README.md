@@ -6,6 +6,7 @@
 <a><img src="https://badgen.net/badge/generative/models/orange" alt="generative-models"></a>
 <a><img src="https://badgen.net/badge/diffusion/models/pink" alt="diffusion-models"></a>
 <a><img src="https://img.shields.io/badge/python-3.9-red" alt="python-3.9"></a>
+<a href="https://zenodo.org/doi/10.5281/zenodo.10282060"><img src="https://zenodo.org/badge/713388439.svg" alt="DOI"></a>
 </p>
 
 Code repository for generating quantum circuits with diffusion models.
@@ -83,7 +84,7 @@ Example notebooks are provided in the directory `src/examples/`.
   [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/2_unitary_compilation.ipynb):
   Compile unitaries and transpile circuits
 - `3_dataset_and_fineTune`
-  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/dataset_and_fineTune.html)
+  [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/dataset_and_finetune.html)
   [\[notebook\]](https://github.com/FlorianFuerrutter/genQC/blob/main/src/examples/3_dataset_and_fineTune.ipynb):
   How to create a dataset and fine-tune a pre-trained model
 
