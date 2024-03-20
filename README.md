@@ -51,7 +51,7 @@ pipeline   = DiffusionPipeline.from_config_file(model_path, "cpu")
 pipeline.scheduler.set_timesteps(20) 
 
 out_tensor           = generate_srv_tensors(pipeline, "Generate SRV: [1,1,1,2,2]", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=7.5) 
-qc_list, _, svr_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
+qc_list, _, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
 ```
 
     [INFO]: `genQC.models.unet_qc.QC_Cond_UNet` instantiated from given config on cpu.
@@ -59,7 +59,7 @@ qc_list, _, svr_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
     [INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.
 
 ``` python
-print(f"is SRV {svr_list[0]}")
+print(f"is SRV {srv_list[0]}")
 qc_list[0].draw("mpl", style="clifford")
 ```
 
@@ -116,11 +116,11 @@ cuda support, see
 [pytorch.org/get-started/locally](https://pytorch.org/get-started/locally/).
 
 **Requirements:** `genQC` depends on `python` (min. version 3.9) and the
-librarys: `torch`, `numpy`, `matplotlib`, `scipy`, `pandas`,
+libraries: `torch`, `numpy`, `matplotlib`, `scipy`, `pandas`,
 `omegaconf`, `qiskit`, `tqdm`, `joblib`, `open_clip_torch`, `ipywidgets`
 and `pylatexenc`. All can be installed with `pip`. In `src/RELEASES.md`
-[\[doc\]](https://florianfuerrutter.github.io/genQC/RELEASES.html) and
-the release descriptions specific tested-on versions are listed.
+[\[doc\]](https://florianfuerrutter.github.io/genQC/src/RELEASES.html)
+and the release descriptions specific tested-on versions are listed.
 
 #### 3. Run example
 
