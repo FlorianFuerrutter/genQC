@@ -141,15 +141,14 @@ We kindly ask you to cite our paper if any of the previous material was
 useful for your work.
 
 ``` latex
-@article{fuerrutter2023quantum,
-      title={Quantum circuit synthesis with diffusion models}, 
-      author={Florian Fürrutter and Gorka Muñoz-Gil and Hans J. Briegel},
-      year={2023},
-      eprint={2311.02041},
-      publisher = {arXiv},
-      archivePrefix={arXiv},
-      primaryClass={quant-ph},
-      url = {https://arxiv.org/abs/2311.02041},
-      doi = {/10.48550/arXiv.2311.02041},
+@article{furrutter2024quantum,
+  title={Quantum circuit synthesis with diffusion models},
+  author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
+  journal={Nature Machine Intelligence},
+  vol = {6},
+  pages = {515-–524},
+  pages={1--10},
+  year={2024},
+  publisher={Nature Publishing Group UK London}
 }
 ```
