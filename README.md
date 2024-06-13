@@ -145,6 +145,7 @@ useful for your work.
   title={Quantum circuit synthesis with diffusion models},
   author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
   journal={Nature Machine Intelligence},
+  doi = {https://doi.org/10.1038/s42256-024-00831-9},
   vol = {6},
   pages = {515-–524},
   pages={1--10},
