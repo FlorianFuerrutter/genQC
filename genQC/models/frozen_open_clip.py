@@ -38,7 +38,9 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         
         self.model = model
         self.to(device)
-               
+
+        self.tokenizer = open_clip.get_tokenizer(arch)
+        
         assert max_length <= 77   # max set by the clip 
         self.max_length = max_length
         
@@ -68,7 +70,8 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         
     @torch.no_grad()
     def tokenize_and_push_to_device(self, text, to_device=True):
-        tokens = open_clip.tokenize(text)
+        # tokens = open_clip.tokenize(text)
+        tokens = self.tokenizer(text)
         if to_device:
             tokens = tokens.to(self.device)
         return tokens
@@ -79,12 +82,21 @@ class FrozenOpenCLIPEmbedder(Config_Model):
 
     @torch.no_grad()
     def encode_with_transformer(self, text):
-        x = self.model.token_embedding(text)  # [batch_size, n_ctx, d_model]
-        x = x + self.model.positional_embedding[None, :x.shape[1]]
-        x = x.permute(1, 0, 2)  # NLD -> LND
+        cast_dtype = self.model.transformer.get_cast_dtype()
+        
+        x = self.model.token_embedding(text).to(cast_dtype)  # [batch_size, n_ctx, d_model]        
+        x = x + self.model.positional_embedding[None, :x.shape[1]].to(cast_dtype)
+
+        if not self.model.transformer.batch_first:
+            x = x.permute(1, 0, 2)  # NLD -> LND
+        
         x = self.text_transformer_forward(x, attn_mask=self.model.attn_mask)
-        x = x.permute(1, 0, 2)  # LND -> NLD
-        x = self.model.ln_final(x)
+
+        if not self.model.transformer.batch_first:
+            x = x.permute(1, 0, 2)  # LND -> NLD
+        
+        x = self.model.ln_final(x)  # [batch_size, n_ctx, transformer.width]
+        
         return x
 
     @torch.no_grad()
@@ -92,12 +104,8 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         for i, r in enumerate(self.model.transformer.resblocks):
             if i == len(self.model.transformer.resblocks) - self.layer_idx:
                 break
-            #if self.model.transformer.grad_checkpointing and not torch.jit.is_scripting():
-                #x = checkpoint(r, x, attn_mask)
-            #else:
-            
-            x = r(x, attn_mask=attn_mask)
-            
+
+            x = r(x, attn_mask=attn_mask)  
         return x
 
     #--------------------------------------------------------------
@@ -113,7 +121,7 @@ class FrozenOpenCLIPEmbedder(Config_Model):
         config["save_path"] = None
         return Config_Model.from_config(config, device, save_path=None)        
 
-# %% ../../src/models/frozen_open_clip.ipynb 13
+# %% ../../src/models/frozen_open_clip.ipynb 17
 class CachedFrozenOpenCLIPEmbedder(FrozenOpenCLIPEmbedder):
     """Adds caching support to `FrozenOpenCLIPEmbedder`."""
     
@@ -141,7 +149,7 @@ class CachedFrozenOpenCLIPEmbedder(FrozenOpenCLIPEmbedder):
             
             if i == 0:
                 mem = n * x.shape[1] * x.shape[2] * x.element_size() * 1e-9
-                print(f"[INFO]: caching trying to allocate memory {(n, x.shape[1], x.shape[2])} on {'cpu' if y_on_cpu else self.device} approx. {mem:.3f} GB")
+                print(f"[INFO]: caching trying to allocate memory {(n, x.shape[1], x.shape[2])} on {'cpu' if y_on_cpu else self.device}, approx. {mem:.3f} GB")
                 self.cached_embeddings = torch.zeros((n, x.shape[1], x.shape[2]), device="cpu" if y_on_cpu else self.device, dtype=x.dtype) # alloc huge memory !!
                 
             self.cached_embeddings[last_ind:last_ind+x.shape[0]] = x.to(self.cached_embeddings.device)
