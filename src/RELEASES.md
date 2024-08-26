@@ -1,3 +1,36 @@
+# genQC 0.1.0 - 26.08.2024
+
+### Description:
+
+- Upload of `genQC` to `pypi`. 
+- Added [`CUDA-Q`](https://github.com/NVIDIA/cuda-quantum) kernel export. 
+- Added hugginface model loading.
+- Increased minimal python version to 3.10
+
+### Tested on:
+
+- Ubuntu 22.04.4 LTS
+- nbdev==2.3.27 (for notebook development)
+- python 3.10
+
+**Libs**:
+
+```txt 
+torch==2.4.0
+numpy==2.1.0
+matplotlib==3.9.2
+scipy==1.14.1
+pandas==2.2.2
+omegaconf==2.3.0
+qiskit==1.2.0
+tqdm==4.66.5
+joblib==1.4.2
+open-clip-torch==2.26.1
+ipywidgets==8.1.5
+pylatexenc==2.10
+huggingface_hub==0.24.6
+```
+
 
 # Arxiv submission release - 07.12.2023
 
