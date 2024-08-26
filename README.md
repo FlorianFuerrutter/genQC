@@ -6,20 +6,24 @@
 <a><img src="https://badgen.net/badge/icon/awesome?icon=awesome&label" alt="awesome"></a>
 <a><img src="https://badgen.net/badge/generative/models/orange" alt="generative-models"></a>
 <a><img src="https://badgen.net/badge/diffusion/models/pink" alt="diffusion-models"></a>
-<a><img src="https://img.shields.io/badge/python-3.9-red" alt="python-3.9"></a>
-<a href="https://zenodo.org/doi/10.5281/zenodo.10282060"><img src="https://zenodo.org/badge/713388439.svg" alt="DOI"></a>
+<a><img src="https://img.shields.io/badge/python-3.10-red" alt="python-3.10"></a>
+<a href="https://doi.org/10.5281/zenodo.10282060"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.10282060.svg" alt="DOI"></a>
 </p>
 
 Code repository for generating quantum circuits with diffusion models.
-[\[Paper\]](https://arxiv.org/abs/2311.02041)
+[\[Arxiv\]](https://arxiv.org/abs/2311.02041)
 [\[Demo\]](https://huggingface.co/spaces/Floki00/genQC)
 
 ![](https://github.com/FlorianFuerrutter/genQC/blob/main/src/assets/inference.png?raw=true)
 
 ## The codebase
 
-All weights and functions are contained within this repo. For the CLIP
-model weights we use the
+The code contained within this repo allows the sampling of pre-trained
+diffusion models and includes our pipeline to fine-tune and train models
+from scratch. Pre-trained weights can be found on [Hugging
+Face](https://huggingface.co/collections/Floki00/generative-quantum-circuits-6550e926c67f60a368b02bc3)
+and can be downloaded automatically via our code (see minimal example).
+For the CLIP model weights we use the
 [OpenCLIP](https://github.com/mlfoundations/open_clip) library, which
 will download (and cache) the CLIP model on first usage of our pipeline.
 In case you prefer reading a documentation rather than notebooks or code
@@ -27,11 +31,10 @@ see [\[Documentation\]](https://florianfuerrutter.github.io/genQC/).
 
 The repo inlcudes:
 
-1.  `saves/` the configs and weights of the pre-trained models.
-2.  `genQC/` a full release of our used diffusion pipeline.
-3.  `src/examples` examples how to reproduce some figures of the
+1.  `genQC/` a full release of our used diffusion pipeline.
+2.  `src/examples` examples how to reproduce some figures of the
     [Paper](https://arxiv.org/abs/2311.02041).
-4.  `src/` the source notebooks for
+3.  `src/` the source notebooks for
     [nbdev](https://github.com/fastai/nbdev).
 
 ## Examples
@@ -39,19 +42,18 @@ The repo inlcudes:
 #### Minimal example
 
 A minimal example to generate a 5 qubit circuit conditioned on a SRV of
-$[1,1,1,2,2]$. You can try it out on your own with our demo
-[\[huggingface-space\]](https://huggingface.co/spaces/Floki00/genQC), no
-coding required.
+$[1,1,1,2,2]$. You can try it out on your own with our
+[\[Demo\]](https://huggingface.co/spaces/Floki00/genQC), no coding
+required.
 
 ``` python
 from genQC.pipeline.diffusion_pipeline import DiffusionPipeline
 from genQC.inference.infer_srv import generate_srv_tensors, convert_tensors_to_srvs
 
-model_path = "../saves/qc_unet_config_SRV_3to8_qubit/"
-pipeline   = DiffusionPipeline.from_config_file(model_path, "cpu")  
+pipeline = DiffusionPipeline.from_pretrained("Floki00/qc_srv_3to8qubit", "cpu")
 pipeline.scheduler.set_timesteps(20) 
 
-out_tensor           = generate_srv_tensors(pipeline, "Generate SRV: [1,1,1,2,2]", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=7.5) 
+out_tensor = generate_srv_tensors(pipeline, "Generate SRV: [1,1,2,2,2]", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=10) 
 qc_list, _, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
 ```
 
@@ -60,13 +62,13 @@ qc_list, _, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool)
     [INFO]: `genQC.models.frozen_open_clip.CachedFrozenOpenCLIPEmbedder`. No save_path` provided. No state dict loaded.
 
 ``` python
-print(f"is SRV {srv_list[0]}")
-qc_list[0].draw("mpl", style="clifford")
+print(f"Circuit is SRV {srv_list[0]}")
+qc_list[0].draw("mpl")
 ```
 
-    is SRV [1, 1, 1, 2, 2]
+    Circuit is SRV [1, 1, 2, 2, 2]
 
-![](index_files/figure-commonmark/cell-3-output-2.png)
+![](https://github.com/FlorianFuerrutter/genQC/blob/main/index_files/figure-commonmark/cell-3-output-2.png?raw=true)
 
 #### Included examples
 
@@ -91,39 +93,48 @@ Example notebooks are provided in the directory `src/examples/`.
 
 ## Installation
 
-The installation of genQC is done via `pip` within a few minutes,
+The installation of `genQC` is done via `pip` within a few minutes,
 depending on your downloading speed.
 
-#### 1. Clone the repository
+#### Method 1: pip install
+
+To install `genQC` just run:
+
+``` sh
+pip install genQC
+```
+
+Note, this will install missing requirements automatically. You may want
+to install some of them manually beforehand, e.g. `torch` for specific
+cuda support, see
+[pytorch.org/get-started/locally](https://pytorch.org/get-started/locally/).
+
+**Requirements:** `genQC` depends on `python` (min. version 3.10) and
+the libraries: `torch`, `numpy`, `matplotlib`, `scipy`, `pandas`,
+`omegaconf`, `qiskit`, `tqdm`, `joblib`, `open_clip_torch`,
+`ipywidgets`, `pylatexenc` and `huggingface_hub`. All can be installed
+with `pip`. In `src/RELEASES.md`
+[\[doc\]](https://florianfuerrutter.github.io/genQC/RELEASES.html) and
+the release descriptions specific tested-on versions are listed.
+
+#### Method 2: clone the repository
+
+To use the latest GitHub code you can clone the repository by running:
 
 ``` sh
 git clone https://github.com/FlorianFuerrutter/genQC.git
 cd genQC
 ```
 
-#### 2. Install genQC
-
-This library is build using jupyter notebooks and
-[nbdev](https://github.com/fastai/nbdev). To install the library use in
-the clone directory:
+The library `genQC` is built using jupyter notebooks and
+[`nbdev`](https://github.com/fastai/nbdev). To install the library use
+in the clone directory:
 
 ``` sh
 pip install -e .
 ```
 
-Note, this will install missing requirements automatically. You may want
-to install some of them manually beforehand, e.g. pytorch for specific
-cuda support, see
-[pytorch.org/get-started/locally](https://pytorch.org/get-started/locally/).
-
-**Requirements:** `genQC` depends on `python` (min. version 3.9) and the
-libraries: `torch`, `numpy`, `matplotlib`, `scipy`, `pandas`,
-`omegaconf`, `qiskit`, `tqdm`, `joblib`, `open_clip_torch`, `ipywidgets`
-and `pylatexenc`. All can be installed with `pip`. In `src/RELEASES.md`
-[\[doc\]](https://florianfuerrutter.github.io/genQC/src/RELEASES.html)
-and the release descriptions specific tested-on versions are listed.
-
-#### 3. Run example
+#### Test installation
 
 You can run the provided `0_hello_circuit`
 [\[doc\]](https://florianfuerrutter.github.io/genQC/examples/hello_circuit.html)
@@ -133,8 +144,9 @@ this inference example notebook should run under half a minute.
 
 ## License
 
-The code and weights in this repository are released under the MIT
-License.
+The code and weights in this repository are licensed under the [Apache
+License
+2.0](https://github.com/FlorianFuerrutter/genQC/blob/main/LICENSE.txt).
 
 ## BibTeX
 

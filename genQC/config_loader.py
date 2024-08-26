@@ -50,7 +50,7 @@ def instantiate_from_config(config):
 def load_model_from_config(config, ckpt, device):
     
     print(f"Loading model from {ckpt}")
-    pl_sd = torch.load(ckpt, map_location=torch.device(device).type)
+    pl_sd = torch.load(ckpt, map_location=torch.device(device).type, weights_only=True)
           
     model = instantiate_from_config(config.model)
     

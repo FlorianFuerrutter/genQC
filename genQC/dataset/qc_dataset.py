@@ -9,7 +9,7 @@ from .config_dataset import Config_Dataset, Config_Dataset_config
 from ..config_loader import *
 from .dataset_helper import *
 from ..platform.qcircuit_dataset_construction import decode_circuit
-from ..platform.simulation.qcircuit_sim import schmidt_rank_vector
+from ..platform.simulation.qcircuit_sim import schmidt_rank_vector, instruction_name_to_qiskit_gate
 import qiskit.quantum_info as qi
 
 # %% ../../src/dataset/qc_dataset.ipynb 4
@@ -32,12 +32,12 @@ class Qc_Config_Dataset(Config_Dataset):
     
     def __init__(self, device: torch.device=torch.device("cpu"), **parameters):
         super().__init__(device, **parameters)            
-        self.gate_pool = [get_obj_from_str(gate) for gate in parameters["gate_pool"]]           
+        self.gate_pool = parameters["gate_pool"] #[get_obj_from_str(gate) for gate in parameters["gate_pool"]]           
             
     @property
     def params_config(self):
         params_config = super().params_config            
-        params_config["gate_pool"] = [class_to_str(gate) for gate in params_config["gate_pool"]]
+        #params_config["gate_pool"] = [class_to_str(gate) for gate in params_config["gate_pool"]]
         params_config = Qc_Config_Dataset_config(**params_config)
         return params_config   
     
@@ -129,8 +129,13 @@ class Qc_Config_Dataset(Config_Dataset):
 
         params = None
         if hasattr(self, "params"): params=self.params[0]
+
+        if isinstance(self.gate_pool[0], str):
+            gate_pool = [instruction_name_to_qiskit_gate(gate) for gate in self.gate_pool]
+        else:
+            gate_pool = self.gate_pool
         
-        qc = decode_circuit(enc_tensor, self.gate_pool, params_tensor=params)
+        qc = decode_circuit(enc_tensor, gate_pool, params_tensor=params)
  
         t = self.store_dict["y"]
         if   t == "tensor"     : label = self.y[0].cpu().tolist()

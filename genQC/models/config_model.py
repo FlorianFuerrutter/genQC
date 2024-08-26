@@ -58,7 +58,7 @@ class Config_Model(nn.Module):
                 print("[INFO]: Found no key `save_path` path in config.")
                                   
         if exists(save_path):
-            model.load_state_dict(torch.load(save_path, map_location=torch.device(device).type), strict=True)
+            model.load_state_dict(torch.load(save_path, map_location=torch.device(device).type, weights_only=True), strict=True)
         else:
             print(f"[INFO]: `{class_to_str(type(model))}`. No save_path` provided. No state dict loaded.")
 

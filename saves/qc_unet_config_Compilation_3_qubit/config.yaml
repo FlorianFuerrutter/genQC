@@ -67,11 +67,11 @@ params:
         min_gates: 2
         max_gates: 12
         gate_pool:
-        - qiskit.circuit.library.standard_gates.h.HGate
-        - qiskit.circuit.library.standard_gates.x.CXGate
-        - qiskit.circuit.library.standard_gates.z.ZGate
-        - qiskit.circuit.library.standard_gates.x.XGate
-        - qiskit.circuit.library.standard_gates.x.CCXGate
-        - qiskit.circuit.library.standard_gates.swap.SwapGate
+        - h
+        - cx
+        - z
+        - x
+        - ccx
+        - swap
         pad_constant: 7
 
