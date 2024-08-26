@@ -6,6 +6,7 @@ __all__ = ['get_rnd_gatepool_subset', 'convert_tensors_to_circuits']
 # %% ../../src/inference/infer_misc.ipynb 2
 from ..imports import *
 from ..platform.qcircuit_dataset_construction import decode_circuit, gate_pool_to_gate_classes
+from ..platform.simulation.qcircuit_sim import instruction_name_to_qiskit_gate
 
 # %% ../../src/inference/infer_misc.ipynb 4
 def get_rnd_gatepool_subset(gate_pool, min_sub_gate_pool_cnt=2):
@@ -22,6 +23,9 @@ def get_rnd_gatepool_subset(gate_pool, min_sub_gate_pool_cnt=2):
 
 # %% ../../src/inference/infer_misc.ipynb 6
 def convert_tensors_to_circuits(out_tensor, gate_pool, params_tensor=None, place_barrier=False): 
+    if isinstance(gate_pool[0], str):
+        gate_pool = [instruction_name_to_qiskit_gate(gate) for gate in gate_pool]
+    
     error_cnt = 0
     qc_list   = []
 

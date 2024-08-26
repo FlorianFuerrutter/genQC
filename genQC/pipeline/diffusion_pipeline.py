@@ -10,6 +10,8 @@ from .pipeline import Pipeline
 from ..config_loader import *
 from ..models.config_model import Config_Model
 
+from huggingface_hub import snapshot_download
+
 # %% ../../src/pipeline/diffusion_pipeline.ipynb 3
 class DiffusionPipeline(Pipeline):   
     """A `Pipeline` for diffusion models. Implements train and inference functions. Diffusion parameters are defined inside a `Scheduler` object."""
@@ -96,11 +98,19 @@ class DiffusionPipeline(Pipeline):
         pipeline = instantiate_from_config(config)
         
         if exists(pipeline.add_config):
-            pipeline.gate_pool  = [get_obj_from_str(gate) for gate in add_config["dataset"]["params"]["gate_pool"]] 
+            pipeline.gate_pool  = [gate for gate in add_config["dataset"]["params"]["gate_pool"]] 
             pipeline.add_config = add_config
         
         return pipeline
-        
+
+
+    @classmethod
+    def from_pretrained(cls, repo_id: str, device: torch.device, **kwargs):  
+        """Load a model pipeline directly from Huggingface."""
+        model_path = snapshot_download(repo_id=repo_id, repo_type="model", allow_patterns=["*.pt", "*.yaml", "*.safetensors"], **kwargs) 
+        pipeline   = cls.from_config_file(model_path+"/", device)  
+        return pipeline
+    
     #------------------------------------
     # Inference functions
     

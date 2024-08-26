@@ -12,6 +12,7 @@ from .infer_misc import *
 from .infer_gate_hist import get_tensor_gate_length
 import genQC.platform.qcircuit_dataset_construction as data_con
 from ..dataset.dataset_helper import check_duplicates_in_dataset, uniquify_tensor_dataset, shuffle_tensor_dataset
+from ..platform.simulation.qcircuit_sim import instruction_name_to_qiskit_gate
 
 from joblib import Parallel, delayed
 import qiskit.quantum_info as qi
@@ -162,6 +163,9 @@ def check_correct_unitary_distance(qc, target_U, norms):
 # %% ../../src/inference/infer_compilation.ipynb 13
 def get_gate_and_U_acc(out_tensor, allowed_gate_clrs, U, gate_pool, num_of_qubits, max_gates, norms=[], no_bar=True):
 
+    if isinstance(gate_pool[0], str):
+        gate_pool = [instruction_name_to_qiskit_gate(gate) for gate in gate_pool]
+    
     #-------------------------
     #decode 
     qc_list, error_cnt = convert_tensors_to_circuits(out_tensor, gate_pool)
