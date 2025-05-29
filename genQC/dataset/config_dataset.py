@@ -7,6 +7,8 @@ __all__ = ['Config_Dataset_config', 'Config_Dataset']
 from ..imports import *
 from ..config_loader import *
 
+from huggingface_hub import snapshot_download
+
 # %% ../../src/dataset/config_dataset.ipynb 3
 @dataclass
 class Config_Dataset_config:
@@ -92,35 +94,51 @@ class Config_Dataset():
         self.save_path = path_str
         
         for k,v in self.store_dict.items(): 
-            x = torch.load(path_str + f"_{k}.pt")
+            x = torch.load(path_str + f"_{k}.pt", weights_only=False)
             setattr(self, str(k), x)
         
     #----------------------------
     
     @staticmethod
-    def from_config(config, device: torch.device, save_path: str=None):
+    def from_config(config, device: torch.device, save_path: Optional[str] = None, make_contiguous: bool = True):
         """Use this if we have a loaded config."""
         
-        config_Dataset = instantiate_from_config(config)
+        config_dataset = instantiate_from_config(config)
         
-        if "comment" in config: config_Dataset.comment = config["comment"]
+        if "comment" in config: config_dataset.comment = config["comment"]
         
-        #--------------------------------        
+        #--------------------------------  
+
+        config_dataset.save_type = config.pop("save_type", None)
+        
         if not exists(save_path):            
             if "save_path" in config: save_path = config["save_path"]
-            else:                     print("[INFO]: Found no key `save_path` path in config.")
+            else:                     print("[INFO]: Found no key `save_path` path in config and no `save_path` arg provided.")
                                   
-        if exists(save_path): config_Dataset.load_x_y(save_path)
+        if exists(save_path): config_dataset.load_x_y(save_path)
         else:                 print("[INFO]: No save_path` provided. Nothing loaded.")
 
         #--------------------------------
         
-        config_Dataset = config_Dataset.to(device)
-        print(f"[INFO]: Instantiated config_Dataset from given config on {device}.")
+        config_dataset = config_dataset.to(device)
+        print(f"[INFO]: Instantiated config_dataset from given config on {device}.")
         
-        return config_Dataset
+        return config_dataset
     
-    @staticmethod
-    def from_config_file(config_path, device: torch.device, save_path: str=None):
+    @classmethod
+    def from_config_file(cls, config_path, device: torch.device, save_path:  Optional[str] = None, make_contiguous: bool = True):
+        """
+        Load a dataset from a config file. 
+        If this method is called with `ConfigDataset.from_config_file` we use the given `target`, else use the caller class.
+        """
         config = load_config(config_path)
-        return Config_Dataset.from_config(config, device, save_path)
+        if cls is not Config_Dataset:
+            config["target"] = class_to_str(cls)      
+        return cls.from_config(config, device, save_path, make_contiguous)
+
+    @classmethod
+    def from_huggingface(cls, repo_id: str, device: torch.device, **kwargs):  
+        """Load a dataset directly from Huggingface."""
+        dataset_path = snapshot_download(repo_id=repo_id, repo_type="dataset", allow_patterns=["*.pt", "*.yaml", "*.safetensors"], **kwargs) 
+        dataset = cls.from_config_file(config_path=dataset_path+"/config.yaml", device=device, save_path=dataset_path+"/dataset")  
+        return dataset 
