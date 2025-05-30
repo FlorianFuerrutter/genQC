@@ -1,0 +1,96 @@
+---
+pagetitle: "genQC"
+section-divs: false
+toc: false
+page-layout: custom    #custom  full
+theme:
+  light: [simplex, webpage/index.scss]
+repo-actions: false
+description: | 
+  Generating quantum circuits with diffusion models.
+
+code-annotations: below 
+ 
+#hide-description: true
+#image: quarto-dark-bg.jpeg
+#resources: 
+#  - images/hero_animation.mp4
+---
+
+::: {.hero-banner}
+
+# genQC · Generative Quantum Circuits
+
+Generating quantum circuits with diffusion models
+
+::: {.hero-buttons}
+[Get Started](./get_started.ipynb){.btn-action-primary .btn-action .btn .btn-success .btn-lg role="button"}
+[Tutorials](./examples/tutorials.qmd){.btn-action .btn .btn-info .btn-lg role="button"}
+[API Reference](./webpage/api_reference.qmd){.btn-action .btn .btn-warning .btn-lg role="button"}
+:::
+
+::: {.features}
+::: {.feature}
+<h3>Generative circuit synthesis</h3>
+<p>Synthesis of discrete-continuous quantum circuits.</p>
+:::
+::: {.feature}
+<h3>Pre-trained models</h3>
+<p>Easy inference of pre-trained model weights. </p>
+:::
+::: {.feature}
+<h3>Open-source research</h3>
+<p>Full open source research code and model weights.</p>
+:::	
+:::
+:::
+
+::: {.figure}
+<div class="arrow_box"><h3>"Compile 4-qubit QFT"</h3></div>
+<img alt="img" src="webpage/assets/qft_4qubit_circuit_15s_wpause.gif" width="950">
+:::
+
+<!-- 
+🚀
+-->
+
+::: {.container}
+::: {.left}
+<h1>Quick start <span>genQC</span></h1>
+::: {.left-grid}
+::: {.left-grid-text}
+<p>
+To install <span>genQC</span> just run: 
+</p>
+:::
+::: {.left-grid-src}
+```sh
+pip install genQC
+```
+:::
+:::
+<p>
+On the right hand side, a minimal example to generate a parametrized quantum circuit conditioned on the 4-qubit QFT unitary.
+</p>
+[View tutorials](./examples/tutorials.qmd){.btn-action .btn .btn-info .btn-lg role="button"}
+:::
+
+::: {.right}
+
+```python
+from genQC.pipeline.diffusion_pipeline import DiffusionPipeline
+from genQC.inference.infer_srv import generate_srv_tensors, convert_tensors_to_srvs
+
+pipeline = DiffusionPipeline.from_pretrained("Floki00/qc_srv_3to8qubit", "cpu") # <1>
+pipeline.scheduler.set_timesteps(20) # <1>
+
+out_tensor = generate_srv_tensors(pipeline, "Generate SRV: [1,1,2,2,2]", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=10) # <2>
+qc_list, _, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool) # <3>
+```
+1. Load a pre-trained `DiffusionPipeline`, 
+2. sample circuit tensors, and then,
+3. evaluate circuit and return SRVs.
+:::
+
+:::
+

@@ -1,0 +1,343 @@
+//-----------------------------
+/*-- scss:defaults --*/
+
+// Color system
+$background-clr-page: #3b3f57; /*linear-gradient(135deg, #2b2d42, #1c1e29);*/
+$background-clr-navbar: #201232;
+
+$dark-hl-clr: #eb8a80;
+// $text-clr: #e0f7fa;
+$text-clr: #ffffff;
+
+// nice purple to test #800080
+
+$navbar-bg: $background-clr-navbar;
+$navbar-fg: $text-clr;
+$navbar-hl: $dark-hl-clr;
+
+$feature-header-clr: #5de4ff;
+
+
+$arrow-box-clr-bg: rgba(128, 81, 139, 0.52); //#88b7d5;
+$arrow-box-clr-ed: rgba(128, 81, 139, 0.00); //#c2e1f5;
+
+
+//-----------------------------	
+// CSS goes here
+/*-- scss:rules --*/
+
+body {
+	/* margin: 10px; */
+	/* font-family: Arial, sans-serif; */
+	background: $background-clr-page;
+	color: $text-clr;
+	/* width: 100vw; */
+}
+
+#title-block-header {
+  display: none;
+}
+
+.navbar {
+    /* border-width: 0px; */
+    /* border-style: none; */
+    /* border-color: linear-gradient(135deg, #6a0572, #00bcd4); */
+	/* background: $background-clt-navbar; linear-gradient(135deg, #6a0572, #00bcd4);*/ 
+	/* color: $text-clr; */
+}
+
+.hero-banner {
+	margin-top: 3%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	/* height: 400px; */
+	/* width: 100vw; */
+	height: 60%;
+	/* background: linear-gradient(135deg, #6a0572, #00bcd4); */
+	background: linear-gradient(110deg, rgb(59, 63, 87) 10%, rgb(128 81 139 / 52%) 40%, rgb(59, 63, 87) 90%);
+	// color: #ffffff;
+	position: relative;
+}
+
+.hero-banner h1 {
+	font-size: 3rem;
+	margin: 0;
+	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.hero-banner p {
+	font-size: 1.5rem;
+	margin: 10px 0 20px;
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.features {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 20px;
+	padding: 20px;
+}
+
+.feature {
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	padding: 20px;
+	width: 400px;
+	text-align: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+	transition: transform 0.3s;
+}
+
+.feature:hover {
+	transform: translateY(-10px);
+}
+
+.feature h3 {
+	color: $feature-header-clr;
+	margin-bottom: 23px;
+}
+
+.animated-svg {
+	position: absolute;
+	bottom: 20px;
+	width: 200px;
+	height: 200px;
+	animation: float 4s infinite ease-in-out;
+}
+
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+.hero-banner .hero-buttons {
+	display: flex;
+	gap: 40px;
+}
+
+.hero-banner .hero-buttons .btn {
+	padding: 10px 20px;
+	font-size: 1rem;
+	font-weight: bold;
+	color: #fff;
+	background-color: #5a20cb;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: transform 0.3s, background-color 0.3s;
+	margin: 5px;
+}
+
+.hero-banner .hero-buttons .btn:hover {
+	background-color: #1cb5e0;
+	transform: scale(1.05);
+}
+
+.container .btn {
+	padding: 10px 20px;
+	font-size: 1rem;
+	font-weight: bold;
+	color: #fff;
+	background-color: #5a20cb;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: transform 0.3s, background-color 0.3s;
+}
+
+.container .btn:hover {
+	background-color: #1cb5e0;
+	transform: scale(1.05);
+}
+
+//-----------------------------
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1267px;
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.left {
+  flex: 1;
+  padding-right: 30px;
+  max-width: 500px;
+}
+
+.left h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  margin-top: 0rem;
+}
+
+.left h1 span {
+  color: #7bd3ef;
+}
+
+.left p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/*
+.tutorial-btn {
+  background-color: white;
+  border: 1px solid #ccc;
+  color: #333;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+}*/
+
+.right {
+  flex: 1;
+  background: #ffffff;
+  color: #000000;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 20px;
+  padding-left: 20px;
+  border-radius: 12px;
+  // font-family: monospace;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.code-block {
+  background: #ffffff;
+  color: #000000;
+  padding: 20px;
+  border-radius: 8px;
+  //overflow-x: auto;
+  //max-height: 500px;
+  // font-size: 0.9em;
+  //white-space: pre-wrap;
+  // line-height: 1.4;
+}
+
+.run-btn {
+  margin-top: 10px;
+  background-color: #20232a;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.left .left-grid {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 10px;
+	padding: 0px;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: row;
+}
+
+.left .left-grid-text {
+	margin-top: 0px;
+}
+
+.left .left-grid-text p {
+	margin: auto;
+}
+
+.left .left-grid-src {
+	margin: 0px;
+}
+
+.left .sourceCode {
+  background: #ffffff;
+  color: #000000;
+  max-width: 185px;
+  float: right;
+  position: relative;
+  min-width: 180px;
+  margin: 0px;
+}
+
+.left .sourceCode * {
+  //color: #000000;
+  color: $link-color;
+  padding-left: 3px;
+}
+
+//-----------------------------
+
+.figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // height: 100vh;
+}
+
+.figure .arrow {
+  width: 0;
+  height: 0;
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  border-left: 40px solid red;
+  margin: 0 10px;
+}
+
+
+
+.arrow_box {
+	position: relative;
+	background: $arrow-box-clr-bg;
+	border: 5px solid $arrow-box-clr-ed;
+	border-radius: 10px;
+	margin-right: 2em;	
+	// background: rgb(59, 63, 87);
+	padding: 8px;
+	// width: 400px;
+	text-align: center;
+	// box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+	// transition: transform 0.3s;
+}
+
+.arrow_box h3 {
+	margin-top: 2rem;
+    margin-bottom: 2rem;
+	color: #ffffff;
+}
+   
+.arrow_box:after, .arrow_box:before {
+	left: 104%;
+	top: 50%;
+	border: solid transparent;
+	content: "";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-left-color: $arrow-box-clr-bg;
+	border-width: 40px;
+	margin-top: -40px;
+}
+.arrow_box:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-left-color: $arrow-box-clr-ed;
+	border-width: 47px;
+	margin-top: -47px;
+}

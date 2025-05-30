@@ -3,76 +3,86 @@ project:
 
 format:
   html:
-    # page-layout: full
+    page-layout: full
     theme:
-      light: simplex
+      light: [simplex, webpage/custom.scss]
       # dark: darkl
-    css: styles.css
+    css: webpage/styles.css
+    mainfont: "Lexend"
     toc: true
     code-copy: true
     code-overflow: wrap
     grid:
       content-mode: standard
-      sidebar-width: "350px"
+      sidebar-width: "380px"
       body-width: "1100px"
-      margin-width: "250px"
+      margin-width: "300px" #"250px"
+      gutter-width: 2.5rem
 
 website:
-  favicon: "assets/logo.png"
+  page-footer: 
+    center: "Copyright 2025, Florian Fürrutter" 
+  favicon: "webpage/assets/logo.png"
   open-graph: true
-  repo-actions: [issue]
+  repo-actions: [issue, source]
   back-to-top-navigation: true
   page-navigation: true
   
   navbar:
-    logo: "assets/logo.png"
-    background: "#5cb4c1"
+    logo: "webpage/assets/logo.png"
+    logo-alt: "genQC logo"
     search: true
     left:       
-      - icon: file-text
-        href: "https://arxiv.org/abs/2311.02041"
-        text: "paper-arxiv"
+      - text: "Overview"
+        icon: list-ul
+        href: index.qmd
+        
+      - text: "Get Started"
+        icon: cursor-fill
+        href: get_started.ipynb
+
+      - text: "Tutorials"
+        icon: cup-hot
+        href: examples/tutorials.qmd
+
+      - text: "API Reference"
+        icon: file-text
+        href: webpage/api_reference.qmd
+             
+      - text: Research
+        icon: book-half
+        href: webpage/research.qmd
+
     right:
       - icon: github
         href: "https://github.com/FlorianFuerrutter/genQC"  
-        text: code repository
+        text: Code Repository
         
   sidebar:
-    collapse-level: 2
-    style: "floating"
-    background: "#dde8ea"
-    foreground: "#674ea7"
-    
-    contents:
-    - text: "genQC · Generative Quantum Circuits"
-      href: index.ipynb
-    - section: Examples
-      contents: examples/*
-    
-    - section: Lib
-      contents: 
-      - section: Pipeline
-        contents: pipeline/*
-      - section: Scheduler
-        contents: scheduler/*
-      - section: Inference
-        contents: inference/*
-      - section: Models
-        contents: models/*
-      - section: Dataset
-        contents: dataset/* 
-      - section: Platform
-        contents: 
-        - auto: platform/*
-        - section: Simulation
-          contents: platform/simulation/*  
-      - section: Miscellaneous functions
-        contents: 
-        - auto: /*.ipynb
-        
-    - text: "Release notes"
-      href: RELEASES.md
 
+    #-------------------------------------
+    - title: "Tutorials"
+      collapse-level: 1
+      header: "Tutorials"
+      style: "floating"
+      contents:
+        - text: "Tutorials Overview"
+          href: examples/tutorials.qmd
+        - text: "---"
+        - auto: examples/**/!(tutorials.qmd)*{.qmd,.ipynb}
+
+    #-------------------------------------
+    - title: "API Reference" 
+      collapse-level: 1
+      header: "API Reference"
+      style: "floating"
+      contents:
+        - text: "Modules Overview"
+          href: webpage/api_reference.qmd
+        - text: "Release notes"
+          href: RELEASES.md
+        - text: "---"
+        - auto: "/!(webpage|examples)/**/*"
 
 metadata-files: [nbdev.yml] 
 

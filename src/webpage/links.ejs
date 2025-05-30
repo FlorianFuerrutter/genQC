@@ -1,0 +1,91 @@
+<%
+    function myCallback({ outputHref }) 
+    {
+        return outputHref.split("/")[0];
+    }
+
+    const groupitems = Object.groupBy(items, myCallback);
+%>
+
+<%/* for (const [key, value] of Object.entries(groupitems) ){
+    console.log(`${key}: ${value}`);
+  }
+*/%>
+
+<%/* for (const [key, value] of Object.entries(groupitems) ){
+    for (const item of value ){
+        console.log(item);
+      }
+  }
+*/%>
+
+::: {.link-cards}
+
+<% for (const [key, value] of Object.entries(groupitems) ){ %>
+
+::: {.card}
+::: {.card-body}
+
+::: {.card-title}
+<% let card_title = key.charAt(0).toUpperCase() + key.slice(1); %>
+#### <%- card_title %>
+
+::: {.card-subtitle .text-muted}
+<% 
+    let website_meta = value[0]["website"]; 
+    let module_link = website_meta["repo-url"] + "/tree/" + website_meta["repo-branch"] + "/" + website_meta["title"] + "/" + key; 
+%>
+[`genQC.<%- key %>`](<%- module_link %>)
+:::
+:::
+
+<!-- 
+link outputHref from 
+https://github.com/quarto-dev/quarto-cli/blob/d86da0b118220ab8b9aeeb98e831abfc279b4073/src/project/types/website/listing/website-listing-read.ts#L1178 
+-->
+
+<% 
+    function myCallback2({ outputHref }) 
+    {
+        let s = outputHref.split("/");
+
+        if (s.length < 3) {
+            return "000";
+          }
+
+        return s[1];
+    }
+
+    const groupitems2 = Object.groupBy(value, myCallback2);
+    var keys2 = Object.keys(groupitems2).sort();
+%>
+
+<% for (const key2 of keys2 ) { 
+    var value2 = groupitems2[key2];   
+    var module_link2 = module_link + "/" + key2; 
+%>
+
+<% if (key2 != "000") { %>
+::: {.card-title}
+::: {.card-subtitle .text-muted}
+[`genQC.<%- key %>.<%- key2 %>`](<%- module_link2 %>)
+:::
+:::
+<% } %>
+
+<% for (const item of value2 ){ %> 
+- [<%- item.title %>](<%- item.path %>)<% } %> 
+
+<% } %>
+
+:::
+:::
+
+<% } %>
+
+:::
+
+
+
+
+

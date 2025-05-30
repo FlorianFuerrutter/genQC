@@ -1,0 +1,128 @@
+---
+toc: true
+format:
+  html:
+    header-includes: |
+      <link rel="stylesheet" href="./fonts/academicons/css/academicons.min.css"/>
+theme:
+  light: [simplex, research.scss]
+---
+
+# Synthesis of discrete-continuous quantum circuits with multimodal diffusion models
+::: {.authors}
+<h3>Florian Fürrutter, Zohim Chandani, Ikko Hamamura, Hans J. Briegel and Gorka Muñoz-Gil.</h3>
+:::
+
+::: {.paper}
+::: {.links}
+```{=html}
+<div class="has-text-centered">
+<div class="publication-links">
+
+<!-- arxiv Link. -->
+<span class="link-block">
+<a href="" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="ai ai-arxiv"></i></span>
+<span>COMING SOON</span></a></span>
+
+<!-- Code Link. -->
+<span class="link-block">
+<a href="https://github.com/FlorianFuerrutter/genQC" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="bi bi-github"></i></i></span>
+<span>Code</span></a></span>
+
+<!-- huggingface Link. -->
+<span class="link-block">
+<a href="https://huggingface.co/collections/Floki00/discrete-continuous-circuits-with-multimodal-diffusion-6839c4e4553e56b957bbd5bf" class="external-link button is-normal is-rounded is-dark">
+<span class="icon">🤗</span>
+<span>Models</span></a></span>
+
+
+</div></div>
+```
+:::
+::: {.tldr}
+<h4>TL;DR:</h4>
+<p>We develop a multi-modal generative diffusion model to compile quantum operations in parameterized quantum circuits.</p>
+:::
+::: {.abstract}
+<h4>Abstract</h4>
+<p>Efficiently compiling quantum operations remains a major bottleneck in scaling quantum computing. Today’s state-of-the-art methods achieve low compilation error by combining search algorithms with gradient-based parameter optimization, but they incur long runtimes and require multiple calls to quantum hardware or expensive classical simulations, making their scaling prohibitive. Recently, machine-learning models have emerged as an alternative, though they are currently restricted to discrete gate sets. Here, we introduce a multimodal denoising diffusion model that simultaneously generates a circuit’s structure and its continuous parameters for compiling a target unitary. It leverages two independent diffusion processes, one for discrete gate selection and one for parameter prediction. We benchmark the model over different experiments, analyzing the method’s accuracy across varying qubit counts, circuit depths, and proportions of parameterized gates. Finally, by exploiting its rapid circuit generation, we create large datasets of circuits for particular operations and use these to extract valuable heuristics that can help us discover new insights into quantum circuit synthesis.</p>
+:::
+:::
+
+
+# Quantum circuit synthesis with diffusion models
+::: {.authors}
+<h3>Florian Fürrutter, Gorka Muñoz-Gil and Hans J. Briegel.</h3>
+:::
+
+::: {.paper}
+::: {.links}
+```{=html}
+<div class="has-text-centered">
+<div class="publication-links">
+
+<!-- PDF Link. -->
+<span class="link-block">
+<a href="https://doi.org/10.1038/s42256-024-00831-9" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="bi bi-file-pdf"></i></i></span>
+<span>Article</span></a></span>
+
+<!-- arxiv Link. -->
+<span class="link-block">
+<a href="https://arxiv.org/abs/2311.02041" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="ai ai-arxiv"></i></span>
+<span>arXiv</span></a></span>
+
+<!-- huggingface Link. -->
+<span class="link-block">
+<a href="https://huggingface.co/collections/Floki00/quantum-circuit-synthesis-with-diffusion-models-6550e926c67f60a368b02bc3" class="external-link button is-normal is-rounded is-dark">
+<span class="icon">🤗</span>
+<span>Models</span></a></span>
+
+<!-- Zenodo Link. -->
+<span class="link-block">
+<a href="https://doi.org/10.5281/zenodo.10282061" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="ai ai-zenodo"></i></span>
+<span>Zenodo</span></a></span>
+
+<!-- Code Link. -->
+<span class="link-block">
+<a href="https://github.com/FlorianFuerrutter/genQC" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="bi bi-github"></i></i></span>
+<span>Code</span></a></span>
+
+</div></div>
+```
+:::
+::: {.tldr}
+<h4>TL;DR:</h4>
+<p>We use a generative diffusion model to synthesize quantum circuits for entanglement generation and unitary compilation.</p>
+:::
+::: {.abstract}
+<h4>Abstract</h4>
+<p>Quantum computing has recently emerged as a transformative technology. Yet, its promised advantages rely on efficiently translating quantum operations into viable physical realizations. In this work, we use generative machine learning models, specifically denoising diffusion models (DMs), to facilitate this transformation. Leveraging text-conditioning, we steer the model to produce desired quantum operations within gate-based quantum circuits. Notably, DMs allow to sidestep during training the exponential overhead inherent in the classical simulation of quantum dynamics — a consistent bottleneck in preceding ML techniques. We demonstrate the model’s capabilities across two tasks: entanglement generation and unitary compilation. The model excels at generating new circuits and supports typical DM extensions such as masking and editing to, for instance, align the circuit generation to the constraints of the targeted quantum device. Given their flexibility and generalization abilities, we envision DMs as pivotal in quantum circuit synthesis, enhancing both practical applications but also insights into theoretical quantum computation.</p>
+:::
+::: {.cite}
+<h4>BibTeX</h4>
+``` latex
+@article{furrutter2024quantum,
+  title={Quantum circuit synthesis with diffusion models},
+  author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
+  journal={Nature Machine Intelligence},
+  doi = {https://doi.org/10.1038/s42256-024-00831-9},
+  vol = {6},
+  pages = {515-–524},
+  pages={1--10},
+  year={2024},
+  publisher={Nature Publishing Group UK London}
+}
+```
+:::
+:::
+
+
+<!--
+hi
+-->
