@@ -9,7 +9,7 @@ repo-actions: false
 description: | 
   Generating quantum circuits with diffusion models.
 
-code-annotations: below 
+code-annotations: hover 
  
 #hide-description: true
 #image: quarto-dark-bg.jpeg
@@ -78,18 +78,52 @@ On the right hand side, a minimal example to generate a parametrized quantum cir
 ::: {.right}
 
 ```python
-from genQC.pipeline.diffusion_pipeline import DiffusionPipeline
-from genQC.inference.infer_srv import generate_srv_tensors, convert_tensors_to_srvs
+import torch
+from genQC.pipeline.multimodal_diffusion_pipeline import MultimodalDiffusionPipeline_ParametrizedCompilation
+from genQC.inference.sampling import generate_compilation_tensors, decode_tensors_to_backend
+from genQC.utils.misc_utils import infer_torch_device, set_seed
+from genQC.platform.tokenizer.circuits_tokenizer import CircuitTokenizer
+from genQC.benchmark.bench_compilation import SpecialUnitaries
+from genQC.platform.simulation import Simulator, CircuitBackendType
 
-pipeline = DiffusionPipeline.from_pretrained("Floki00/qc_srv_3to8qubit", "cpu") # <1>
-pipeline.scheduler.set_timesteps(20) # <1>
+device = infer_torch_device()
+set_seed(0)
 
-out_tensor = generate_srv_tensors(pipeline, "Generate SRV: [1,1,2,2,2]", samples=1, system_size=5, num_of_qubits=5, max_gates=16, g=10) # <2>
-qc_list, _, srv_list = convert_tensors_to_srvs(out_tensor, pipeline.gate_pool) # <3>
+pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained( # <1>
+                            repo_id="Floki00/cirdit_multimodal_compile_3to5qubit", # <1> 
+                            device=device)  # <1>
+
+pipeline.scheduler.set_timesteps(40)   # <2>
+pipeline.scheduler_w.set_timesteps(40) # <2>
+
+pipeline.g_h, pipeline.g_w = 0.3, 0.1  # <2>
+pipeline.lambda_h, pipeline.lambda_w = 1.0, 0.35 # <2>
+
+prompt = "Compile 4 qubits using: ['h', 'cx', 'ccx', 'swap', 'rx', 'ry', 'rz', 'cp']" # <2>
+
+U = SpecialUnitaries.QFT(num_qubits=4).to(torch.complex64) # <3>
+
+out_tensor, params = generate_compilation_tensors(pipeline, # <4>
+                                          prompt=prompt,   # <4> 
+                                          U=U,             # <4>
+                                          samples=8,       # <4>
+                                          system_size=5,   # <4>
+                                          num_of_qubits=4, # <4>
+                                          max_gates=32)    # <4>
+
+vocabulary = {g:i+1 for i, g in enumerate(pipeline.gate_pool)} # <5>
+tokenizer  = CircuitTokenizer(vocabulary)                      # <5>
+simulator  = Simulator(CircuitBackendType.QISKIT)              # <5>
+
+qc_list, _ = decode_tensors_to_backend(simulator, tokenizer, out_tensor, params) # <5>
+
+qc_list[0].draw("mpl")
 ```
-1. Load a pre-trained `DiffusionPipeline`, 
-2. sample circuit tensors, and then,
-3. evaluate circuit and return SRVs.
+1. Load a pre-trained Diffusion model. 
+2. Set inference parameters.
+3. Specify QFT unitary.
+4. Generate tokenized circuits.
+5. Decode tensors to circuits.
 :::
 
 :::
