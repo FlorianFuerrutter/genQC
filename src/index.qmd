@@ -1,0 +1,129 @@
+---
+pagetitle: "genQC"
+section-divs: false
+toc: false
+page-layout: custom    #custom  full
+theme:
+  light: [simplex, webpage/index.scss]
+repo-actions: false
+description: | 
+  Generating quantum circuits with diffusion models.
+
+code-annotations: hover 
+ 
+#hide-description: true
+#image: quarto-dark-bg.jpeg
+#resources: 
+#  - images/hero_animation.mp4
+---
+
+::: {.hero-banner}
+
+# genQC · Generative Quantum Circuits
+
+Generating quantum circuits with diffusion models
+
+::: {.hero-buttons}
+[Get Started](./get_started.ipynb){.btn-action-primary .btn-action .btn .btn-success .btn-lg role="button"}
+[Tutorials](./examples/tutorials.qmd){.btn-action .btn .btn-info .btn-lg role="button"}
+[API Reference](./webpage/api_reference.qmd){.btn-action .btn .btn-warning .btn-lg role="button"}
+:::
+
+::: {.features}
+::: {.feature}
+<h3>Generative circuit synthesis</h3>
+<p>Synthesis of discrete-continuous quantum circuits.</p>
+:::
+::: {.feature}
+<h3>Pre-trained models</h3>
+<p>Easy inference of pre-trained model weights. </p>
+:::
+::: {.feature}
+<h3>Open-source research</h3>
+<p>Full open source research code and model weights.</p>
+:::	
+:::
+:::
+
+::: {.figure}
+<div class="arrow_box"><h3>"Compile 4-qubit QFT"</h3></div>
+<img alt="img" src="webpage/assets/qft_4qubit_circuit_15s_wpause.gif" width="950">
+:::
+
+<!-- 
+🚀
+-->
+
+::: {.container}
+::: {.left}
+<h1>Quick start <span>genQC</span></h1>
+::: {.left-grid}
+::: {.left-grid-text}
+<p>
+To install <span>genQC</span> just run: 
+</p>
+:::
+::: {.left-grid-src}
+```sh
+pip install genQC
+```
+:::
+:::
+<p>
+On the right hand side, a minimal example to generate a parametrized quantum circuit conditioned on the 4-qubit QFT unitary.
+</p>
+[View tutorials](./examples/tutorials.qmd){.btn-action .btn .btn-info .btn-lg role="button"}
+:::
+
+::: {.right}
+
+```python
+import torch
+from genQC.pipeline.multimodal_diffusion_pipeline import MultimodalDiffusionPipeline_ParametrizedCompilation
+from genQC.inference.sampling import generate_compilation_tensors, decode_tensors_to_backend
+from genQC.utils.misc_utils import infer_torch_device
+from genQC.platform.tokenizer.circuits_tokenizer import CircuitTokenizer
+from genQC.benchmark.bench_compilation import SpecialUnitaries
+from genQC.platform.simulation import Simulator, CircuitBackendType
+
+device = infer_torch_device()
+
+pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained( # <1>
+                            repo_id="Floki00/cirdit_multimodal_compile_3to5qubit", # <1> 
+                            device=device)  # <1>
+
+pipeline.scheduler.set_timesteps(40)   # <2>
+pipeline.scheduler_w.set_timesteps(40) # <2>
+
+pipeline.g_h, pipeline.g_w = 0.3, 0.1  # <2>
+pipeline.lambda_h, pipeline.lambda_w = 1.0, 0.35 # <2>
+
+prompt = "Compile 4 qubits using: ['h', 'cx', 'ccx', 'swap', 'rx', 'ry', 'rz', 'cp']" # <2>
+
+U = SpecialUnitaries.QFT(num_qubits=4).to(torch.complex64) # <3>
+
+out_tensor, params = generate_compilation_tensors(pipeline, # <4>
+                                          prompt=prompt,   # <4> 
+                                          U=U,             # <4>
+                                          samples=8,       # <4>
+                                          system_size=5,   # <4>
+                                          num_of_qubits=4, # <4>
+                                          max_gates=32)    # <4>
+
+vocabulary = {g:i+1 for i, g in enumerate(pipeline.gate_pool)} # <5>
+tokenizer  = CircuitTokenizer(vocabulary)                      # <5>
+simulator  = Simulator(CircuitBackendType.QISKIT)              # <5>
+
+qc_list, _ = decode_tensors_to_backend(simulator, tokenizer, out_tensor, params) # <5>
+
+qc_list[0].draw("mpl")
+```
+1. Load a pre-trained Diffusion model. 
+2. Set inference parameters.
+3. Specify QFT unitary.
+4. Generate tokenized circuits.
+5. Decode tensors to circuits.
+:::
+
+:::
+

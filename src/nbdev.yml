@@ -4,6 +4,6 @@ project:
 website:
   title: "genQC"
   site-url: "https://FlorianFuerrutter.github.io/genQC"
-  description: "Generating quantum circuits with diffusion models"
+  description: "Generative quantum circuits"
   repo-branch: main
   repo-url: "https://github.com/FlorianFuerrutter/genQC"

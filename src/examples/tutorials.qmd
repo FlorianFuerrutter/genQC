@@ -1,0 +1,24 @@
+---
+html:
+  code-copy: false
+listing:
+  - id: tutorials-links
+    image-placeholder: "../webpage/assets/logo.png"
+    sort: false
+    type: grid
+    categories: true
+    sort-ui: [title]
+    filter-ui: [title]
+    contents: "*{.qmd,.ipynb}"
+---
+
+# Tutorials Overview
+
+#### Welcome to the `genQC` Tutorials. 
+
+Here you can familiarize yourself with basics concepts and modules. Tutorials show how to reproduce some figures and results of the corresponding [research papers](../webpage/research.qmd).
+
+<br>
+
+::: {#tutorials-links}
+:::

@@ -4,14 +4,19 @@
 #------------------------------------
 # Python
 
-import math, itertools, functools, copy, asyncio, time, importlib, datetime, importlib, os, dataclasses, platform
+import math, itertools, functools, copy, asyncio, time, importlib, datetime, importlib, \
+        os, dataclasses, platform, sys, subprocess, pathlib, ast, weakref, enum, abc, \
+        typing, random
+
 from datetime import datetime
 from PIL import Image
 from dataclasses import dataclass, asdict, is_dataclass
-from typing import Union, Optional, TypeVar, Callable, Any
+from typing import Union, Optional, TypeVar, Callable, Any, List, Tuple, Iterable, Sequence
+
 
 import numpy as np
-import pandas as pd
+np.set_printoptions(edgeitems=40, linewidth=200, formatter=dict(float=lambda x: "%.3g" % x))
+
 import scipy
 import matplotlib.pyplot as plt
 
@@ -21,14 +26,12 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision
-from torchvision import datasets
 from torch.utils.data import DataLoader, TensorDataset
 
 torch.set_printoptions(linewidth=200)
 
 #------------------------------------
-# runtime
+# Runtime
 
 def in_colab():
     "Check if the code is running in Google Colaboratory"
@@ -52,16 +55,31 @@ def in_notebook():
 
 IN_NOTEBOOK = in_notebook()
 
-if IN_NOTEBOOK: from tqdm.notebook import trange, tqdm
-else: from tqdm import trange, tqdm
+if IN_NOTEBOOK: 
+    from tqdm.notebook import trange, tqdm
+else: 
+    from tqdm import trange, tqdm
 
 #------------------------------------
-# python commons
+# Python commons
 
-def exists(val): return val is not None
-def default(val, d):
-    if exists(val): return val
-    return d() if isfunction(d) else d
+from inspect import isfunction, ismethod
+
+def exists(val): 
+    return val is not None
+
+def not_exists(val): 
+    return val is None
+
+def default(val, default_value):
+    if exists(val): 
+        return val
+    return default_value() if isfunction(default_value) else default_value
 
 #------------------------------------
-# ....
+# Fail-safe
+
+if not IN_NOTEBOOK:
+    def display(*args, **kwargs):
+        pass
+

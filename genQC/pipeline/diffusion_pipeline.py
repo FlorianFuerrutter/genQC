@@ -7,10 +7,8 @@ __all__ = ['DiffusionPipeline']
 from ..imports import *
 from ..scheduler.scheduler import Scheduler
 from .pipeline import Pipeline
-from ..config_loader import *
-from ..models.config_model import Config_Model
-
-from huggingface_hub import snapshot_download
+from ..utils.config_loader import *
+from ..models.config_model import ConfigModel
 
 # %% ../../src/pipeline/diffusion_pipeline.ipynb 3
 class DiffusionPipeline(Pipeline):   
@@ -21,6 +19,7 @@ class DiffusionPipeline(Pipeline):
                  scheduler: Scheduler,   
                  model: nn.Module,
                  text_encoder: nn.Module,
+                 embedder: nn.Module,       # clr embeddings or a VAE for latent diffusion
                  device: torch.device,
                  enable_guidance_train = True,
                  guidance_train_p = 0.1,
@@ -28,20 +27,24 @@ class DiffusionPipeline(Pipeline):
                 ):    
         super().__init__(model, device)
         self.scheduler = scheduler
-        self.scheduler.to_device(device)    
+        self.scheduler.to(device)    
         
         self.text_encoder = text_encoder
-        self.text_encoder.eval()
+        # self.text_encoder.eval()
+        self.trainables.append(self.text_encoder)
+        
+        self.embedder = embedder
+        self.trainables.append(self.embedder)
         
         self.enable_guidance_train = enable_guidance_train           
         self.guidance_train_p      = guidance_train_p
            
         self.cached_text_enc = cached_text_enc        
         self.empty_token     = self.text_encoder.empty_token
-        
+
         if cached_text_enc:                       
             def cached_empty_token_fn(c):
-                if   c.dim() == 1: return self.text_encoder.cached_empty_token_index  # yields then a list of ints       
+                if   c.dim() == 1: return self.text_encoder.cached_empty_token_index.expand(c.shape)  # yields then a list of ints       
                 elif c.dim() == 2: return self.empty_token.expand(c.shape)            # tokenized input      
                 else: raise NotImplementedError("")
             
@@ -51,15 +54,16 @@ class DiffusionPipeline(Pipeline):
             self.empty_token_fn = lambda c: self.empty_token.expand(c.shape) # for own clip  
 
     #------------------------------------
-         
+
     add_config = {}
         
     def params_config(self, save_path: str):         
         params_config = {}
                 
         params_config["scheduler"]    = self.scheduler.get_config()
-        params_config["model"]        = self.model.get_config(save_path=save_path+"model.pt")
-        params_config["text_encoder"] = self.text_encoder.get_config(save_path=save_path+"text_encoder.pt")
+        params_config["model"]        = self.model.get_config(save_path=save_path+"model")
+        params_config["text_encoder"] = self.text_encoder.get_config(save_path=save_path+"text_encoder")
+        params_config["embedder"]     = self.embedder.get_config(save_path=save_path+"embedder")
         
         params_config["device"]                = str(self.device)
         params_config["enable_guidance_train"] = self.enable_guidance_train
@@ -75,57 +79,72 @@ class DiffusionPipeline(Pipeline):
         save_dict_yaml(config, config_path+"config.yaml")
                
         #only store weights of these submodels
-        self.model.store_model(config_path=None, save_path=save_path+"model.pt")
-        self.text_encoder.store_model(config_path=None, save_path=save_path+"text_encoder.pt")
+        self.model.store_model(config_path=None, save_path=save_path+"model")
+        self.text_encoder.store_model(config_path=None, save_path=save_path+"text_encoder")
+        self.embedder.store_model(config_path=None, save_path=save_path+"embedder")
     
     @staticmethod
-    def from_config_file(config_path, device: torch.device):    
+    def from_config_file(config_path, device: torch.device, save_path: Optional[str] = None):    
         config = load_config(config_path+"config.yaml")   
         config = config_to_dict(config)
 
+        def _get_save_path(config_save_path, appendix):
+            _save_path = default(save_path, config_path) + appendix
+            if "save_path" in config_save_path:
+                if exists(config_save_path["save_path"]):
+                    _save_path = config_save_path["save_path"]
+                else:
+                    config_save_path.pop("save_path")
+            return _save_path   
+        
         if exists(device):
             config["params"]["device"]                        = device
-            config["params"]["scheduler"]["params"]["device"] = device
-        
-        config["params"]["scheduler"] = instantiate_from_config(config["params"]["scheduler"])
- 
-        model_path                = config_path+"model.pt" if config["params"]["model"]["save_path"] is None else config["params"]["model"]["save_path"]
-        config["params"]["model"] = Config_Model.from_config(config["params"]["model"], device, model_path)
 
-        config["params"]["text_encoder"] = Config_Model.from_config(config["params"]["text_encoder"], device, config["params"]["text_encoder"]["save_path"])   
+        config["params"]["scheduler"] = Scheduler.from_config(config["params"]["scheduler"], device, _get_save_path(config["params"]["scheduler"], ""))
+          
+        config["params"]["model"] = ConfigModel.from_config(config["params"]["model"], device, _get_save_path(config["params"]["model"], "model"))
+        config["params"]["text_encoder"] = ConfigModel.from_config(config["params"]["text_encoder"], device, _get_save_path(config["params"]["text_encoder"], "text_encoder")) 
+        
+        if "embedder" in config["params"]:
+            config["params"]["embedder"] = ConfigModel.from_config(config["params"]["embedder"], device, _get_save_path(config["params"]["embedder"], "embedder"))  
+        else:
+            config["params"]["embedder"] = config["params"]["model"]  #for legacy loading model
+        
         add_config = config["params"].pop("add_config", None)
 
         pipeline = instantiate_from_config(config)
         
         if exists(pipeline.add_config):
-            pipeline.gate_pool  = [gate for gate in add_config["dataset"]["params"]["gate_pool"]] 
             pipeline.add_config = add_config
+            
+            params = add_config["dataset"]["params"]
+            
+            if "gate_pool" in params: 
+                # pipeline.gate_pool = [get_obj_from_str(gate) for gate in params["gate_pool"]] 
+                pipeline.gate_pool = [gate for gate in params["gate_pool"]] 
+
+        return pipeline
         
-        return pipeline
-
-
-    @classmethod
-    def from_pretrained(cls, repo_id: str, device: torch.device, **kwargs):  
-        """Load a model pipeline directly from Huggingface."""
-        model_path = snapshot_download(repo_id=repo_id, repo_type="model", allow_patterns=["*.pt", "*.yaml", "*.safetensors"], **kwargs) 
-        pipeline   = cls.from_config_file(model_path+"/", device)  
-        return pipeline
-    
     #------------------------------------
     # Inference functions
-    
-    @torch.no_grad()
-    def __call__(self, latents=None, c=None, seed=None, timesteps=None, no_bar=False, enable_guidance=True, g=7.5):        
+
+    # @torch.no_grad()
+    @torch.inference_mode()    
+    def __call__(self, latents=None, c=None, negative_c=None, seed=None, timesteps=None, no_bar=False, enable_guidance=True, g=7.5, micro_cond=None):        
         if exists(seed):      torch.manual_seed(seed)
         if exists(timesteps): self.scheduler.set_timesteps(self.timesteps)
+
+        self.text_encoder.eval()
+        self.model.eval()
             
         latents = latents.to(self.device)                  
-        x0      = self.denoising(latents, c=c, no_bar=no_bar, enable_guidance=enable_guidance, g=g)  
+        x0      = self.denoising(latents, c=c, negative_c=negative_c, no_bar=no_bar, enable_guidance=enable_guidance, g=g, micro_cond=micro_cond)  
         
         return x0
     
-    @torch.no_grad()
-    def latent_filling(self, org_latents: torch.Tensor, mask: torch.Tensor, c=None, enable_guidance=True, g=7.5, 
+    # @torch.no_grad()
+    @torch.inference_mode()
+    def latent_filling(self, org_latents: torch.Tensor, mask: torch.Tensor, c=None, negative_c=None, enable_guidance=True, g=7.5, 
                        t_start_index=0, no_bar=False, return_predicted_x0=False, **kwargs):
         """mask: area with ones is going to be filled"""
         if   mask.dim() == 4: assert list(org_latents.shape) == list(mask.shape)     # diff mask per sample and channel
@@ -135,9 +154,9 @@ class DiffusionPipeline(Pipeline):
     
         self.model.eval()
         self.text_encoder.eval()       
-        self.scheduler.to_device(self.device)
+        self.scheduler.to(self.device)
                  
-        c_emb = self.prepare_c_emb(c, enable_guidance, **kwargs)
+        c_emb = self.prepare_c_emb(c, enable_guidance, negative_c, **kwargs)
     
         org_latents = org_latents.to(self.device, non_blocking=self.non_blocking)
 
@@ -186,74 +205,82 @@ class DiffusionPipeline(Pipeline):
     #------------------------------------
     # Helper functions
     
-    def get_guidance_condition(self, c, enable_guidance):
+    def get_guidance_condition(self, c: torch.Tensor, enable_guidance: bool = True, negative_c: Optional[torch.Tensor] = None):
         if not exists(c): return c      
         c = c.to(self.device)                
         if enable_guidance:             
-            u = self.empty_token_fn(c).to(self.device)        
+            if exists(negative_c): u = negative_c.to(self.device)
+            else:                  u = self.empty_token_fn(c).to(self.device)        
             c = torch.cat([u, c])            
-        c = c.type(torch.int64) 
+        c = c.type(torch.int64) #to token dtype
         return c
 
-    def prepare_c_emb(self, c, enable_guidance, **kwargs):
-        c     = self.get_guidance_condition(c, enable_guidance) 
+    def prepare_c_emb(self, c: torch.Tensor, enable_guidance: bool = True, negative_c: Optional[torch.Tensor] = None, **kwargs):
+        c     = self.get_guidance_condition(c, enable_guidance, negative_c) 
         c_emb = self.text_encoder(c, pool=False)
         return c_emb
         
-    @torch.no_grad()
-    def denoising(self, latents: torch.Tensor, c=None, enable_guidance=True, g=7.5, t_start_index=0, no_bar=False, return_predicted_x0=False, **kwargs):
+    # @torch.no_grad()
+    @torch.inference_mode()
+    def denoising(self, latents: torch.Tensor, c=None, negative_c=None, enable_guidance=True, g=7.5, t_start_index=0, no_bar=False, 
+                  return_predicted_x0=False, micro_cond=None, **kwargs):
         self.model.eval()
         self.text_encoder.eval()
-        self.scheduler.to_device(self.device)
+        self.scheduler.to(self.device)
     
-        c_emb = self.prepare_c_emb(c, enable_guidance, **kwargs)
+        c_emb = self.prepare_c_emb(c, enable_guidance, negative_c, **kwargs)
         
         latents = latents.to(self.device, non_blocking=self.non_blocking)
         
         if return_predicted_x0: predicted_x0 = list()
         
         for i, t in enumerate(tqdm(self.scheduler.timesteps[t_start_index:], disable=no_bar)):
-            timesteps = (torch.ones((1)) * t).type(torch.int64).to(self.device, non_blocking=self.non_blocking)
-                   
-            latents, x0 = self.denoising_step(latents, timesteps, c_emb=c_emb, enable_guidance=enable_guidance, g=g, **kwargs)
-        
-            if return_predicted_x0: predicted_x0.append(x0.cpu())
-        
-        if return_predicted_x0: return latents.cpu(), predicted_x0     
-        return latents.cpu()
-  
-    # @torch.no_grad()
-    def denoising_step(self, latents: torch.Tensor, ts: Union[int, torch.IntTensor], c_emb: torch.Tensor=None, enable_guidance=True, g=7.5, **kwargs):    
+            timesteps = torch.tensor([t], device=self.device)
+            
+            latents, x0 = self.denoising_step(latents, timesteps, c_emb=c_emb, enable_guidance=enable_guidance, g=g, micro_cond=micro_cond, **kwargs)
+
+            if return_predicted_x0: 
+                predicted_x0.append(x0)
+
+        if return_predicted_x0: 
+            predicted_x0 = torch.stack(predicted_x0, dim=0) # [timesteps, *latents.shape]
+            return latents, predicted_x0    
+            
+        return latents
+    
+    def denoising_step(self, latents: torch.Tensor, ts: Union[int, torch.IntTensor], c_emb: torch.Tensor=None, enable_guidance=True, g=7.5, micro_cond=None, **kwargs):    
         if enable_guidance:
             x = torch.cat([latents] * 2)     #uses batch layer combine here
             
             if ts.numel() > 1: chunk_ts = torch.cat([ts] * 2)
             else:              chunk_ts = ts
-                
-            eps_u, eps_c = self.model(x, chunk_ts, c_emb).chunk(2) 
+            
+            eps_u, eps_c = self.model(x, chunk_ts, c_emb, micro_cond=micro_cond).chunk(2) 
             
             eps = self.CFG(eps_u, eps_c, g)
-                    
+
+            x = self.scheduler.step(eps, ts, latents, uncond_model_output=eps_u)    
+        
         else:
             eps = self.model(latents, ts, c_emb)  
-                 
-        x = self.scheduler.step(eps, ts, latents)      
+            x   = self.scheduler.step(eps, ts, latents)    
+            
         return x.prev_sample, x.pred_original_sample
      
-    guidance_sample_mode = "rescaled" # one of: normal, fastai, rescaled
+    guidance_sample_mode = "normal" # one of: normal, fastai, rescaled
         
     def CFG(self, eps_u, eps_c, g):
         """Apply Classifier-free-guidance sampling"""
         dim = list(range(1, eps_u.dim())) # reduce all but batches
 
-        if self.guidance_sample_mode == "normal":   # from https://arxiv.org/pdf/2207.12598.pdf, w=g+1    
+        if self.guidance_sample_mode == "normal":   # from https://arxiv.org/pdf/2207.12598.pdf, w=g+1    s=g+1
             eps = eps_u + g * (eps_c-eps_u)               
 
         elif self.guidance_sample_mode == "fastai":  # from fastAi less 11
             eps = eps_u + g*(eps_c-eps_u) * torch.linalg.vector_norm(eps_u, dim=dim, keepdim=True) / torch.linalg.vector_norm(eps_c-eps_u, dim=dim, keepdim=True)    
             eps = eps * torch.linalg.vector_norm(eps_u, dim=dim, keepdim=True) / torch.linalg.vector_norm(eps, dim=dim, keepdim=True)
 
-        elif self.guidance_sample_mode == "rescaled": # from https://arxiv.org/pdf/2305.08891.pd
+        elif self.guidance_sample_mode == "rescaled": # from https://arxiv.org/pdf/2305.08891.pdf
             phi = 0.7
 
             eps_cfg    = eps_u + g * (eps_c-eps_u)              
@@ -267,36 +294,55 @@ class DiffusionPipeline(Pipeline):
     #------------------------------------
     # Training functions
 
+    def sample_timesteps_low_variance(self, b: int, scheduler: Scheduler, shuffle: bool = False, continuous_time: bool = False) -> torch.Tensor:
+        """Low variance sampling, see https://arxiv.org/abs/2406.07524 and originaly https://arxiv.org/abs/2107.00630."""
+        
+        start = torch.linspace(0, 1.0-1.0/b, b, device=self.device, dtype=torch.float32)
+        ts = start + torch.rand_like(start) / b
+
+        if continuous_time:
+            ts = ts.clamp(0., 1.)
+        else:
+            ts = (ts * scheduler.num_train_timesteps).floor().clamp(0, scheduler.num_train_timesteps-1).to(torch.int64)
+
+        if shuffle:
+            return ts[torch.randperm(b)]
+        return ts
+    
     def train_on_epoch(self, data_loader: DataLoader, train=True):   
-        self.scheduler.to_device(self.device, non_blocking=self.non_blocking)    
+        self.scheduler.to(self.device, non_blocking=self.non_blocking)    
         super().train_on_epoch(data_loader, train)
 
-    #@torch.autocast(device_type=device.type)
-    def train_step(self, data, **kwargs): 
+    def cfg_drop(self, y, y_drop, rnd):
+        """A value of `rnd` one means we take `y`. A value of `rnd` zero means we drop `y` and use `empty_token_fn`."""
+        rnd = self.scheduler.unsqueeze_vector_to_shape(rnd, y.shape)   # e.g. [b, 1, 1]            
+        y   = y * rnd + (1-rnd) * y_drop
+        return y
+
+    def train_step(self, data, train, **kwargs): 
         latents, y = data                
         b, s, t = latents.shape          
         
         #start async memcpy
         latents = latents.to(self.device, non_blocking=self.non_blocking)  
-        latents = self.model.embedd_clrs(latents)                   #this is only new tensor
-               
+        latents = self.embedder.embed(latents)  
+         
         #do the cond embedding with CLIP                     
         y = y.to(self.device, non_blocking=self.non_blocking)  
+        U = U.to(self.device, non_blocking=self.non_blocking)  
         
-        if self.enable_guidance_train: 
-            rnd = torch.rand((b,), device=self.device)            
-            rnd = (rnd > self.guidance_train_p).type(torch.int64)          # todo: change to bernoulli dist fn
-            rnd = self.scheduler.unsqueeze_vector_to_shape(rnd, y.shape)   # e.g. [b, 1, 1]            
-            y   = y * rnd + (1-rnd) * self.empty_token_fn(y)
-               
+        if self.enable_guidance_train and train: 
+            rnd_y = torch.empty((b,), device=self.device).bernoulli_(p=1.0-self.guidance_train_p).type(torch.int64)
+            y = self.cfg_drop(y, self.empty_token_fn(y), rnd_y) 
+    
         y_emb = self.text_encoder(y, pool=False)
-                          
+              
         #sample timesteps
         timesteps = torch.randint(low=0, high=self.scheduler.num_train_timesteps, size=(b,), device=self.device, dtype=torch.int64)
 
         #forward noising    
         noise = torch.randn(latents.shape, device=self.device)     
-        noisy_latents = self.scheduler.add_noise(latents, noise, timesteps)
+        noisy_latents = self.scheduler.add_noise(latents, noise, timesteps, train=train)
 
         #predict eps
         eps = self.model(noisy_latents, timesteps, y_emb)

@@ -1,0 +1,242 @@
+//-----------------------------
+/*-- scss:defaults --*/
+
+
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+$ubuntu_mono: "Ubuntu Mono", serif;
+$lexend: "Lexend", serif;
+$academicons: "Academicons";
+
+// Color system
+$dark-green: #858E79;
+$light-green: #D1D9CE;
+$cream: #FDFBF7;
+$gray: #64605f;
+$purple: #9158A2;
+$orange: #ad7237;
+$yellow: #fcee63;
+$darkblue: #053660;
+$teal: #147C91;
+$darkgray: #333333;
+
+// Quarto Sass Variables
+
+//$h2-font-size:          1.6rem !default;
+//$headings-font-weight:  500 !default;
+
+$link-color: #d9230f; // hyperlinks 
+
+$background-clr-page: #3b3f57; /*linear-gradient(135deg, #2b2d42, #1c1e29);*/
+$background-clr-navbar: #201232;
+
+$dark-hl-clr: #eb8a80;
+$text-clr: #ffffff;
+
+$navbar-bg: $background-clr-navbar;
+$navbar-fg: $text-clr;
+$navbar-hl: $dark-hl-clr;
+
+// $sidebar-bg: #dde8eabd;
+$sidebar-fg: #674ea7;
+/* $sidebar-hl: $dark-hl-clr; */
+
+//-----------------------------
+// CSS goes here
+/*-- scss:rules --*/
+
+/*h1, h2, h3, h4, h5, h6 {
+  font-family: $ubuntu_mono;
+}*/
+
+h3, h4, h5, h6 {
+  color: $teal; 
+}
+
+p, ul, ol {
+  font-family: $lexend;
+  font-weight: 300;
+}
+
+a { //, .sourceCode, code
+  font-family: $ubuntu_mono;
+}
+
+/*-- Fixes wrong links on floating source links inside API docs--*/
+a { 
+	z-index: 10;
+	position: relative;
+}
+    
+
+.listing-description {
+	font-family: $lexend;
+	font-weight: 300;
+}
+
+.quarto-listing-category .category.active {
+    color: $link-color;
+}
+
+
+.quarto-grid-item .card-title {
+    font-size: 130%;
+    font-weight: bold;
+	margin-bottom: 20px;
+}
+
+#quarto-sidebar {
+    border-right: 2px solid #c5c6c7;
+}
+
+.quarto-grid-item.card-left:hover {
+  box-shadow: 0 8px 16px 0  rgba(99, 42, 110, 0.245);
+  transform: scale(1.05);
+}
+
+.quarto-grid-item p.card-img-top>img {
+    object-fit: contain;
+}
+
+.quarto-grid-item.card-left {
+    border-style: solid;
+	border-width: 4px;
+	border-radius: 25px;
+	background-color: rgb(229 229 229 / 29%);
+}
+
+.button-styling {
+  background: $teal;
+  color: $darkblue; 
+  border-color: $darkgray;
+}
+
+.sidebar-header-item {
+    font-size: 200%;
+	font-weight: 400;
+}
+
+.sidebar-menu-container * {
+	font-weight: 400;
+}
+
+/*.sidebar-item-container {
+    font-size: 110%;
+	font-family: $lexend;
+	
+}*/
+
+.sidebar-item-container .active {
+	box-shadow: inset 5px 0px 0 0 #d9230f;
+}
+
+.sidebar-item-text.sidebar-link{
+    font-family: $lexend;
+	font-size: 100%;
+	margin-left: 8px;
+	padding-left: 8px;
+	padding-bottom: 2px;
+    padding-top: 2px;
+}
+
+.sidebar-item-text.sidebar-link.text-start{
+    font-family: $lexend;
+	font-size: 105%;
+	margin-left: 0px;
+	margin-top: 0px;
+	color: $teal; 
+}
+
+.menu-text {
+	font-family: $lexend;
+}
+
+.nav-link.active {
+	font-weight: 350;
+}
+
+.navbar {
+    border-radius: 0px;
+}
+
+.navbar-brand img { 
+  max-height: 45px;
+  width: auto;
+  padding-right: 0px;
+}
+
+.navbar-brand.navbar-brand-logo {
+    margin-right: 10px;
+}
+
+.navbar-logo {
+  background: #4B555B;
+  border-radius: 8px;
+}
+
+.navbar-title {
+	font-size: 110%;
+	font-family: $lexend;
+	font-weight: 400;
+	background: linear-gradient(240.01deg, #4B555B 15.29%, rgba(67, 78, 84, 0) 138.75%);
+	padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.nav-item {
+	font-size: 120%;
+	margin-left: 10px;
+	font-weight: 300;
+}
+
+.px-0 {
+	padding-top: 10px;
+}
+
+#toc-title{
+	font-size: 110%;
+}
+
+.toc-active * {
+	font-size: 100%;
+
+}
+
+.toc-actions li{
+	font-size: 120%;
+}
+
+
+#quarto-back-to-top {
+	border-radius: 15px;
+}
+
+#quarto-back-to-top:hover {
+  box-shadow: 0 8px 16px 0  rgba(99, 42, 110, 0.245);
+  color: $link-color;
+}
+
+
+//-----------------------------
+// fOR THE ARCHIVE BUTTONS USE THIS
+
+
+/* .hero-buttons */
+/* { */
+ /* position: absolute; */
+ /* border: black 1px solid; */
+ /* top: 100px; */
+ /* left:100px; */
+ /* width: 10px; */
+ /* height: 10px; */
+/* } */
+
+/* .hero-buttons:hover{ */
+ /* width: 30px; */
+ /* height: 30px; */
+ /* margin-left:-10px; */
+ /* margin-top:-10px; */
+/* } */
+
+

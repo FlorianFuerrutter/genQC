@@ -1,0 +1,164 @@
+
+//-----------------------------
+/*-- scss:defaults --*/
+
+
+
+//-----------------------------	
+// CSS goes here
+/*-- scss:rules --*/
+
+
+//-----------------------------
+
+h1 {
+	text-align: center !important;
+	margin-bottom: 0.2rem;
+}
+
+.authors h3 {
+	// color: $link-color;
+	text-align: center !important;
+	margin-top: 10px;
+	font-size: 1.25rem;
+}
+
+.paper {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: .75rem;
+	// background: #c5c6c7;
+	background: #3e2d5d42;
+	border-radius: 20px;
+	margin-bottom: 3em;
+}
+
+.paper .links {
+
+}
+
+.paper .tldr {
+	background: #3b3f57;
+	margin: 5px;
+	padding: 18px;
+    // background: white;
+	background: linear-gradient(110deg, rgb(59, 63, 87) 10%, rgba(128, 81, 139, 0.52) 40%, rgb(59, 63, 87) 90%);
+    border-radius: 20px;
+}
+
+.paper .tldr h4 {
+	margin-top: 0.1rem;
+	margin-bottom: 0.1rem;
+	// color: white;
+	color: #ffccc2;
+}
+
+.paper .tldr p {
+	margin-top: 0.4rem;
+	margin-bottom: 0rem;
+	font-size: 1.25rem;
+	color: white;
+}
+    
+
+.paper .abstract {
+	margin: 5px;
+	padding: 18px;
+    background: white;
+    border-radius: 20px;
+}
+
+.paper .abstract h4 {
+	margin-top: 0.1rem;
+}
+
+.paper .cite {
+	margin: 5px;
+	padding: 18px;
+    background: white;
+    border-radius: 20px;
+}
+
+.paper .cite h4 {
+	margin-top: 0.1rem;
+}
+
+//-----------------------------
+
+.has-text-centered {
+    text-align: center !important;
+}
+
+.publication-links {
+	width: 100%;
+    height: auto;
+	display:inline-block;
+	margin: .75rem;
+    margin-top: 0.5rem;
+}
+
+.link-block a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+	font-size: 120%;
+	text-decoration: none;
+	padding: 10px;
+	margin: 3px;
+}
+
+.link-block .button.is-rounded {
+    border-radius: 290486px;
+    //padding-left: calc(1em + .25em);
+    //padding-right: calc(1em + .25em);
+}
+
+/* .link-block .button.is-normal { */
+    /* font-size: 1rem; */
+/* } */
+
+.link-block .button.is-dark {
+    background-color: #363636;
+    border-color: transparent;
+    color: #fff;
+}
+
+/* .ai { */
+    /* font-family: $academicons; */
+    /* font-weight: 400; */
+    /* -moz-osx-font-smoothing: grayscale; */
+    /* -webkit-font-smoothing: antialiased; */
+    /* display: inline-block; */
+    /* font-style: normal; */
+    /* font-variant: normal; */
+    /* text-rendering: auto; */
+    /* line-height: 1; */
+/* } */
+
+.icon {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    height: 1.5rem;
+    width: 1.5rem;
+	scale: 110%;
+}
+
+/* .button .icon, .button .icon.is-large, .button .icon.is-medium, .button .icon.is-small { */
+    /* height: 1.5em; */
+    /* width: 1.5em; */
+/* } */
+
+/* .button .icon:first-child:not(:last-child) { */
+    /* margin-left: calc(-.5em - 1px); */
+    /* margin-right: .25em; */
+/* } */
+
+/* .column { */
+    /* display: inline-block; */
+    /* flex-basis: 0; */
+    /* flex-grow: 1; */
+    /* flex-shrink: 1; */
+    /* padding: .75rem; */
+/* } */
