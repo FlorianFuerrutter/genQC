@@ -6,9 +6,9 @@ __all__ = ['UNet_block', 'Encoder', 'Decoder', 'QC_Cond_UNet_config', 'QC_Cond_U
 
 # %% ../../src/models/unet_qc.ipynb 3
 from ..imports import *
-from .config_model import Config_Model
+from .config_model import ConfigModel
 import genQC.models.layers as layers
-import genQC.models.transformers as transformers
+import genQC.models.transformers.transformers as transformers
 from .unitary_encoder import Unitary_encoder, Unitary_encoder_config
 
 # %% ../../src/models/unet_qc.ipynb 5
@@ -19,7 +19,7 @@ class UNet_block(nn.Module):
                                 
         self.resBlocks = nn.ModuleList() 
         for i in range(num_res_blocks):          
-            self.resBlocks.append(layers.ResBlock2D_Conditional(ch_in, ch_out, t_emb_size, kernel_size=(1, 3)))
+            self.resBlocks.append(layers.ResBlock2DConditional(ch_in, ch_out, t_emb_size, kernel_size=(1, 3)))
             ch_in = ch_out 
             
         self.transformer_depth = transformer_depth
@@ -111,14 +111,16 @@ class QC_Cond_UNet_config:
     transformer_depths: list[int]
 
 # %% ../../src/models/unet_qc.ipynb 10
-class QC_Cond_UNet(Config_Model):
+class QC_Cond_UNet(ConfigModel):
     """Conditional U-Net model for quantum circuits. Implemets `embedd_clrs` and `invert_clr` functions to embed and decode color-tensors."""
+
+    channel_last = False
     
     def __init__(self, model_features=[32,32,64], clr_dim=8, num_clrs=8, t_emb_size=128, cond_emb_size=512, 
                  num_heads=[8,8,2], num_res_blocks=[2, 2, 4], transformer_depths=[1,2,1]):
         
         super().__init__()       
-        
+
         self.clr_dim  = clr_dim     
         self.num_clrs = num_clrs
         
@@ -160,7 +162,7 @@ class QC_Cond_UNet(Config_Model):
        
     #--------------------------------------------
     
-    def embedd_clrs(self, x):
+    def embed(self, x):
         sign = torch.sign(x + 0.1)  #trick: add 0.1 so that the sign of 0 is +1, else the 0 token would be all 0s.     
         clr  = self.emb_clr(torch.abs(x))      
         x = clr * sign[:, :, :, None]        
@@ -168,7 +170,7 @@ class QC_Cond_UNet(Config_Model):
         return x
     
     @torch.no_grad()
-    def invert_clr(self, x):
+    def invert(self, x):
         #collaps clr to gate ... use cos sim
         
         clrs = self.emb_clr.weight.detach() # is [clr_num, clr_dim]
@@ -201,7 +203,7 @@ class QC_Cond_UNet(Config_Model):
     
     #--------------------------------------------
     
-    def forward(self, x, t, c_emb, attn_mask=None, key_padding_mask=None):
+    def forward(self, x, t, c_emb, attn_mask=None, key_padding_mask=None, **kwargs):
         if attn_mask        is None: attn_mask        = [None] * len(self.enc_chs)
         if key_padding_mask is None: key_padding_mask = [None] * len(self.enc_chs)
               
@@ -235,8 +237,8 @@ class QC_Compilation_UNet(QC_Cond_UNet):
         self.unitary_encoder = Unitary_encoder(**unitary_encoder_config)
         self.params_config   = QC_Compilation_UNet_config(model_features, self.clr_dim, self.num_clrs, self.t_emb_size, self.cond_emb_size, num_heads, num_res_blocks, transformer_depths, self.unitary_encoder.params_config)
     
-    def forward(self, x, t, c_emb, U, attn_mask=None, key_padding_mask=None):
+    def forward(self, x, t, c_emb, U, attn_mask=None, key_padding_mask=None, **kwargs):
         u_emb = self.unitary_encoder(U)            # [batch, seq2, ch]     
         c_emb = torch.cat([c_emb, u_emb], dim=1)   # [batch, seq1+seq2, ch]  
-        out = super().forward(x, t, c_emb, attn_mask, key_padding_mask)
+        out = super().forward(x, t, c_emb, attn_mask, key_padding_mask, **kwargs)
         return out

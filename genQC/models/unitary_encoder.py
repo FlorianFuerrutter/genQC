@@ -5,9 +5,9 @@ __all__ = ['Unitary_encoder_config', 'Unitary_encoder']
 
 # %% ../../src/models/unitary_encoder.ipynb 2
 from ..imports import *
-from .config_model import Config_Model
+from .config_model import ConfigModel
 import genQC.models.layers as layers
-import genQC.models.transformers as transformers
+import genQC.models.transformers.transformers as transformers
 
 # %% ../../src/models/unitary_encoder.ipynb 4
 @dataclass
@@ -19,7 +19,7 @@ class Unitary_encoder_config:
     dropout: float
 
 # %% ../../src/models/unitary_encoder.ipynb 5
-class Unitary_encoder(Config_Model):
+class Unitary_encoder(ConfigModel):
     """Encoder for unitary conditions."""
     def __init__(self, cond_emb_size, model_features=None, num_heads=8, transformer_depths=[4, 4], dropout=0.1):
         super().__init__()             
