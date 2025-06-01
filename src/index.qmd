@@ -81,13 +81,12 @@ On the right hand side, a minimal example to generate a parametrized quantum cir
 import torch
 from genQC.pipeline.multimodal_diffusion_pipeline import MultimodalDiffusionPipeline_ParametrizedCompilation
 from genQC.inference.sampling import generate_compilation_tensors, decode_tensors_to_backend
-from genQC.utils.misc_utils import infer_torch_device, set_seed
+from genQC.utils.misc_utils import infer_torch_device
 from genQC.platform.tokenizer.circuits_tokenizer import CircuitTokenizer
 from genQC.benchmark.bench_compilation import SpecialUnitaries
 from genQC.platform.simulation import Simulator, CircuitBackendType
 
 device = infer_torch_device()
-set_seed(0)
 
 pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained( # <1>
                             repo_id="Floki00/cirdit_multimodal_compile_3to5qubit", # <1> 
