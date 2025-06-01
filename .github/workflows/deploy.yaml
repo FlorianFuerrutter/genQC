@@ -10,4 +10,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: answerdotai/workflows/quarto-ghp@master
-#         with: {pre: 1}
+        with:
+          version: "3.12"
