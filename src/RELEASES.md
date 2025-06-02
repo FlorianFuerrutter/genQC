@@ -1,3 +1,36 @@
+# genQC 0.2.0 - 02.06.2025
+
+### Description:
+
+- Added code accompanying the paper [Synthesis of discrete-continuous quantum circuits with multimodal diffusion models](https://arxiv.org/abs/??).
+- Increased minimal python version to 3.12
+
+### Tested on:
+
+- Ubuntu 22.04.5 LTS
+- nbdev==2.4.2 (for notebook development)
+- python 3.12.9
+
+**Libs**:
+
+```txt 
+torch==2.7.0
+numpy==2.2.6
+matplotlib==3.10.3
+scipy==1.15.3
+omegaconf==2.3.0
+qiskit==2.0.2
+tqdm==4.67.1
+joblib==1.5.1
+open_clip_torch==2.32.0
+ipywidgets==8.1.7
+pylatexenc==2.10
+safetensors==0.5.3
+tensordict==0.8.3
+huggingface_hub==0.32.3
+```
+
+
 # genQC 0.1.0 - 26.08.2024
 
 ### Description:
