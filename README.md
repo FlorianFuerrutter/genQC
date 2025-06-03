@@ -23,6 +23,7 @@ QFT.](https://github.com/FlorianFuerrutter/genQC/blob/main/src/webpage/assets/qf
 
 ## 📰 News
 
+- 🔥 \[2025-06-02\] Paper release: [Synthesis of discrete-continuous quantum circuits with multimodal diffusion models](https://www.arxiv.org/abs/2506.01666).
 - 🔥 \[2025-06-01\] *Discrete-continuous circuits with multimodal
   diffusion* - model released on [Hugging Face:
   huggingface.co/collections/Floki00](https://huggingface.co/collections/Floki00/discrete-continuous-circuits-with-multimodal-diffusion-6839c4e4553e56b957bbd5bf).

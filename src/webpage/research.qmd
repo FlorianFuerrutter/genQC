@@ -21,9 +21,15 @@ theme:
 
 <!-- arxiv Link. -->
 <span class="link-block">
-<a href="" class="external-link button is-normal is-rounded is-dark">
+<a href="https://www.arxiv.org/abs/2506.01666" class="external-link button is-normal is-rounded is-dark">
 <span class="icon"><i class="ai ai-arxiv"></i></span>
-<span>COMING SOON</span></a></span>
+<span>arXiv</span></a></span>
+
+<!-- Zenodo Link. -->
+<span class="link-block">
+<a href="https://doi.org/10.5281/zenodo.15577991" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="ai ai-zenodo"></i></span>
+<span>Zenodo</span></a></span>
 
 <!-- Code Link. -->
 <span class="link-block">
@@ -36,7 +42,6 @@ theme:
 <a href="https://huggingface.co/collections/Floki00/discrete-continuous-circuits-with-multimodal-diffusion-6839c4e4553e56b957bbd5bf" class="external-link button is-normal is-rounded is-dark">
 <span class="icon">🤗</span>
 <span>Models</span></a></span>
-
 
 </div></div>
 ```
@@ -75,12 +80,6 @@ theme:
 <span class="icon"><i class="ai ai-arxiv"></i></span>
 <span>arXiv</span></a></span>
 
-<!-- huggingface Link. -->
-<span class="link-block">
-<a href="https://huggingface.co/collections/Floki00/quantum-circuit-synthesis-with-diffusion-models-6550e926c67f60a368b02bc3" class="external-link button is-normal is-rounded is-dark">
-<span class="icon">🤗</span>
-<span>Models</span></a></span>
-
 <!-- Zenodo Link. -->
 <span class="link-block">
 <a href="https://doi.org/10.5281/zenodo.10282061" class="external-link button is-normal is-rounded is-dark">
@@ -92,6 +91,12 @@ theme:
 <a href="https://github.com/FlorianFuerrutter/genQC" class="external-link button is-normal is-rounded is-dark">
 <span class="icon"><i class="bi bi-github"></i></i></span>
 <span>Code</span></a></span>
+
+<!-- huggingface Link. -->
+<span class="link-block">
+<a href="https://huggingface.co/collections/Floki00/quantum-circuit-synthesis-with-diffusion-models-6550e926c67f60a368b02bc3" class="external-link button is-normal is-rounded is-dark">
+<span class="icon">🤗</span>
+<span>Models</span></a></span>
 
 </div></div>
 ```
