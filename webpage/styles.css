@@ -1,0 +1,139 @@
+.cell {
+  margin-bottom: 1rem;
+}
+
+.cell > .sourceCode {
+  margin-bottom: 0;
+}
+
+.cell-output > pre {
+  margin-bottom: 0;
+}
+
+.cell-output > pre, .cell-output > .sourceCode > pre, .cell-output-stdout > pre {
+  margin-left: 0.8rem;
+  margin-top: 0;
+  background: none;
+  border-left: 2px solid lightsalmon;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.cell-output > .sourceCode {
+  border: none;
+}
+
+.cell-output > .sourceCode {
+  background: none;
+  margin-top: 0;
+}
+
+div.description {
+  padding-left: 2px;
+  padding-top: 5px;
+  font-style: italic;
+  font-size: 135%;
+  opacity: 70%;
+}
+
+/* --------------------------------------- */
+
+/* show_doc signature */
+blockquote > pre {
+  font-size: 14px;
+}
+
+.table {
+  font-size: 16px;
+  /* disable striped tables */
+  --bs-table-striped-bg: var(--bs-table-bg);
+}
+
+.quarto-figure-center > figure > figcaption {
+  text-align: center;
+}
+
+.figure-caption {
+  font-size: 75%;
+  font-style: italic;
+}
+
+
+/* --------------------------------------- */
+
+@media (max-width: 1200px) {
+
+.link-cards .card {
+  margin-bottom: 20px;
+  margin-right: 10px;
+}
+
+}
+
+@media (min-width: 400px) { 
+.link-cards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.link-cards .card {
+  width: 455px;
+  margin: 0 20px 10px 0;
+}
+
+}
+
+.link-cards .card {
+  border: none;
+  padding: 0;
+  background-color: #add8e300;
+  border-radius: 25px;
+  padding: 5px;
+  padding-left: 15px;
+}
+
+.link-cards .card:hover {
+  box-shadow: 0 8px 16px 0  rgba(99, 42, 110, 0.245);
+}
+
+.link-cards .card-title h4 {
+  margin-top: 0;
+}
+
+.link-cards .card-title p {
+  margin-bottom: 0px;
+  margin-top: 5px;
+  padding-left: 0.2rem;
+}
+
+.link-cards .card-subtitle {
+  margin-bottom: 0.1rem;
+  margin-top: 0.6rem;
+  text-decoration: none;
+  padding-left: 0.5rem;
+}
+
+.link-cards .card-body {
+  padding: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.link-cards .card-body ul {
+  margin-bottom: 0;
+  padding-left: 1.5rem;
+  list-style-type: none;
+  font-size: 95%;
+}
+
+.link-cards .card-body ul a {
+  text-decoration: none;
+}
+
+.link-cards .card-body ul li {
+  padding-bottom: 0.01rem;
+}
+
+.card .source-code {
+  margin-top: 3px;
+}
