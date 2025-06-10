@@ -119,7 +119,9 @@ class CircuitsCudaqBackend(BaseBackend):
 
         return True
   
-    def genqc_to_backend(self, instructions: CircuitInstructions) -> cudaq.kernel:
+    def genqc_to_backend(self, 
+                         instructions: CircuitInstructions,
+                         **kwargs) -> cudaq.kernel:
         """Convert given genQC `CircuitInstructions` to a `cudaq.kernel`."""
 
         _params = torch.tensor([
