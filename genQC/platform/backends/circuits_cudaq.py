@@ -128,9 +128,10 @@ class CircuitsCudaqBackend(BaseBackend):
                                 instruction.params if instruction.params else torch.nan 
                                 for instruction in instructions.data
                                ])   # ... [seq, nP]
-            
-        assert _params.shape[1] == 1  #only support nP=1 for now
-        _params = _params.squeeze()
+
+        if not torch.isnan(_params).any():
+            assert _params.shape[1] == 1  #only support nP=1 for now
+            _params = _params.squeeze()
 
         #--------------------
         
