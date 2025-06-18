@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions to create a quantum circuit dataset.">
+
+<title>Circuits dataset generation functions – genQC</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../platform/circuits_instructions.html" rel="next">
+<link href="../pipeline/unitary_clip_pipeline.html" rel="prev">
+<link href="../webpage/assets/logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-d87a3651302b9e5cd4aef916472bf00d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../webpage/styles.css">
+<meta property="og:title" content="Circuits dataset generation functions – genQC">
+<meta property="og:description" content="Functions to create a quantum circuit dataset.">
+<meta property="og:image" content="https://FlorianFuerrutter.github.io/genQC/platform/circuits_generation_files/figure-html/cell-9-output-1.png">
+<meta property="og:site_name" content="genQC">
+<meta property="og:image:height" content="238">
+<meta property="og:image:width" content="820">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../webpage/assets/logo.png" alt="genQC logo" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">genQC</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> <i class="bi bi-list-ul" role="img">
+</i> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../get_started.html"> <i class="bi bi-cursor-fill" role="img">
+</i> 
+<span class="menu-text">Get Started</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/tutorials.html"> <i class="bi bi-cup-hot" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../webpage/api_reference.html" aria-current="page"> <i class="bi bi-file-text" role="img">
+</i> 
+<span class="menu-text">API Reference</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../webpage/research.html"> <i class="bi bi-book-half" role="img">
+</i> 
+<span class="menu-text">Research</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/FlorianFuerrutter/genQC"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text">Code Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../platform/circuits_generation.html">Platform</a></li><li class="breadcrumb-item"><a href="../platform/circuits_generation.html">Circuits dataset generation functions</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="quarto-sidebar-header"><div class="sidebar-header-item">
+<p>API Reference</p>
+</div></div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../webpage/api_reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modules Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../RELEASES.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Release notes</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Benchmark</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../benchmark/bench_compilation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compilation benchmark</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Dataset</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/balancing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset balancing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/cached_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cached dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/circuits_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/config_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/dataset_helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dataset/mixed_cached_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed cached dataset</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/eval_metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/evaluation_helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation helper</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../inference/sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false">
+ <span class="menu-text">Models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/config_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/frozen_open_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frozen OpenCLIP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/position_encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Position encodings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/unet_qc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Conditional qc-UNet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/unitary_encoder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Encoder for unitaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Clip</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/clip/frozen_open_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frozen OpenCLIP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/clip/unitary_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unitary CLIP</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false">
+ <span class="menu-text">Embedding</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/embedding/base_embedder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base embedder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/embedding/rotational_preset_embedder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rotational preset embedder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Transformers</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/transformers/attention.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformers and attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/transformers/cirdit_multimodal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CirDiT - Circuit Diffusion Transformer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../models/transformers/transformers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformers</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Pipeline</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/callbacks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Callbacks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/compilation_diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compilation Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/diffusion_pipeline_special.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline Special</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/multimodal_diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multimodal Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../pipeline/unitary_clip_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unitary CLIP Pipeline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Platform</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/circuits_generation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Circuits dataset generation functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/circuits_instructions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Circuits instructions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Backends</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/backends/base_backend.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/backends/circuits_cudaq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CUDA-Q circuits backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/backends/circuits_pennylane.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pennylane circuits backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/backends/circuits_qiskit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Qiskit circuits backend</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
+ <span class="menu-text">Tokenizer</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/tokenizer/base_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base tokenizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/tokenizer/circuits_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Circuits tokenizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../platform/tokenizer/tensor_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tensor tokenizer</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Scheduler</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler_ddim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDIM Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler_ddpm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDPM Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../scheduler/scheduler_dpm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPM Scheduler</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">Utils</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/async_fn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Async functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/config_loader.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config loader</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/math.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Math and algorithms</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../utils/misc_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Miscellaneous util</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#generate-random-circuits" id="toc-generate-random-circuits" class="nav-link active" data-scroll-target="#generate-random-circuits">Generate random circuits</a>
+  <ul class="collapse">
+  <li><a href="#circuitconditiontype" id="toc-circuitconditiontype" class="nav-link" data-scroll-target="#circuitconditiontype">CircuitConditionType</a></li>
+  <li><a href="#get_rnd_encoded_circuit" id="toc-get_rnd_encoded_circuit" class="nav-link" data-scroll-target="#get_rnd_encoded_circuit">get_rnd_encoded_circuit</a></li>
+  <li><a href="#get_rnd_encoded_circuits" id="toc-get_rnd_encoded_circuits" class="nav-link" data-scroll-target="#get_rnd_encoded_circuits">get_rnd_encoded_circuits</a></li>
+  </ul></li>
+  <li><a href="#dataset-generation" id="toc-dataset-generation" class="nav-link" data-scroll-target="#dataset-generation">Dataset generation</a>
+  <ul class="collapse">
+  <li><a href="#generate_circuit_dataset" id="toc-generate_circuit_dataset" class="nav-link" data-scroll-target="#generate_circuit_dataset">generate_circuit_dataset</a></li>
+  </ul></li>
+  <li><a href="#test" id="toc-test" class="nav-link" data-scroll-target="#test">Test</a>
+  <ul class="collapse">
+  <li><a href="#random-circuits-with-condition" id="toc-random-circuits-with-condition" class="nav-link" data-scroll-target="#random-circuits-with-condition">Random circuits with condition</a></li>
+  <li><a href="#generate-dataset" id="toc-generate-dataset" class="nav-link" data-scroll-target="#generate-dataset">Generate Dataset</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/platform/circuits_generation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../platform/circuits_generation.html">Platform</a></li><li class="breadcrumb-item"><a href="../platform/circuits_generation.html">Circuits dataset generation functions</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Circuits dataset generation functions</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions to create a quantum circuit dataset.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="generate-random-circuits" class="level2">
+<h2 class="anchored" data-anchor-id="generate-random-circuits">Generate random circuits</h2>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/circuits_generation.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="circuitconditiontype" class="level3">
+<h3 class="anchored" data-anchor-id="circuitconditiontype">CircuitConditionType</h3>
+<blockquote class="blockquote">
+<pre><code> CircuitConditionType (*values)</code></pre>
+</blockquote>
+<p>*Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>class Color(Enum): … RED = 1 … BLUE = 2 … GREEN = 3</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Access them by:</p>
+<ul>
+<li><p>attribute access:</p>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>Color.RED &lt;Color.RED: 1&gt;</p>
+</blockquote>
+</blockquote>
+</blockquote></li>
+<li><p>value lookup:</p>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>Color(1) &lt;Color.RED: 1&gt;</p>
+</blockquote>
+</blockquote>
+</blockquote></li>
+<li><p>name lookup:</p>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>Color[‘RED’] &lt;Color.RED: 1&gt;</p>
+</blockquote>
+</blockquote>
+</blockquote></li>
+</ul>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>len(Color) 3</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>list(Color) [&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p>Methods can be added to enumerations, and members can have their own attributes – see the documentation for details.*</p>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/circuits_generation.py#L21" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_rnd_encoded_circuit" class="level3">
+<h3 class="anchored" data-anchor-id="get_rnd_encoded_circuit">get_rnd_encoded_circuit</h3>
+<blockquote class="blockquote">
+<pre><code> get_rnd_encoded_circuit
+                          (backend:genQC.platform.backends.base_backend.Ba
+                          seBackend, tokenizer:genQC.platform.tokenizer.ci
+                          rcuits_tokenizer.CircuitTokenizer,
+                          condition:__main__.CircuitConditionType,
+                          num_of_qubits:int,
+                          gate_pool:Optional[Sequence[str]],
+                          min_gates:int, max_gates:int,
+                          rng:numpy.random._generator.Generator,
+                          optimized:bool=True,
+                          post_randomize_params:bool=True,
+                          return_params:bool=True)</code></pre>
+</blockquote>
+<p><em>Generate a random circuit with corresponding condition.</em></p>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/circuits_generation.py#L61" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_rnd_encoded_circuits" class="level3">
+<h3 class="anchored" data-anchor-id="get_rnd_encoded_circuits">get_rnd_encoded_circuits</h3>
+<blockquote class="blockquote">
+<pre><code> get_rnd_encoded_circuits
+                           (backend:genQC.platform.backends.base_backend.B
+                           aseBackend, tokenizer:genQC.platform.tokenizer.
+                           circuits_tokenizer.CircuitTokenizer,
+                           condition:__main__.CircuitConditionType,
+                           samples:int, num_of_qubits:int, min_gates:int,
+                           max_gates:int, min_sub_gate_pool_cnt:int=1,
+                           max_sub_gate_pool_cnt:Optional[int]=None, fixed
+                           _sub_gate_pool:Optional[Sequence[str]]=None,
+                           max_num_params:Optional[int]=None,
+                           filter_unique:bool=True, optimized:bool=True,
+                           post_randomize_params:bool=True,
+                           return_params:bool=True, silent:bool=False)</code></pre>
+</blockquote>
+<p><em>Generate ´samples´ number of random circuits with corresponding condition. Creates prompts for conditioning.</em></p>
+</section>
+</section>
+<section id="dataset-generation" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-generation">Dataset generation</h2>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/platform/circuits_generation.py#L191" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="generate_circuit_dataset" class="level3">
+<h3 class="anchored" data-anchor-id="generate_circuit_dataset">generate_circuit_dataset</h3>
+<blockquote class="blockquote">
+<pre><code> generate_circuit_dataset
+                           (backend:genQC.platform.backends.base_backend.B
+                           aseBackend, tokenizer:genQC.platform.tokenizer.
+                           circuits_tokenizer.CircuitTokenizer,
+                           condition:__main__.CircuitConditionType,
+                           total_samples:int, num_of_qubits:int,
+                           min_gates:int, max_gates:int,
+                           batch_samples:int=128, n_jobs:int=1,
+                           unitary_dtype:torch.dtype=torch.float16,
+                           min_sub_gate_pool_cnt:int=1,
+                           max_sub_gate_pool_cnt:Optional[int]=None, fixed
+                           _sub_gate_pool:Optional[Sequence[str]]=None,
+                           max_num_params:Optional[int]=None,
+                           filter_unique:bool=True, optimized:bool=True,
+                           post_randomize_params:bool=True,
+                           return_params:bool=True)</code></pre>
+</blockquote>
+<p>*Generates ´samples´ number of random circuits with corresponding condition. Supports large scale dataset with large unitaries. Uses memory mapping and parallelization.</p>
+<ul>
+<li>´unitary_dtype´ only relevant for ´condition=CircuitConditionType.UNITARY´*</li>
+</ul>
+</section>
+</section>
+<section id="test" class="level2">
+<h2 class="anchored" data-anchor-id="test">Test</h2>
+<div id="d97c4a90-7232-4776-83ce-e7dcce160466" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.simulation <span class="im">import</span> Simulator, CircuitBackendType</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d201f855-f536-41c0-91df-722cfac281e1" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>simulator <span class="op">=</span> Simulator(CircuitBackendType.QISKIT)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> CircuitTokenizer({<span class="st">"rx"</span>:<span class="dv">1</span>, <span class="st">"ccx"</span>:<span class="dv">2</span>, <span class="st">"u"</span>:<span class="dv">3</span>, <span class="st">"cp"</span>: <span class="dv">4</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d72b8c97-86a6-4853-b08d-4b018e47067b" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(tokenizer.vocabulary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['rx', 'ccx', 'u', 'cp']</code></pre>
+</div>
+</div>
+<section id="random-circuits-with-condition" class="level3">
+<h3 class="anchored" data-anchor-id="random-circuits-with-condition">Random circuits with condition</h3>
+<div id="bcbf1a82-f9ab-4fd1-b5bd-2cb5a4e5207e" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>qc, condition, qc_tensor, params_tensor <span class="op">=</span> get_rnd_encoded_circuit(backend<span class="op">=</span>simulator.backend, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                                                  tokenizer<span class="op">=</span>tokenizer,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                                                                  condition<span class="op">=</span>CircuitConditionType.UNITARY,       </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                                                                  gate_pool<span class="op">=</span>tokenizer.vocabulary,           </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                                                                  num_of_qubits<span class="op">=</span><span class="dv">3</span>, </span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                                                                  min_gates<span class="op">=</span><span class="dv">4</span>, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                                                                  max_gates<span class="op">=</span><span class="dv">8</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                                                                  rng<span class="op">=</span>np.random.default_rng())</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>display(qc.draw(<span class="st">"mpl"</span>), qc_tensor, params_tensor, condition)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="circuits_generation_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[-2,  4,  1,  0,  0,  0,  4,  0],
+        [-2,  4,  0,  3,  4,  0,  0,  0],
+        [ 2,  0,  0,  0,  4,  1,  4,  1]], dtype=torch.int32)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[ 0.0000,  0.1530,  0.8770, -0.0982,  0.8894, -0.1517, -0.9942,  0.4529],
+        [ 0.0000,  0.0000,  0.0000,  0.5461,  0.0000,  0.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  0.3656,  0.0000,  0.0000,  0.0000,  0.0000]])</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[-0.5160,  0.0000,  0.1092,  0.0922,  0.0000, -0.2913, -0.1705, -0.0078],
+         [ 0.0059, -0.5158,  0.0487,  0.0356, -0.2911, -0.0280,  0.0643,  0.1626],
+         [-0.1575,  0.0191, -0.4388, -0.2793,  0.0899, -0.0853,  0.6793,  0.0832],
+         [ 0.0209, -0.1561, -0.1054,  0.1762, -0.0866,  0.0817, -0.1028, -0.4679],
+         [ 0.0000, -0.2913, -0.1705, -0.0078, -0.5160,  0.0000,  0.1092,  0.0922],
+         [-0.2913,  0.0022,  0.0614,  0.1631,  0.0017, -0.5160,  0.0496,  0.0260],
+         [-0.0652, -0.0889,  0.3769, -0.0596, -0.1511, -0.0264, -0.1630, -0.2675],
+         [-0.0890, -0.0645, -0.2472, -0.4959, -0.0259, -0.1516, -0.1986, -0.2816]],
+
+        [[ 0.0000, -0.2100, -0.1229,  0.0109,  0.7160,  0.0000, -0.1515,  0.0664],
+         [-0.2098, -0.0145,  0.0458, -0.2253, -0.0114,  0.7155, -0.0669,  0.0238],
+         [-0.0470, -0.0641,  0.2716,  0.0827,  0.2096,  0.0366,  0.2261, -0.1928],
+         [-0.0635, -0.0514, -0.1815,  0.6940,  0.0332,  0.2130,  0.2726, -0.2176],
+         [ 0.7160,  0.0000, -0.1515,  0.0664,  0.0000, -0.2100, -0.1229,  0.0109],
+         [ 0.0009,  0.7160, -0.0695,  0.0206, -0.2099, -0.0042,  0.0448, -0.2266],
+         [ 0.2186, -0.0265,  0.6088, -0.2013,  0.0648, -0.0615,  0.4896, -0.1154],
+         [-0.0263,  0.2188,  0.1541,  0.1425, -0.0617,  0.0636, -0.0679,  0.6583]]], dtype=torch.float64)</code></pre>
+</div>
+</div>
+<div id="6fda9ebd-8b03-45cd-9974-0b22b07153b8" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tensors, ys, Us, params <span class="op">=</span> get_rnd_encoded_circuits(backend<span class="op">=</span>simulator.backend, </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                                                   tokenizer<span class="op">=</span>tokenizer,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                                   condition<span class="op">=</span>CircuitConditionType.UNITARY,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                                   samples<span class="op">=</span><span class="dv">128</span>,          </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                                                   num_of_qubits<span class="op">=</span><span class="dv">4</span>, </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                                                   min_gates<span class="op">=</span><span class="dv">4</span>, </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                                                   max_gates<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>                                                   min_sub_gate_pool_cnt<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>display(tensors[<span class="dv">0</span>], ys[<span class="dv">0</span>], params[<span class="dv">0</span>], Us.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d085aec59ed94682ae4de97bd206b958","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: Generated unique circuits: 125.
+[INFO]: No max_num_params provided, infered p_max_para=3, p_min_value=tensor(-0.9998) and p_max_value=tensor(0.9996).</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[-2, -2,  4,  2,  0,  4,  2, -2,  0,  0,  0,  4,  0,  0,  0,  0],
+        [ 0, -2,  0,  0,  2,  0, -2,  2,  0,  2,  0,  0, -2,  0,  0,  0],
+        [ 2,  2,  4, -2, -2,  4, -2, -2,  4, -2,  4,  4,  2,  0,  0,  0],
+        [-2,  0,  0, -2, -2,  0,  0,  0,  4, -2,  4,  0, -2,  0,  0,  0]], dtype=torch.int32)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>np.str_("Compile using: ['ccx', 'cp']")</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[ 0.0000,  0.0000,  0.9185,  0.0000,  0.0000, -0.0226,  0.0000,  0.0000, -0.1110,  0.0000, -0.8066, -0.6071,  0.0000,  0.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000],
+        [ 0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]])</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>torch.Size([125, 2, 16, 16])</code></pre>
+</div>
+</div>
+<div id="df0f7d1a-0b4f-44e5-ac9a-776cd886d329" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ys[:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array(["Compile using: ['ccx', 'cp']", "Compile using: ['ccx', 'u']", "Compile using: ['ccx', 'u', 'cp']", "Compile using: ['rx', 'ccx', 'u', 'cp']", "Compile using: ['ccx', 'cp']"], dtype='&lt;U39')</code></pre>
+</div>
+</div>
+<div id="82d59d77-f76e-47d1-abd2-28ee9367c9d0" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> params.flatten()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ind  <span class="op">=</span> data.nonzero(as_tuple<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>plt.hist(data[ind], bins<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="circuits_generation_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="a9d6013c-eddc-4629-9219-da0e43cee9e5" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_unitary(tensor, param, should_U, rtol, atol):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    instructions <span class="op">=</span> tokenizer.decode(tensor, param)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    qc   <span class="op">=</span> simulator.genqc_to_backend(instructions)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    is_U <span class="op">=</span> simulator.backend.get_unitary(qc)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    is_U <span class="op">=</span> torch.stack([torch.from_numpy(np.real(is_U)), torch.from_numpy(np.imag(is_U))])</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> torch.allclose(is_U, should_U, rtol<span class="op">=</span>rtol, atol<span class="op">=</span>atol)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1be4d78b-54dd-4178-b15a-71d2245c15bf" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tensor, param, should_U <span class="kw">in</span> tqdm(<span class="bu">zip</span>(tensors, params, Us), total<span class="op">=</span>tensors.shape[<span class="dv">0</span>]):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    test_unitary(tensor, param, should_U, rtol<span class="op">=</span><span class="fl">1e-03</span>, atol<span class="op">=</span><span class="fl">1e-05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d833eeb8d58d45a9a5a4623f91de0d52","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+</section>
+<section id="generate-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="generate-dataset">Generate Dataset</h3>
+<div id="7574654f-6da2-4cbb-a04d-3b627edeb62e" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tensors, ys, Us, params <span class="op">=</span> generate_circuit_dataset(backend<span class="op">=</span>simulator.backend, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                                                   tokenizer<span class="op">=</span>tokenizer,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                                                   condition<span class="op">=</span>CircuitConditionType.UNITARY,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                                                   total_samples<span class="op">=</span><span class="dv">512</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                                                   n_jobs<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                                                   num_of_qubits<span class="op">=</span><span class="dv">3</span>, </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>                                                   min_gates<span class="op">=</span><span class="dv">4</span>, </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>                                                   max_gates<span class="op">=</span><span class="dv">16</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>                                                   unitary_dtype<span class="op">=</span>torch.float64,</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>                                                   min_sub_gate_pool_cnt<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>display(Us.dtype, Us.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: Generated 498 valid circuits.
+[INFO]: After filtering unique circuits: 494.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>torch.float64</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>torch.Size([494, 2, 8, 8])</code></pre>
+</div>
+</div>
+<div id="e3215062-51c7-468b-b4ad-75bd4c634c96" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> tensor, param, should_U <span class="kw">in</span> tqdm(<span class="bu">zip</span>(tensors, params, Us), total<span class="op">=</span>tensors.shape[<span class="dv">0</span>]):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    test_unitary(tensor, param, should_U, rtol<span class="op">=</span><span class="fl">1e-03</span>, atol<span class="op">=</span><span class="fl">1e-05</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"58f19085808e4a62a54ffb625f8711b6","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"08186667b499403b98d45008b373cd51":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"13ab4d5c77344ce583fd9f5f5fd35ed6":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_1f6e00abd86642ff9429e25f83e62673","max":494,"style":"IPY_MODEL_8ec3d1746f2f4c7aa417128765902adb","value":494}},"170bca1b925446e191431b1adfbeca90":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"1e58e44178774979a94b9edc5f18219d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_9e26b80070e64ead8e41851ce156fe93","max":125,"style":"IPY_MODEL_1fbf56b888ec41ecb6a42c680c75ae83","value":125}},"1f6e00abd86642ff9429e25f83e62673":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"1fbf56b888ec41ecb6a42c680c75ae83":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"22de4c4c3cb64fe0b0bd7e01fb03c0ec":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_49a64c58adfa46888b45841d137e9e4d","style":"IPY_MODEL_8567817c50174b8181b09fa7339ae223","value":"100%"}},"230f519207bc4327a790d597381f448b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_08186667b499403b98d45008b373cd51","style":"IPY_MODEL_6c06e03d7697403d99aed60257cd8c9f","value":"100%"}},"3ff8b21ffd36489e8bb17881138a851f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"45db3a5f68c14fb198ead4fd1409cf94":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_db4489f792c6425cbf3a5eedeba4e453","style":"IPY_MODEL_eae366ae96614851b956a42dc99756b3","value":" 125/125 [00:00&lt;00:00, 244.55it/s]"}},"46609e8068f2452e851619258b5fe539":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"49a64c58adfa46888b45841d137e9e4d":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"50afd699d284434bae72237738ea8a5f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"53b9f8941423421bb122f7d6b2672360":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"58f19085808e4a62a54ffb625f8711b6":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_230f519207bc4327a790d597381f448b","IPY_MODEL_13ab4d5c77344ce583fd9f5f5fd35ed6","IPY_MODEL_cb2eba774b5b453f85559d908ddf0122"],"layout":"IPY_MODEL_efa6ce1b1b764d7aa58578cbbcfbf696"}},"6c06e03d7697403d99aed60257cd8c9f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"70ae6cc4196147898cb1a37798554577":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"8567817c50174b8181b09fa7339ae223":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"8ec3d1746f2f4c7aa417128765902adb":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"94e27138b28245fd88fd14569312fbe1":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_9fbfae679fc64e42872f2cf3fb7fae2f","style":"IPY_MODEL_f1c06c29fd6c40c087d429a45307ac4d","value":"100%"}},"9e26b80070e64ead8e41851ce156fe93":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"9fbfae679fc64e42872f2cf3fb7fae2f":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"b7b416a987be4fdab797a33eca661b57":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_bdeac293c5684f929b4b2a58db2603d4","style":"IPY_MODEL_d3d4e37557324cafba675b48423c5ff7","value":" 128/128 [00:01&lt;00:00, 99.31it/s]"}},"bdeac293c5684f929b4b2a58db2603d4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"cb2eba774b5b453f85559d908ddf0122":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_170bca1b925446e191431b1adfbeca90","style":"IPY_MODEL_50afd699d284434bae72237738ea8a5f","value":" 494/494 [00:02&lt;00:00, 247.76it/s]"}},"ceb2d6a4802642cb964f3065e1595c26":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_53b9f8941423421bb122f7d6b2672360","max":128,"style":"IPY_MODEL_3ff8b21ffd36489e8bb17881138a851f","value":128}},"d085aec59ed94682ae4de97bd206b958":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_94e27138b28245fd88fd14569312fbe1","IPY_MODEL_ceb2d6a4802642cb964f3065e1595c26","IPY_MODEL_b7b416a987be4fdab797a33eca661b57"],"layout":"IPY_MODEL_70ae6cc4196147898cb1a37798554577"}},"d3d4e37557324cafba675b48423c5ff7":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"d833eeb8d58d45a9a5a4623f91de0d52":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_22de4c4c3cb64fe0b0bd7e01fb03c0ec","IPY_MODEL_1e58e44178774979a94b9edc5f18219d","IPY_MODEL_45db3a5f68c14fb198ead4fd1409cf94"],"layout":"IPY_MODEL_46609e8068f2452e851619258b5fe539"}},"db4489f792c6425cbf3a5eedeba4e453":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"eae366ae96614851b956a42dc99756b3":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"efa6ce1b1b764d7aa58578cbbcfbf696":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"f1c06c29fd6c40c087d429a45307ac4d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}}},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/FlorianFuerrutter\.github\.io\/genQC");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../pipeline/unitary_clip_pipeline.html" class="pagination-link" aria-label="Unitary CLIP Pipeline">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Unitary CLIP Pipeline</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../platform/circuits_instructions.html" class="pagination-link" aria-label="Circuits instructions">
+        <span class="nav-page-text">Circuits instructions</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Florian Fürrutter</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/platform/circuits_generation.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

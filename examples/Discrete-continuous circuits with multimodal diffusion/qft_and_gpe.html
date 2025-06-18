@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A short tutorial showing the compilation of the Quantum Fourier transform (QFT) and extracting tokens via Gate-Pair tokenization (GPE).">
+
+<title>Quantum Fourier transform and gate-pair tokenization – genQC</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../examples/Quantum circuit synthesis with diffusion models/hello_circuit.html" rel="next">
+<link href="../../examples/Discrete-continuous circuits with multimodal diffusion/compile_testset.html" rel="prev">
+<link href="../../webpage/assets/logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d87a3651302b9e5cd4aef916472bf00d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../../webpage/styles.css">
+<meta property="og:title" content="Quantum Fourier transform and gate-pair tokenization – genQC">
+<meta property="og:description" content="A short tutorial showing the compilation of the Quantum Fourier transform (QFT) and extracting tokens via Gate-Pair tokenization (GPE).">
+<meta property="og:image" content="https://FlorianFuerrutter.github.io/genQC/examples/Discrete-continuous circuits with multimodal diffusion/1_qft_and_gpe_files/figure-html/cell-15-output-1.png">
+<meta property="og:site_name" content="genQC">
+<meta property="og:image:height" content="311">
+<meta property="og:image:width" content="711">
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../webpage/assets/logo.png" alt="genQC logo" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">genQC</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> <i class="bi bi-list-ul" role="img">
+</i> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../get_started.html"> <i class="bi bi-cursor-fill" role="img">
+</i> 
+<span class="menu-text">Get Started</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../examples/tutorials.html" aria-current="page"> <i class="bi bi-cup-hot" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../webpage/api_reference.html"> <i class="bi bi-file-text" role="img">
+</i> 
+<span class="menu-text">API Reference</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../webpage/research.html"> <i class="bi bi-book-half" role="img">
+</i> 
+<span class="menu-text">Research</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/FlorianFuerrutter/genQC"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text">Code Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../examples/Discrete-continuous circuits with multimodal diffusion/compile_testset.html">Discrete-continuous circuits with multimodal diffusion</a></li><li class="breadcrumb-item"><a href="../../examples/Discrete-continuous circuits with multimodal diffusion/qft_and_gpe.html">Quantum Fourier transform and gate-pair tokenization</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="quarto-sidebar-header"><div class="sidebar-header-item">
+<p>Tutorials</p>
+</div></div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/tutorials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tutorials Overview</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Discrete-continuous circuits with multimodal diffusion</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Discrete-continuous circuits with multimodal diffusion/compile_testset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compile unitaries with parametrized circuits</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Discrete-continuous circuits with multimodal diffusion/qft_and_gpe.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Quantum Fourier transform and gate-pair tokenization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Quantum circuit synthesis with diffusion models</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Quantum circuit synthesis with diffusion models/hello_circuit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generate a circuit</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Quantum circuit synthesis with diffusion models/editing_and_masking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Editing and masking of circuits</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Quantum circuit synthesis with diffusion models/unitary_compilation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compile unitaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../examples/Quantum circuit synthesis with diffusion models/dataset_and_finetune.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SRV demo-dataset and fine-tune</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#load-model" id="toc-load-model" class="nav-link active" data-scroll-target="#load-model">Load model</a>
+  <ul class="collapse">
+  <li><a href="#set-inference-parameters" id="toc-set-inference-parameters" class="nav-link" data-scroll-target="#set-inference-parameters">Set inference parameters</a></li>
+  </ul></li>
+  <li><a href="#compile-the-qft-unitary" id="toc-compile-the-qft-unitary" class="nav-link" data-scroll-target="#compile-the-qft-unitary">Compile the QFT unitary</a>
+  <ul class="collapse">
+  <li><a href="#evaluate-and-plot-circuits" id="toc-evaluate-and-plot-circuits" class="nav-link" data-scroll-target="#evaluate-and-plot-circuits">Evaluate and plot circuits</a></li>
+  </ul></li>
+  <li><a href="#gate-pair-tokenization" id="toc-gate-pair-tokenization" class="nav-link" data-scroll-target="#gate-pair-tokenization">Gate-Pair tokenization</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/examples/Discrete-continuous circuits with multimodal diffusion/1_qft_and_gpe.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../examples/Discrete-continuous circuits with multimodal diffusion/compile_testset.html">Discrete-continuous circuits with multimodal diffusion</a></li><li class="breadcrumb-item"><a href="../../examples/Discrete-continuous circuits with multimodal diffusion/qft_and_gpe.html">Quantum Fourier transform and gate-pair tokenization</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Quantum Fourier transform and gate-pair tokenization</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Unitary compilation</div>
+    <div class="quarto-category">Parameterized gates</div>
+    <div class="quarto-category">Quantum circuits</div>
+    <div class="quarto-category">Pretrained model</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A short tutorial showing the compilation of the Quantum Fourier transform (QFT) and extracting tokens via Gate-Pair tokenization (GPE).
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div id="24ecd66b-9552-4e9b-aa68-ce292444d85e" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.imports <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> genQC.utils.misc_utils <span class="im">as</span> util</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.dataset.config_dataset <span class="im">import</span> ConfigDataset</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.pipeline.multimodal_diffusion_pipeline <span class="im">import</span> MultimodalDiffusionPipeline_ParametrizedCompilation</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.scheduler.scheduler_dpm <span class="im">import</span> DPMScheduler</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.tokenizer.circuits_tokenizer <span class="im">import</span> CircuitTokenizer</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.simulation <span class="im">import</span> Simulator, CircuitBackendType</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.inference.sampling <span class="im">import</span> decode_tensors_to_backend, generate_compilation_tensors</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.inference.evaluation_helper <span class="im">import</span> get_unitaries</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.inference.eval_metrics <span class="im">import</span> UnitaryInfidelityNorm</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.benchmark.bench_compilation <span class="im">import</span> SpecialUnitaries</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> genQC.platform.tokenizer.tensor_tokenizer <span class="im">as</span> gpe</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5ae966b5-0f67-4ffe-9d2b-ed0f23c7c383" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>util.MemoryCleaner.purge_mem()      <span class="co"># clean existing memory alloc</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> util.infer_torch_device()  <span class="co"># use cuda if we can</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>device</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: Cuda device has a capability of 8.6 (&gt;= 8), allowing tf32 matmul.</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>device(type='cuda')</code></pre>
+</div>
+</div>
+<div id="f903ecdc-f07c-4e0a-8fc9-1d1bea2bfec5" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># We set a seed to pytorch, numpy and python. </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: This will also set deterministic algorithms, possibly at the cost of reduced performance!</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>util.set_seed(<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="load-model" class="level2">
+<h2 class="anchored" data-anchor-id="load-model">Load model</h2>
+<p>Load the pre-trained model directly from <a href="https://huggingface.co/Floki00/cirdit_multimodal_compile_3to5qubit">Hugging Face: Floki00/cirdit_multimodal_compile_3to5qubit</a>.</p>
+<div id="6ff4eb91-6929-4d54-b6e5-38f6d7b18fdf" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained(<span class="st">"Floki00/cirdit_multimodal_compile_3to5qubit"</span>, device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The model is trained with the gate set:</p>
+<div id="13830bb8-7be4-4fed-9983-09f13d1bf8f4" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pipeline.gate_pool</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>['h', 'cx', 'ccx', 'swap', 'rx', 'ry', 'rz', 'cp']</code></pre>
+</div>
+</div>
+<p>which we need in order to define the <code>vocabulary</code>, allowing us to decode tokenized circuits.</p>
+<div id="36c309d1-bd8b-40b4-b0e7-2d887b6963cb" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="op">=</span> {g:i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i, g <span class="kw">in</span> <span class="bu">enumerate</span>(pipeline.gate_pool)} </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tokenizer  <span class="op">=</span> CircuitTokenizer(vocabulary)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>tokenizer.vocabulary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'h': 1, 'cx': 2, 'ccx': 3, 'swap': 4, 'rx': 5, 'ry': 6, 'rz': 7, 'cp': 8}</code></pre>
+</div>
+</div>
+<section id="set-inference-parameters" class="level3">
+<h3 class="anchored" data-anchor-id="set-inference-parameters">Set inference parameters</h3>
+<p>Set diffusion model inference parameters.</p>
+<div id="eda49101-93cb-48c6-a761-ca8aae4ad1ba" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pipeline.scheduler   <span class="op">=</span> DPMScheduler.from_scheduler(pipeline.scheduler)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pipeline.scheduler_w <span class="op">=</span> DPMScheduler.from_scheduler(pipeline.scheduler_w)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>timesteps <span class="op">=</span> <span class="dv">40</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>pipeline.scheduler.set_timesteps(timesteps) </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>pipeline.scheduler_w.set_timesteps(timesteps) </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>pipeline.lambda_h <span class="op">=</span> <span class="fl">1.5</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>pipeline.lambda_w <span class="op">=</span> <span class="fl">0.45</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>pipeline.g_h <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>pipeline.g_w <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># These parameters are specific to our pre-trained model.</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>system_size   <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>max_gates     <span class="op">=</span> <span class="dv">32</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For evaluation, we also need a circuit simulator backend.</p>
+<div id="e996c1f7-76e9-460d-ab39-c5b43114ade9" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>simulator <span class="op">=</span> Simulator(CircuitBackendType.QISKIT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="compile-the-qft-unitary" class="level2">
+<h2 class="anchored" data-anchor-id="compile-the-qft-unitary">Compile the QFT unitary</h2>
+<p>We now compile the 4-qubit QFT.</p>
+<div id="cea55486-b01e-4ee6-a94f-9720740e8176" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>samples       <span class="op">=</span> <span class="dv">512</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>num_of_qubits <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>prompt        <span class="op">=</span> <span class="ss">f"Compile </span><span class="sc">{</span>num_of_qubits<span class="sc">}</span><span class="ss"> qubits using: ['h', 'cx', 'ccx', 'swap', 'rx', 'ry', 'rz', 'cp']"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>U <span class="op">=</span> SpecialUnitaries.QFT(num_of_qubits).to(torch.complex64)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="6dbf2639-9bcb-402f-89bd-bdfef47a5d29" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>out_tensor, params <span class="op">=</span> generate_compilation_tensors(pipeline, </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                                      prompt<span class="op">=</span>prompt, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                                      U<span class="op">=</span>U, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                                      samples<span class="op">=</span>samples, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                      system_size<span class="op">=</span>system_size, </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                      num_of_qubits<span class="op">=</span>num_of_qubits, </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                                      max_gates<span class="op">=</span>max_gates,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                                      no_bar<span class="op">=</span><span class="va">False</span>,        <span class="co"># show progress bar</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                                      auto_batch_size<span class="op">=</span><span class="dv">256</span>, <span class="co"># limit batch size for less GPU memory usage</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                                     )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"947bf1d7d4d04ffea3abf8530908ad62","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"fa240a3d6d114b6da392ac2fbe059980","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: (generate_comp_tensors) Generated 512 tensors</code></pre>
+</div>
+</div>
+<p>For instance, a circuit tensor alongside parameters the model generated looks like this</p>
+<div id="38513404-0da1-4ca6-b9be-1e1706fc9010" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(out_tensor[<span class="dv">0</span>])</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(params[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tensor([[ 0,  0,  8,  0, -2,  0,  0,  0,  4,  0,  0,  0,  0,  0,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9],
+        [ 0,  0,  0,  4,  2,  3,  1,  8,  0,  8,  8,  0,  0,  0,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9],
+        [ 0,  8,  8,  4,  0, -3,  0,  0,  0,  0,  8,  1,  8,  0,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9],
+        [ 1,  8,  0,  0,  0, -3,  0,  8,  4,  8,  0,  0,  8,  1,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9]], device='cuda:0')
+tensor([[ 0.0000, -0.7021, -0.9835,  0.0000,  0.0000,  0.0000,  0.0000, -0.9720,  0.0000,  0.6553,  0.2625,  0.0000, -0.7555,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,
+          0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000,  0.0000]], device='cuda:0')</code></pre>
+</div>
+</div>
+<section id="evaluate-and-plot-circuits" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-and-plot-circuits">Evaluate and plot circuits</h3>
+<p>We decode these now to circuits and calculate their unitaries.</p>
+<div id="400c673d-89d9-455f-b911-e2e7b9e8535b" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>generated_qc_list, _ <span class="op">=</span> decode_tensors_to_backend(simulator, tokenizer, out_tensor, params)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>generated_us         <span class="op">=</span> get_unitaries(simulator, generated_qc_list)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We then evaluate the unitary infidelity to our target <code>U</code>.</p>
+<div id="2593218b-7edb-4499-abd0-8ac4524d034a" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>U_norms <span class="op">=</span> UnitaryInfidelityNorm.distance(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                    approx_U<span class="op">=</span>torch.from_numpy(np.stack(generated_us)).to(torch.complex128), </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                    target_U<span class="op">=</span>U.unsqueeze(<span class="dv">0</span>).to(torch.complex128),</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>                )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We get the following distribution of the infidelities.</p>
+<div id="8625b627-f981-417d-82c7-934d4dc0697f" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">3</span>), constrained_layout<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>plt.xlabel(UnitaryInfidelityNorm.name(), fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Frequency"</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>plt.hist(U_norms, bins<span class="op">=</span><span class="dv">60</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>plt.xlim([<span class="op">-</span><span class="fl">0.05</span>, <span class="fl">1.05</span>])</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_qft_and_gpe_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We plot the four best ciruits, w.r.t. the infidelity:</p>
+<div id="37788247-4e1d-4d39-8877-90deb67c5cd8" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>plot_k_best <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>idx <span class="op">=</span> np.argsort(U_norms)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, plot_k_best, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">2</span>), constrained_layout<span class="op">=</span><span class="va">True</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (idx_i, ax) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(idx[:plot_k_best], axs.flatten())): </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    ax.clear()</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    generated_qc_list[idx_i].draw(<span class="st">"mpl"</span>, plot_barriers<span class="op">=</span><span class="va">False</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"The </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">. best circuit: </span><span class="ch">\n</span><span class="ss"> infidelity </span><span class="sc">{</span>U_norms[idx_i]<span class="sc">:0.1e}</span><span class="ss">."</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_qft_and_gpe_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="gate-pair-tokenization" class="level2">
+<h2 class="anchored" data-anchor-id="gate-pair-tokenization">Gate-Pair tokenization</h2>
+<p>Now we want to extract reusable substructures (gadgets) from generated circuits. We use all generated tensors in <code>out_tensor</code>, regardless if their circuits have good or bad infidelity.</p>
+<div id="f1bb2aed-1070-427a-a085-7332fdbfbdbd" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>gate_pair_tokenizer <span class="op">=</span> gpe.GatePairTokenizer(unique_class_values<span class="op">=</span>pipeline.embedder.unique_class_values, </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                                            zero_token<span class="op">=</span><span class="dv">0</span>, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                            padding_token<span class="op">=</span><span class="dv">9</span>, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                                            device<span class="op">=</span><span class="st">"cpu"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we run our proposed Gate-Pair Encoding (GPE) scheme:</p>
+<div id="49fe6f42-d84d-4196-8e7d-5127b11e0685" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> gate_pair_tokenizer.learn(out_tensor.cpu(), max_depth<span class="op">=</span><span class="dv">5</span>, max_iters<span class="op">=</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"962235847487477e88ee001eaa67b2ee","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>New depth reached 1
+New depth reached 2
+New depth reached 3
+break: max_iters reached</code></pre>
+</div>
+</div>
+<p>Now we plot the extracted tokens.</p>
+<div id="601fa89b-154f-4e12-8f73-5fb3a1d74463" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>max_depth <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>topk      <span class="op">=</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b734265c-2189-406b-9886-adcbc2be6584" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>unpacked_vocab_configs_depths, unpacked_vocab_configs_cnts_depths <span class="op">=</span> <span class="op">\</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                    gpe.get_topk_depth_unpacked(gate_pair_tokenizer, num_of_qubits, use_raw<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"3ad8e473e03047969891e6c1204a1290","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div id="7e234672-0b27-4449-ae92-28d5aafd299b" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>max_depth <span class="op">=</span> <span class="bu">min</span>(max_depth, <span class="bu">max</span>(unpacked_vocab_configs_depths.keys()))</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(max_depth, topk, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>), dpi<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> axs.flatten():</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    ax.clear()   </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    ax.set_axis_off()</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (depth, unpacked_vocab_configs), (unpacked_vocab_configs_cnts), axs_sel <span class="kw">in</span> <span class="op">\</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">zip</span>(unpacked_vocab_configs_depths.items(), unpacked_vocab_configs_cnts_depths.values(), axs):</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> depth <span class="op">&gt;</span> max_depth:</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, (ax, unpacked_vocab_config, unpacked_vocab_config_cnt) <span class="kw">in</span> <span class="op">\</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>            <span class="bu">enumerate</span>(<span class="bu">zip</span>(axs_sel, unpacked_vocab_configs, unpacked_vocab_configs_cnts)):</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        zero_ps <span class="op">=</span> torch.zeros((<span class="dv">1</span>, unpacked_vocab_config.shape[<span class="op">-</span><span class="dv">1</span>])) <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>        instr <span class="op">=</span> tokenizer.decode(unpacked_vocab_config, zero_ps)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>        qc    <span class="op">=</span> simulator.genqc_to_backend(instr, place_barriers<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">#------</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>        ax.clear() </span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>        qc.draw(<span class="st">"mpl"</span>, </span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>                plot_barriers<span class="op">=</span><span class="va">False</span>, </span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>                ax<span class="op">=</span>ax, </span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>                idle_wires<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> text <span class="kw">in</span> ax.texts:</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="st">'q'</span> <span class="kw">in</span> text.get_text():</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>                text.set_visible(<span class="va">False</span>)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>                text.remove()</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>        ax.patch.set_facecolor(<span class="st">'none'</span>)</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>        ax.patches[<span class="dv">0</span>].set_color(<span class="st">"none"</span>)</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="ss">f"Occurrences: </span><span class="sc">{</span>unpacked_vocab_config_cnt<span class="sc">.</span>item()<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> i<span class="op">==</span><span class="dv">0</span>:</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>            plt.figtext(<span class="op">-</span><span class="fl">0.03</span>, <span class="dv">1</span><span class="op">-</span>(depth<span class="op">-</span><span class="fl">0.7</span>)<span class="op">/</span>max_depth, <span class="ss">f"Depth </span><span class="sc">{</span>depth<span class="sc">}</span><span class="ss">:"</span>, horizontalalignment<span class="op">=</span><span class="st">'left'</span>, verticalalignment<span class="op">=</span><span class="st">'top'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="1_qft_and_gpe_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As we only extract discrete tokens, the parameters of the continuous gates are set to 0 for plotting.</p>
+<div id="8c9909e3-a035-46f7-8979-44be322a5fe0" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> genQC</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"genQC Version"</span>, genQC.__version__)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>genQC Version 0.2.0</code></pre>
+</div>
+</div>
+
+
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"021f52d503b44f5e93f326f4e1c681e9":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_b7b3c47c7bb14d2ea1ee06e8afdba7f6","style":"IPY_MODEL_12d3e5aabc814faa8604361b1c80490a","value":"100%"}},"0ba4139e005649238a5b4040b628100f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_2dc7af76b38b435e8115388ff771bdcb","max":40,"style":"IPY_MODEL_804a105cc9d647bbab287df9ff67502f","value":40}},"0de51d1b7df643d181aabefb36044dd0":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"122ff94a05ef4363937c00a7ddcb041b":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"12d3e5aabc814faa8604361b1c80490a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"189915e75b474731878f4dd2d82eea7d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"18f39bb92f814ba192c66550cf35f972":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_122ff94a05ef4363937c00a7ddcb041b","max":40,"style":"IPY_MODEL_0de51d1b7df643d181aabefb36044dd0","value":40}},"2dc7af76b38b435e8115388ff771bdcb":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"318e739a6c804569a9a6fe91a95791f9":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_c9419d0d5f8e441e815aaccc5a7e69e1","style":"IPY_MODEL_4da4dd4163ae4fffa6ba18402643beee","value":"Fetching 4 files: 100%"}},"341b725d6ea741f4afb8cede9a4ad7a0":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"3ad8e473e03047969891e6c1204a1290":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_021f52d503b44f5e93f326f4e1c681e9","IPY_MODEL_51fcfd77dc8c4475ba826f165c8f1f46","IPY_MODEL_eb040d59b1a24ae287c1cc61832eaf82"],"layout":"IPY_MODEL_824ffe4f7f30494b8139208af9f5d021"}},"4690a080654a4e1ea3b9edd4d3c073b1":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"49813f4fc64b44a799ec78f0921ce5d0":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"4b5ae46e8b1445eda653dfcc62686dbe":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"4d2312b354ca4f30807c08d024c6e9f0":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"4da4dd4163ae4fffa6ba18402643beee":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"51fcfd77dc8c4475ba826f165c8f1f46":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_b391734f3fc7449a801ebc1b0dfec054","style":"IPY_MODEL_7e807267d2c74ffc91806e201348b15b","value":100}},"6b156939bb904c9dafe187a6c1770ea3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"6d6e280e276840b3babdf728594bc1c1":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_edff37b931ba467f8c3af55668d610dc","style":"IPY_MODEL_4d2312b354ca4f30807c08d024c6e9f0","value":"100%"}},"7e807267d2c74ffc91806e201348b15b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"7e928f8f42024d3dae49e80ddd82b3b2":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_c649ae350b714328a6b377c44e47f509","style":"IPY_MODEL_eeaf1b6b54674163b2a61d665af4df79","value":" 40/40 [01:52&lt;00:00,  2.84s/it]"}},"804a105cc9d647bbab287df9ff67502f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"82066e5a51a344d49ba6c6f44b06325b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_8837e58cb680404e8479e38a03e27688","style":"IPY_MODEL_e9132d33e6fe420cbe944ee26871e305","value":100}},"824ffe4f7f30494b8139208af9f5d021":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"8837e58cb680404e8479e38a03e27688":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"8fcdeb78bf434af0b590a4b334a69901":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"947bf1d7d4d04ffea3abf8530908ad62":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_9d2698b2d5244c8ab28111bfebf13091","IPY_MODEL_18f39bb92f814ba192c66550cf35f972","IPY_MODEL_7e928f8f42024d3dae49e80ddd82b3b2"],"layout":"IPY_MODEL_c157678062c94873bd42f3fcc219c967"}},"962235847487477e88ee001eaa67b2ee":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_6d6e280e276840b3babdf728594bc1c1","IPY_MODEL_82066e5a51a344d49ba6c6f44b06325b","IPY_MODEL_b47cb0c8ab634af4b7c9571985cccf3f"],"layout":"IPY_MODEL_49813f4fc64b44a799ec78f0921ce5d0"}},"9a1869704d7a48e3b26e80f244377358":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"9d2698b2d5244c8ab28111bfebf13091":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_4b5ae46e8b1445eda653dfcc62686dbe","style":"IPY_MODEL_a7327c7ff92e4b0e87ef3ec38a95779d","value":"100%"}},"a67d491da7384d2e9c7d96de8779849f":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"a7327c7ff92e4b0e87ef3ec38a95779d":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"b391734f3fc7449a801ebc1b0dfec054":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"b47cb0c8ab634af4b7c9571985cccf3f":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_341b725d6ea741f4afb8cede9a4ad7a0","style":"IPY_MODEL_dced64245df74f84840f0e2e922f1d5c","value":" 100/100 [00:40&lt;00:00,  2.51it/s]"}},"b7b3c47c7bb14d2ea1ee06e8afdba7f6":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"bda858eb4a444b6f9c2e4d12918619d8":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_dbbafaa32f044dc79cde20dca640d182","style":"IPY_MODEL_d8cd8f60d9a44adabb401eee87dc5b95","value":"100%"}},"c157678062c94873bd42f3fcc219c967":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"c649ae350b714328a6b377c44e47f509":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"c9419d0d5f8e441e815aaccc5a7e69e1":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"cae28b86bb0e49368d6dac67ccc30360":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"d3e70533f1024409ab6f0a3662f0f515":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"d8cd8f60d9a44adabb401eee87dc5b95":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"dbbafaa32f044dc79cde20dca640d182":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"dbef30da12f646c2b35e308367007bd2":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_e3497cfed0494def925f01b715b31d10","style":"IPY_MODEL_4690a080654a4e1ea3b9edd4d3c073b1","value":" 4/4 [00:00&lt;00:00, 798.72it/s]"}},"dced64245df74f84840f0e2e922f1d5c":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"dfc99b2ee2b74d00b6097a20baade825":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_318e739a6c804569a9a6fe91a95791f9","IPY_MODEL_ff3ef79425414a96859a7dae83ee809a","IPY_MODEL_dbef30da12f646c2b35e308367007bd2"],"layout":"IPY_MODEL_6b156939bb904c9dafe187a6c1770ea3"}},"dfe56ee8b5b24cf2aaf2d149d0911663":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"e3497cfed0494def925f01b715b31d10":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"e9132d33e6fe420cbe944ee26871e305":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"description_width":""}},"eb040d59b1a24ae287c1cc61832eaf82":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_a67d491da7384d2e9c7d96de8779849f","style":"IPY_MODEL_cae28b86bb0e49368d6dac67ccc30360","value":" 100/100 [00:00&lt;00:00, 1785.68it/s]"}},"eb4ee8e9c8454fac8dc424778e9f73a2":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"layout":"IPY_MODEL_dfe56ee8b5b24cf2aaf2d149d0911663","style":"IPY_MODEL_189915e75b474731878f4dd2d82eea7d","value":" 40/40 [01:53&lt;00:00,  2.82s/it]"}},"edff37b931ba467f8c3af55668d610dc":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{}},"eeaf1b6b54674163b2a61d665af4df79":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"description_width":"","font_size":null,"text_color":null}},"fa240a3d6d114b6da392ac2fbe059980":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"children":["IPY_MODEL_bda858eb4a444b6f9c2e4d12918619d8","IPY_MODEL_0ba4139e005649238a5b4040b628100f","IPY_MODEL_eb4ee8e9c8454fac8dc424778e9f73a2"],"layout":"IPY_MODEL_8fcdeb78bf434af0b590a4b334a69901"}},"ff3ef79425414a96859a7dae83ee809a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"bar_style":"success","layout":"IPY_MODEL_d3e70533f1024409ab6f0a3662f0f515","max":4,"style":"IPY_MODEL_9a1869704d7a48e3b26e80f244377358","value":4}}},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/FlorianFuerrutter\.github\.io\/genQC");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../../examples/Discrete-continuous circuits with multimodal diffusion/compile_testset.html" class="pagination-link" aria-label="Compile unitaries with parametrized circuits">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Compile unitaries with parametrized circuits</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../examples/Quantum circuit synthesis with diffusion models/hello_circuit.html" class="pagination-link" aria-label="Generate a circuit">
+        <span class="nav-page-text">Generate a circuit</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Florian Fürrutter</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/examples/Discrete-continuous circuits with multimodal diffusion/1_qft_and_gpe.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

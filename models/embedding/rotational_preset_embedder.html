@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Class for a rotational preset embedder.">
+
+<title>Rotational preset embedder – genQC</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../models/transformers/attention.html" rel="next">
+<link href="../../models/embedding/base_embedder.html" rel="prev">
+<link href="../../webpage/assets/logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-d87a3651302b9e5cd4aef916472bf00d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../../webpage/styles.css">
+<meta property="og:title" content="Rotational preset embedder – genQC">
+<meta property="og:description" content="Class for a rotational preset embedder.">
+<meta property="og:image" content="https://FlorianFuerrutter.github.io/genQC/models/embedding/rotational_preset_embedder_files/figure-html/cell-22-output-1.png">
+<meta property="og:site_name" content="genQC">
+<meta property="og:image:height" content="418">
+<meta property="og:image:width" content="491">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../webpage/assets/logo.png" alt="genQC logo" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">genQC</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> <i class="bi bi-list-ul" role="img">
+</i> 
+<span class="menu-text">Overview</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../get_started.html"> <i class="bi bi-cursor-fill" role="img">
+</i> 
+<span class="menu-text">Get Started</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../examples/tutorials.html"> <i class="bi bi-cup-hot" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../../webpage/api_reference.html" aria-current="page"> <i class="bi bi-file-text" role="img">
+</i> 
+<span class="menu-text">API Reference</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../webpage/research.html"> <i class="bi bi-book-half" role="img">
+</i> 
+<span class="menu-text">Research</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/FlorianFuerrutter/genQC"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text">Code Repository</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../models/config_model.html">Models</a></li><li class="breadcrumb-item"><a href="../../models/embedding/base_embedder.html">Embedding</a></li><li class="breadcrumb-item"><a href="../../models/embedding/rotational_preset_embedder.html">Rotational preset embedder</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="quarto-sidebar-header"><div class="sidebar-header-item">
+<p>API Reference</p>
+</div></div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../webpage/api_reference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modules Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../RELEASES.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Release notes</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Benchmark</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../benchmark/bench_compilation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compilation benchmark</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Dataset</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/balancing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset balancing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/cached_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Cached dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/circuits_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Quantum circuit dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/config_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config dataset</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/dataset_helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Dataset helper functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../dataset/mixed_cached_dataset.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mixed cached dataset</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false">
+ <span class="menu-text">Inference</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../inference/eval_metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../inference/evaluation_helper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Evaluation helper</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../inference/sampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Sampling functions</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/config_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/frozen_open_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frozen OpenCLIP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/position_encoding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Position encodings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/unet_qc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Conditional qc-UNet</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/unitary_encoder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Encoder for unitaries</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false">
+ <span class="menu-text">Clip</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/clip/frozen_open_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Frozen OpenCLIP</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/clip/unitary_clip.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unitary CLIP</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Embedding</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth2 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/embedding/base_embedder.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base embedder</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/embedding/rotational_preset_embedder.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Rotational preset embedder</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false">
+ <span class="menu-text">Transformers</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/transformers/attention.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformers and attention</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/transformers/cirdit_multimodal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CirDiT - Circuit Diffusion Transformer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../models/transformers/transformers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Transformers</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false">
+ <span class="menu-text">Pipeline</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/callbacks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Callbacks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/compilation_diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compilation Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/diffusion_pipeline_special.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Diffusion Pipeline Special</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Metrics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/multimodal_diffusion_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Multimodal Diffusion Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pipeline</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../pipeline/unitary_clip_pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Unitary CLIP Pipeline</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false">
+ <span class="menu-text">Platform</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/circuits_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Circuits dataset generation functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/circuits_instructions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Circuits instructions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false">
+ <span class="menu-text">Backends</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/backends/base_backend.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/backends/circuits_cudaq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CUDA-Q circuits backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/backends/circuits_pennylane.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Pennylane circuits backend</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/backends/circuits_qiskit.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Qiskit circuits backend</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+          <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false">
+ <span class="menu-text">Tokenizer</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-11" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-11" class="collapse list-unstyled sidebar-section depth2 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/tokenizer/base_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Base tokenizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/tokenizer/circuits_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Circuits tokenizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../platform/tokenizer/tensor_tokenizer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Tensor tokenizer</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false">
+ <span class="menu-text">Scheduler</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-12" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-12" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../scheduler/scheduler.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../scheduler/scheduler_ddim.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDIM Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../scheduler/scheduler_ddpm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DDPM Scheduler</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../scheduler/scheduler_dpm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DPM Scheduler</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false">
+ <span class="menu-text">Utils</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-13" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-13" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../utils/async_fn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Async functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../utils/config_loader.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Config loader</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../utils/math.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Math and algorithms</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../utils/misc_utils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Miscellaneous util</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#multimodialembedder" id="toc-multimodialembedder" class="nav-link active" data-scroll-target="#multimodialembedder">MultimodialEmbedder</a>
+  <ul class="collapse">
+  <li><a href="#multimodialembedder-1" id="toc-multimodialembedder-1" class="nav-link" data-scroll-target="#multimodialembedder-1">MultimodialEmbedder</a></li>
+  </ul></li>
+  <li><a href="#multimodialpresetembedder" id="toc-multimodialpresetembedder" class="nav-link" data-scroll-target="#multimodialpresetembedder">MultimodialPresetEmbedder</a>
+  <ul class="collapse">
+  <li><a href="#multimodialpresetembedderconfig" id="toc-multimodialpresetembedderconfig" class="nav-link" data-scroll-target="#multimodialpresetembedderconfig">MultimodialPresetEmbedderConfig</a></li>
+  <li><a href="#multimodialpresetembedder-1" id="toc-multimodialpresetembedder-1" class="nav-link" data-scroll-target="#multimodialpresetembedder-1">MultimodialPresetEmbedder</a></li>
+  <li><a href="#rotationalmultimodialpresetembedder" id="toc-rotationalmultimodialpresetembedder" class="nav-link" data-scroll-target="#rotationalmultimodialpresetembedder">RotationalMultimodialPresetEmbedder</a></li>
+  <li><a href="#rotationalmultimodialpresetembedder-1" id="toc-rotationalmultimodialpresetembedder-1" class="nav-link" data-scroll-target="#rotationalmultimodialpresetembedder-1">RotationalMultimodialPresetEmbedder</a></li>
+  <li><a href="#rotationalmultimodialpresetembeddertiny" id="toc-rotationalmultimodialpresetembeddertiny" class="nav-link" data-scroll-target="#rotationalmultimodialpresetembeddertiny">RotationalMultimodialPresetEmbedderTiny</a></li>
+  <li><a href="#rotationalmultimodialpresetembeddertiny-1" id="toc-rotationalmultimodialpresetembeddertiny-1" class="nav-link" data-scroll-target="#rotationalmultimodialpresetembeddertiny-1">RotationalMultimodialPresetEmbedderTiny</a></li>
+  </ul></li>
+  <li><a href="#test" id="toc-test" class="nav-link" data-scroll-target="#test">Test</a>
+  <ul class="collapse">
+  <li><a href="#encode-decode-check-fixed-tensor" id="toc-encode-decode-check-fixed-tensor" class="nav-link" data-scroll-target="#encode-decode-check-fixed-tensor">Encode decode check: fixed tensor</a></li>
+  <li><a href="#encode-decode-check-random-circuits" id="toc-encode-decode-check-random-circuits" class="nav-link" data-scroll-target="#encode-decode-check-random-circuits">Encode decode check: random circuits</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/models/embedding/rotational_preset_embedder.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../models/config_model.html">Models</a></li><li class="breadcrumb-item"><a href="../../models/embedding/base_embedder.html">Embedding</a></li><li class="breadcrumb-item"><a href="../../models/embedding/rotational_preset_embedder.html">Rotational preset embedder</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Rotational preset embedder</h1>
+</div>
+
+<div>
+  <div class="description">
+    Class for a rotational preset embedder.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="multimodialembedder" class="level2">
+<h2 class="anchored" data-anchor-id="multimodialembedder">MultimodialEmbedder</h2>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/models/embedding/rotational_preset_embedder.py#L15" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="multimodialembedder-1" class="level3">
+<h3 class="anchored" data-anchor-id="multimodialembedder-1">MultimodialEmbedder</h3>
+<blockquote class="blockquote">
+<pre><code> MultimodialEmbedder (zero_sum_space:bool)</code></pre>
+</blockquote>
+<p><em>A basic <code>nn.Module</code> with IO functionality.</em></p>
+</section>
+</section>
+<section id="multimodialpresetembedder" class="level2">
+<h2 class="anchored" data-anchor-id="multimodialpresetembedder">MultimodialPresetEmbedder</h2>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/models/embedding/rotational_preset_embedder.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="multimodialpresetembedderconfig" class="level3">
+<h3 class="anchored" data-anchor-id="multimodialpresetembedderconfig">MultimodialPresetEmbedderConfig</h3>
+<blockquote class="blockquote">
+<pre><code> MultimodialPresetEmbedderConfig (clr_dim:int, num_clrs:int,
+                                  params_dim:int, num_params_per_clr:int,
+                                  zero_sum_space:bool,
+                                  explicit_node_type_embeddings:bool,
+                                  channel_last:bool, parametrized_tokens:O
+                                  ptional[list[int]]=None, unique_class_va
+                                  lues:Optional[list[int]]=None)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/models/embedding/rotational_preset_embedder.py#L107" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="multimodialpresetembedder-1" class="level3">
+<h3 class="anchored" data-anchor-id="multimodialpresetembedder-1">MultimodialPresetEmbedder</h3>
+<blockquote class="blockquote">
+<pre><code> MultimodialPresetEmbedder (clr_dim:int, num_clrs:int, params_dim:int,
+                            num_params_per_clr:int, zero_sum_space:bool,
+                            explicit_node_type_embeddings:bool=True,
+                            channel_last:bool=True,
+                            parametrized_tokens:Optional[list[int]]=None,
+                            unique_class_values:Optional[list[int]]=None)</code></pre>
+</blockquote>
+<p><em>Embedder class for multimodial discrete and continuous data, e.g.&nbsp;parametrized gates/actions. Embeddings are fixed and not trained.</em></p>
+</section>
+<section id="rotationalmultimodialpresetembedder" class="level3">
+<h3 class="anchored" data-anchor-id="rotationalmultimodialpresetembedder">RotationalMultimodialPresetEmbedder</h3>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/models/embedding/rotational_preset_embedder.py#L421" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="rotationalmultimodialpresetembedder-1" class="level3">
+<h3 class="anchored" data-anchor-id="rotationalmultimodialpresetembedder-1">RotationalMultimodialPresetEmbedder</h3>
+<blockquote class="blockquote">
+<pre><code> RotationalMultimodialPresetEmbedder (clr_dim:int, num_clrs:int,
+                                      params_dim:int,
+                                      num_params_per_clr:int,
+                                      zero_sum_space:bool, explicit_node_t
+                                      ype_embeddings:bool=True,
+                                      channel_last:bool=True, parametrized
+                                      _tokens:Optional[list[int]]=None, un
+                                      ique_class_values:Optional[list[int]
+                                      ]=None)</code></pre>
+</blockquote>
+<p><em>Embedder class for multimodial discrete and continuous data, e.g.&nbsp;parametrized gates/actions. Embeddings are fixed and not trained.</em></p>
+</section>
+<section id="rotationalmultimodialpresetembeddertiny" class="level3">
+<h3 class="anchored" data-anchor-id="rotationalmultimodialpresetembeddertiny">RotationalMultimodialPresetEmbedderTiny</h3>
+<p>Has the same logic as <a href="https://FlorianFuerrutter.github.io/genQC/models/embedding/rotational_preset_embedder.html#rotationalmultimodialpresetembedder"><code>RotationalMultimodialPresetEmbedder</code></a>, but uses the same parameter vector-subspace for all tokens. This makes the parameter embeddings the same for all tokens while reducing the dimesionality of the embeddings, i.e.&nbsp;it is independent of the number of tokens.</p>
+<hr>
+<p><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/genQC/models/embedding/rotational_preset_embedder.py#L543" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="rotationalmultimodialpresetembeddertiny-1" class="level3">
+<h3 class="anchored" data-anchor-id="rotationalmultimodialpresetembeddertiny-1">RotationalMultimodialPresetEmbedderTiny</h3>
+<blockquote class="blockquote">
+<pre><code> RotationalMultimodialPresetEmbedderTiny (clr_dim:int, num_clrs:int,
+                                          params_dim:int,
+                                          num_params_per_clr:int,
+                                          zero_sum_space:bool, explicit_no
+                                          de_type_embeddings:bool=True,
+                                          channel_last:bool=True, parametr
+                                          ized_tokens:Optional[list[int]]=
+                                          None, unique_class_values:Option
+                                          al[list[int]]=None)</code></pre>
+</blockquote>
+<p><em>Mostly the same as <a href="https://FlorianFuerrutter.github.io/genQC/models/embedding/rotational_preset_embedder.html#rotationalmultimodialpresetembedder"><code>RotationalMultimodialPresetEmbedder</code></a>, but the param embedding is not depending on the tokens.</em></p>
+</section>
+</section>
+<section id="test" class="level2">
+<h2 class="anchored" data-anchor-id="test">Test</h2>
+<section id="encode-decode-check-fixed-tensor" class="level3">
+<h3 class="anchored" data-anchor-id="encode-decode-check-fixed-tensor">Encode decode check: fixed tensor</h3>
+<div id="2134bec1-ef0f-4a66-af00-77fcc7b47e97" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>s, t <span class="op">=</span> <span class="dv">3</span>, <span class="dv">8</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>rnd_tokens <span class="op">=</span> torch.tensor([[[ <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>,  <span class="dv">2</span>, <span class="op">-</span><span class="dv">3</span>, <span class="dv">0</span>,  <span class="dv">8</span>],</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                            [<span class="op">-</span><span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">5</span>,  <span class="dv">2</span>,  <span class="dv">3</span>, <span class="dv">6</span>,  <span class="dv">8</span>],</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                            [ <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="op">-</span><span class="dv">2</span>,  <span class="dv">0</span>, <span class="dv">0</span>,  <span class="dv">8</span>]],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                          </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                           [[ <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">1</span>, <span class="dv">0</span>,  <span class="dv">2</span>, <span class="op">-</span><span class="dv">3</span>, <span class="dv">0</span>,  <span class="dv">8</span>],</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                            [ <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">7</span>,  <span class="dv">2</span>,  <span class="dv">3</span>, <span class="dv">1</span>,  <span class="dv">8</span>],</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                            [ <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">8</span>,  <span class="dv">8</span>,  <span class="dv">8</span>, <span class="dv">8</span>,  <span class="dv">8</span>]]])</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>rnd_params <span class="op">=</span> torch.rand((<span class="dv">2</span>, <span class="dv">1</span>, t))<span class="op">*</span><span class="dv">2</span><span class="op">-</span><span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="28570210-5d67-444e-ab6e-af097de3b60f" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>unique_class_values <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>unique_class_values <span class="op">=</span> rnd_tokens.unique(<span class="bu">sorted</span><span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>num_clrs <span class="op">=</span> <span class="dv">9</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>num_params_per_clr <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>parametrized_tokens <span class="op">=</span> [<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>clr_dim    <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>params_dim <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>embedder <span class="op">=</span> RotationalMultimodialPresetEmbedderTiny(clr_dim<span class="op">=</span>clr_dim, </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                                               num_clrs<span class="op">=</span>num_clrs, </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                                               params_dim<span class="op">=</span>params_dim, </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                                               num_params_per_clr<span class="op">=</span>num_params_per_clr,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                                               zero_sum_space<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                                               explicit_node_type_embeddings<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                                               channel_last<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                                               parametrized_tokens<span class="op">=</span>parametrized_tokens,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                                               unique_class_values<span class="op">=</span>unique_class_values.tolist())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: provided `unique_class_values` ([-3, -2, 0, 1, 2, 3, 4, 5, 6, 7, 8]), enforcing `num_clrs=len(unique_class_values)=11`.
+[WARNING]: We need at least a `params_dim` (is 1) of `2*num_params_per_clr` (is 2), automatically setting `params_dim` to 2 to inforce this!
+[WARNING]: `params_dim` is set to the minimum `2*num_params_per_clr`=2, but for `zero_sum_space=True` we need one more dimension, automatically setting it to `2*num_params_per_clr+1` 3.
+[WARNING]: `clr_dim` is set to 1 and `explicit_node_type_embeddings=False`, but for `zero_sum_space=True` we need one more dimension than the number of tokens `num_clrs` (is 11), automatically setting it to `clr_dim=num_clrs+1` 12.
+[INFO]: Created `nn.Embedding` with a total of 13 vectors in a 15 dimensional space.</code></pre>
+</div>
+</div>
+<div id="9174e846-9e86-4f31-b735-20c8277648e3" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rnd_tokens, rnd_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(tensor([[[ 2,  0,  1,  0,  2, -3,  0,  8],
+          [-2,  4,  0,  5,  2,  3,  6,  8],
+          [ 2,  4,  0,  0, -2,  0,  0,  8]],
+ 
+         [[ 8,  8,  1,  0,  2, -3,  0,  8],
+          [ 8,  8,  0,  7,  2,  3,  1,  8],
+          [ 8,  8,  8,  8,  8,  8,  8,  8]]]),
+ tensor([[[-0.0690,  0.7864,  0.9059,  0.3405,  0.9263, -0.5743,  0.6541,  0.8584]],
+ 
+         [[-0.3695, -0.8219,  0.2678, -0.3850, -0.5806, -0.2786,  0.0526,  0.5283]]]))</code></pre>
+</div>
+</div>
+<div id="46130163-667c-4f56-acc2-5dec2ef47b2e" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>rnd_tokens_cls <span class="op">=</span> embedder.tokens_to_unique_class_values(rnd_tokens)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>rnd_tokens_cls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[[ 4,  2,  3,  2,  4,  0,  2, 10],
+         [ 1,  6,  2,  7,  4,  5,  8, 10],
+         [ 4,  6,  2,  2,  1,  2,  2, 10]],
+
+        [[10, 10,  3,  2,  4,  0,  2, 10],
+         [10, 10,  2,  9,  4,  5,  3, 10],
+         [10, 10, 10, 10, 10, 10, 10, 10]]])</code></pre>
+</div>
+</div>
+<div id="b68914c6-1203-42f1-bc37-10427f216949" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>enc_tensor <span class="op">=</span> embedder.embed(rnd_tokens_cls, rnd_params)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(enc_tensor.shape)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>recon_tensor, recon_params <span class="op">=</span> embedder.invert(enc_tensor, reduce_spatial<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>recon_tensor, recon_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>torch.Size([2, 3, 8, 15])</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>(tensor([[[ 2,  0,  1,  0,  2, -3,  0,  8],
+          [-2,  4,  0,  5,  2,  3,  6,  8],
+          [ 2,  4,  0,  0, -2,  0,  0,  8]],
+ 
+         [[ 8,  8,  1,  0,  2, -3,  0,  8],
+          [ 8,  8,  0,  7,  2,  3,  1,  8],
+          [ 8,  8,  8,  8,  8,  8,  8,  8]]]),
+ tensor([[[ 0.0000,  0.0000,  0.0000,  0.3405,  0.0000,  0.0000,  0.6541,  0.0000]],
+ 
+         [[ 0.0000,  0.0000,  0.0000, -0.3850,  0.0000,  0.0000,  0.0000,  0.0000]]]))</code></pre>
+</div>
+</div>
+<div id="2d02d749-36e1-450e-9fb1-6b5a825a8d4e" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> torch.allclose(recon_tensor, rnd_tokens)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="kw">not</span> torch.allclose(recon_params, rnd_params, atol<span class="op">=</span><span class="fl">1e-06</span>)   <span class="co"># note decoding puts 0s on all non param times, but we had rnd ones</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>pmask <span class="op">=</span> embedder.get_parametrized_mask(embedder.tokens_to_unique_class_values(recon_tensor))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> torch.allclose(torch.where(pmask.<span class="bu">any</span>(<span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>), recon_params, <span class="fl">0.0</span>), torch.where(pmask.<span class="bu">any</span>(<span class="dv">1</span>, keepdim<span class="op">=</span><span class="va">True</span>), rnd_params, <span class="fl">0.0</span>), atol<span class="op">=</span><span class="fl">1e-06</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="encode-decode-check-random-circuits" class="level3">
+<h3 class="anchored" data-anchor-id="encode-decode-check-random-circuits">Encode decode check: random circuits</h3>
+<div id="6e27664d-bf41-4bc9-ae6f-cb97bed17469" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.simulation <span class="im">import</span> Simulator, CircuitBackendType</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.tokenizer.circuits_tokenizer <span class="im">import</span> CircuitTokenizer, Vocabulary</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.platform.circuits_generation <span class="im">import</span> get_rnd_encoded_circuits, CircuitConditionType</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> genQC.dataset.balancing <span class="im">import</span> get_tensor_gate_length</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="2f5c40c5-61a7-4f32-bd0e-059525685c5e" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> [<span class="st">'h'</span>, <span class="st">'cx'</span>, <span class="st">'ccx'</span>, <span class="st">'swap'</span>, <span class="st">'rx'</span>, <span class="st">'ry'</span>, <span class="st">'cp'</span>]</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>simulator <span class="op">=</span> Simulator(CircuitBackendType.QISKIT)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> CircuitTokenizer({gi:i<span class="op">+</span><span class="dv">1</span> <span class="cf">for</span> i,gi <span class="kw">in</span> <span class="bu">enumerate</span>(g)})</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>tokenizer.vocabulary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'h': 1, 'cx': 2, 'ccx': 3, 'swap': 4, 'rx': 5, 'ry': 6, 'cp': 7}</code></pre>
+</div>
+</div>
+<div id="679ad014-1bab-4bda-9ec1-aae819e8cb50" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>parametrized_tokens <span class="op">=</span> CircuitTokenizer.get_parametrized_tokens(tokenizer.vocabulary)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>parametrized_tokens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[5, 6, 7]</code></pre>
+</div>
+</div>
+<div id="31ba6cae-9aee-4287-9b0d-cc5de883f6ef" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_rnd_qc():</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    tensors, ys, Us, params <span class="op">=</span> get_rnd_encoded_circuits(backend<span class="op">=</span>simulator.backend, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                                       tokenizer<span class="op">=</span>tokenizer,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                                                       condition<span class="op">=</span>CircuitConditionType.UNITARY,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                                                       samples<span class="op">=</span>b,          </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                                                       num_of_qubits<span class="op">=</span>s, </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                                                       min_gates<span class="op">=</span><span class="dv">2</span>, </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>                                                       max_gates<span class="op">=</span>t,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>                                                       min_sub_gate_pool_cnt<span class="op">=</span><span class="bu">len</span>(tokenizer.vocabulary),</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>                                                       optimized<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    l <span class="op">=</span> get_tensor_gate_length(tensors, padding_token<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, li <span class="kw">in</span> <span class="bu">enumerate</span>(l):    </span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        tensors[i, :, li:] <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tensors, ys, Us, params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="124bb90d-35da-481d-bf89-2328c893c486" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>b    <span class="op">=</span> <span class="dv">512</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>s, t <span class="op">=</span> <span class="dv">4</span>, <span class="dv">24</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>tensors, ys, Us, params <span class="op">=</span> get_rnd_qc()</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>tensors[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"5315df66a2274e7680906b4a7f09978e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: Generated unique circuits: 511.
+[INFO]: No max_num_params provided, infered p_max_para=1, p_min_value=tensor(-0.9999) and p_max_value=tensor(0.9992).</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[-3, -3,  0,  0,  4,  0, -2,  2,  0,  0,  0,  0,  0,  3,  0,  0,  0,  0, -3,  0,  4,  7, -3,  4],
+        [-3,  3,  0,  0,  4,  0,  0, -2,  1,  7,  3,  0,  6,  0,  6,  0, -2,  7, -3,  0,  0,  7,  3,  0],
+        [ 0, -3,  7,  5,  0,  1,  2,  0,  0,  0, -3,  4,  0, -3,  0,  1,  0,  7,  3,  0,  4,  0, -3,  0],
+        [ 3,  0,  7,  0,  0,  0,  0,  0,  0,  7, -3,  4,  0, -3,  0,  0,  2,  0,  0,  5,  0,  0,  0,  4]], dtype=torch.int32)</code></pre>
+</div>
+</div>
+<div id="2d3c9b91-0e7c-4330-8e50-35203f88cff4" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>unique_class_values <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>unique_class_values <span class="op">=</span> tensors.unique(<span class="bu">sorted</span><span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>num_clrs <span class="op">=</span> <span class="bu">len</span>(tokenizer.vocabulary) <span class="op">+</span> <span class="dv">1</span> <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>num_params_per_clr <span class="op">=</span> <span class="dv">3</span> <span class="cf">if</span> <span class="st">"u"</span> <span class="kw">in</span> g <span class="cf">else</span> <span class="dv">1</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>clr_dim    <span class="op">=</span><span class="dv">1</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>params_dim <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>embedder <span class="op">=</span> RotationalMultimodialPresetEmbedderTiny(clr_dim<span class="op">=</span>clr_dim, </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                                                   num_clrs<span class="op">=</span>num_clrs, </span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>                                                   params_dim<span class="op">=</span>params_dim, </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>                                                   num_params_per_clr<span class="op">=</span>num_params_per_clr,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>                                                   zero_sum_space<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>                                                   explicit_node_type_embeddings<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>                                                   channel_last<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>                                                   parametrized_tokens<span class="op">=</span>parametrized_tokens, </span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>                                                   unique_class_values<span class="op">=</span>unique_class_values.tolist())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[INFO]: provided `unique_class_values` ([-3, -2, 0, 1, 2, 3, 4, 5, 6, 7, 8]), enforcing `num_clrs=len(unique_class_values)=11`.
+[WARNING]: We need at least a `params_dim` (is 1) of `2*num_params_per_clr` (is 2), automatically setting `params_dim` to 2 to inforce this!
+[WARNING]: `params_dim` is set to the minimum `2*num_params_per_clr`=2, but for `zero_sum_space=True` we need one more dimension, automatically setting it to `2*num_params_per_clr+1` 3.
+[WARNING]: `clr_dim` is set to 1 and `explicit_node_type_embeddings=False`, but for `zero_sum_space=True` we need one more dimension than the number of tokens `num_clrs` (is 11), automatically setting it to `clr_dim=num_clrs+1` 12.
+[INFO]: Created `nn.Embedding` with a total of 13 vectors in a 15 dimensional space.</code></pre>
+</div>
+</div>
+<div id="16e50b15-f0c4-4267-b918-09a6a9dac006" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tensors <span class="op">=</span> embedder.tokens_to_unique_class_values(tensors)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>tensors[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([[0, 0, 2, 2, 6, 2, 1, 4, 2, 2, 2, 2, 2, 5, 2, 2, 2, 2, 0, 2, 6, 9, 0, 6],
+        [0, 5, 2, 2, 6, 2, 2, 1, 3, 9, 5, 2, 8, 2, 8, 2, 1, 9, 0, 2, 2, 9, 5, 2],
+        [2, 0, 9, 7, 2, 3, 4, 2, 2, 2, 0, 6, 2, 0, 2, 3, 2, 9, 5, 2, 6, 2, 0, 2],
+        [5, 2, 9, 2, 2, 2, 2, 2, 2, 9, 0, 6, 2, 0, 2, 2, 4, 2, 2, 7, 2, 2, 2, 6]])</code></pre>
+</div>
+</div>
+<div id="e4473d87-387b-43d8-b512-c5619091cfc8" class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>np.sqrt(embedder.clr_dim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>np.float64(3.4641016151377544)</code></pre>
+</div>
+</div>
+<div id="0159f236-f825-4396-859b-e231d7faf9b6" class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#embedder single token clr mean:</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(embedder._num_discrete_embeddings):</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> embedder.emb_clr(torch.tensor([i]))[:, :embedder.clr_dim]</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"token  </span><span class="sc">{</span><span class="bu">str</span>(i)<span class="sc">:&gt;2}</span><span class="ss">:   mean </span><span class="sc">{</span>a<span class="sc">.</span>mean()<span class="sc">:0.3}</span><span class="ss">   norm </span><span class="sc">{</span>torch<span class="sc">.</span>linalg<span class="sc">.</span>vector_norm(a)<span class="sc">:0.3}</span><span class="ss">    std </span><span class="sc">{</span>a<span class="sc">.</span>std(correction<span class="op">=</span><span class="dv">0</span>)<span class="sc">:0.3}</span><span class="ss">"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(embedder._num_param_embeddings):</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> embedder.emb_clr(torch.tensor([embedder._num_discrete_embeddings<span class="op">+</span>i]))[:, embedder.clr_dim:]</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"params </span><span class="sc">{</span><span class="bu">str</span>(i)<span class="sc">:&gt;2}</span><span class="ss">:   mean </span><span class="sc">{</span>a<span class="sc">.</span>mean()<span class="sc">:0.3}</span><span class="ss">   norm </span><span class="sc">{</span>torch<span class="sc">.</span>linalg<span class="sc">.</span>vector_norm(a)<span class="sc">:0.3}</span><span class="ss">    std </span><span class="sc">{</span>a<span class="sc">.</span>std(correction<span class="op">=</span><span class="dv">0</span>)<span class="sc">:0.3}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>token   0:   mean -1.49e-08   norm 3.46    std 1.0
+token   1:   mean 4.97e-09   norm 3.46    std 1.0
+token   2:   mean -1.49e-08   norm 3.46    std 1.0
+token   3:   mean -2.48e-08   norm 3.46    std 1.0
+token   4:   mean 0.0   norm 3.46    std 1.0
+token   5:   mean 1.49e-08   norm 3.46    std 1.0
+token   6:   mean -1.24e-09   norm 3.46    std 1.0
+token   7:   mean 1.99e-08   norm 3.46    std 1.0
+token   8:   mean 1.99e-08   norm 3.46    std 1.0
+token   9:   mean -2.48e-09   norm 3.46    std 1.0
+token  10:   mean 9.93e-09   norm 3.46    std 1.0
+params  0:   mean -1.99e-08   norm 1.73    std 1.0
+params  1:   mean -3.97e-08   norm 1.73    std 1.0</code></pre>
+</div>
+</div>
+<div id="09389ae7-6608-45b7-977c-b7b387391ab1" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">#get scalar produkt of all</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> torch.zeros((embedder.num_embeddings, embedder.num_embeddings))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i,j <span class="kw">in</span> itertools.product(<span class="bu">range</span>(embedder.num_embeddings), <span class="bu">range</span>(embedder.num_embeddings)):</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    v1 <span class="op">=</span> embedder.emb_clr(torch.tensor([i])) </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    v2 <span class="op">=</span> embedder.emb_clr(torch.tensor([j]))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    p[i, j] <span class="op">=</span> (v1 <span class="op">*</span> v2).<span class="bu">sum</span>() <span class="op">/</span> (torch.linalg.norm(v1)<span class="op">*</span>torch.linalg.norm(v2))</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>plt.imshow(p)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>plt.colorbar()</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="rotational_preset_embedder_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="f4c8232d-0b6e-4f52-94e6-e5e4587ae0d1" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#before normalization global scale</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>enc_tensor <span class="op">=</span> embedder.embed(tensors, params)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>enc_tensor.mean(), enc_tensor.std(correction<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>(tensor(-7.4943e-09), tensor(1.))</code></pre>
+</div>
+</div>
+<div id="20f48a04-fe8b-4c27-9c54-ce4caed8e8b9" class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>enc_tensor[..., :embedder.clr_dim].std(<span class="op">-</span><span class="dv">1</span>, correction<span class="op">=</span><span class="dv">0</span>).unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([1.])</code></pre>
+</div>
+</div>
+<div id="38591b4d-50ce-4a36-befd-08c579466399" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>enc_tensor[..., embedder.clr_dim:].std(<span class="op">-</span><span class="dv">1</span>, correction<span class="op">=</span><span class="dv">0</span>).unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor([1.0000, 1.0000, 1.0000, 1.0000])</code></pre>
+</div>
+</div>
+<div id="986eda9a-3450-4acf-8648-6090ec5d30b6" class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>enc_tensor[..., :embedder.clr_dim].var(correction<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>tensor(1.)</code></pre>
+</div>
+</div>
+<div id="9801b83b-b448-4c33-8e1f-a91b5249e901" class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>recon_tensor, recon_params <span class="op">=</span> embedder.invert(enc_tensor)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>tensors<span class="sc">.</span>shape<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>params<span class="sc">.</span>shape<span class="op">=</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((params<span class="op">-</span>recon_params).<span class="bu">abs</span>().<span class="bu">max</span>())</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> torch.allclose(embedder.unique_class_values_to_tokens(tensors).<span class="bu">long</span>(), recon_tensor)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> torch.allclose(params, recon_params, atol<span class="op">=</span><span class="fl">1e-07</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tensors.shape=torch.Size([511, 4, 24])
+params.shape=torch.Size([511, 1, 24])
+tensor(5.9605e-08)</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/FlorianFuerrutter\.github\.io\/genQC");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../../models/embedding/base_embedder.html" class="pagination-link" aria-label="Base embedder">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Base embedder</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../../models/transformers/attention.html" class="pagination-link" aria-label="Transformers and attention">
+        <span class="nav-page-text">Transformers and attention</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Copyright 2025, Florian Fürrutter</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/FlorianFuerrutter/genQC/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li><li><a href="https://github.com/FlorianFuerrutter/genQC/blob/main/models/embedding/rotational_preset_embedder.ipynb" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
