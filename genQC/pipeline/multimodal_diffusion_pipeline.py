@@ -400,7 +400,8 @@ class MultimodalDiffusionPipeline_ParametrizedCompilation(DiffusionPipeline_Comp
         mse_loss_weight_h = (1.0 - alphas_cumprod_h) * F.sigmoid(SNR_h.log())
 
         SNR_w = alphas_cumprod_w / (1.0-alphas_cumprod_w+1e-8) + 1e-8
-
+        mse_loss_weight_w = (1.0 - alphas_cumprod_w) * F.sigmoid(SNR_w.log() + np.log(3.0 * np.pi**2))
+        
         #comp mse
         mse_flat = lambda out, target: (out-target).square().mean(dim=list(range(1, len(out.shape))))
         loss_h = mse_flat(model_output[..., :self.embedder.clr_dim], pred_target_h.detach()) * mse_loss_weight_h.squeeze().detach()

@@ -193,8 +193,15 @@ class CircuitsCudaqBackend(BaseBackend):
             
         return U
 
-    def draw(self, kernel: cudaq.kernel, num_qubits: int, **kwargs) -> None:
+    def draw(self, parametrizedCudaqKernel: ParametrizedCudaqKernel, num_qubits: int, return_str: bool = False, **kwargs) -> None:
         """Draw the given `cudaq.kernel` using cudaq.""" 
+
+        kernel, thetas = parametrizedCudaqKernel.kernel, parametrizedCudaqKernel.params
+        
         c    = [0] * (2**num_qubits)
         c[0] = 1
-        print(cudaq.draw(kernel, c))
+
+        s = cudaq.draw(kernel, c, thetas)
+        if return_str:
+            return s
+        print(s)

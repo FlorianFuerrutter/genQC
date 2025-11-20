@@ -16,7 +16,7 @@ listing:
 
 #### Welcome to the `genQC` Tutorials. 
 
-Here you can familiarize yourself with basics concepts and modules. Tutorials show how to reproduce some figures and results of the corresponding [research papers](../webpage/research.qmd).
+Here you can familiarize yourself with basics concepts and modules. The tutorials show how to reproduce some figures and results of the corresponding [research papers](../webpage/research.qmd).
 
 <br>
 

@@ -23,7 +23,9 @@ QFT.](https://github.com/FlorianFuerrutter/genQC/blob/main/src/webpage/assets/qf
 
 ## 📰 News
 
-- 🔥 \[2025-06-02\] Paper release: [Synthesis of discrete-continuous quantum circuits with multimodal diffusion models](https://www.arxiv.org/abs/2506.01666).
+- 🔥 \[2025-06-02\] Paper release: [Synthesis of discrete-continuous
+  quantum circuits with multimodal diffusion
+  models](https://www.arxiv.org/abs/2506.01666).
 - 🔥 \[2025-06-01\] *Discrete-continuous circuits with multimodal
   diffusion* - model released on [Hugging Face:
   huggingface.co/collections/Floki00](https://huggingface.co/collections/Floki00/discrete-continuous-circuits-with-multimodal-diffusion-6839c4e4553e56b957bbd5bf).
@@ -67,10 +69,9 @@ from genQC.benchmark.bench_compilation import SpecialUnitaries
 from genQC.platform.simulation import Simulator, CircuitBackendType
 
 device = infer_torch_device()
-set_seed(0)
 
 pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained(
-                                repo_id="Floki00/cirdit_multimodal_compile_3to5qubit", 
+                                repo_id="Floki00/cirdit_multimodal_compile_3to5qubit_v1.1", 
                                 device=device)
 
 pipeline.scheduler.set_timesteps(40) 
@@ -91,20 +92,44 @@ out_tensor, params = generate_compilation_tensors(pipeline,
 ```
 
 ``` python
-vocabulary = {g:i+1 for i, g in enumerate(pipeline.gate_pool)} 
+vocabulary = {g:i+1 for i, g in enumerate(pipeline.gate_pool)}
 tokenizer  = CircuitTokenizer(vocabulary)
-simulator  = Simulator(CircuitBackendType.QISKIT)
+simulator  = Simulator(CircuitBackendType.CUDAQ)
 
 qc_list, _ = decode_tensors_to_backend(simulator, tokenizer, out_tensor, params)
-qc_list[0].draw("mpl")
+
+simulator.backend.draw(qc_list[0], num_qubits=4)
 ```
 
-![](https://github.com/FlorianFuerrutter/genQC/blob/main/get_started_files/figure-commonmark/cell-3-output-1.png?raw=true)
+                                                                            »
+    q0 : ────────────────────────●────────────────────●───────────●───────╳─»
+                                 │         ╭───╮      │      ╭────┴─────╮ │ »
+    q1 : ────────────────────────┼───────╳─┤ h ├──────┼──────┤ r1(1.25) ├─┼─»
+                                 │       │ ╰───╯╭─────┴─────╮╰──────────╯ │ »
+    q2 : ───────────●────────────┼───────╳──────┤ r1(6.253) ├─────────────┼─»
+         ╭───╮╭─────┴─────╮╭─────┴─────╮        ╰───────────╯             │ »
+    q3 : ┤ h ├┤ r1(1.571) ├┤ r1(7.191) ├──────────────────────────────────╳─»
+         ╰───╯╰───────────╯╰───────────╯                                    »
+
+    ################################################################################
+
+                     
+    ─────────────────
+                     
+    ─────●───────────
+    ╭────┴─────╮╭───╮
+    ┤ r1(1.59) ├┤ h ├
+    ╰──┬───┬───╯╰───╯
+    ───┤ h ├─────────
+       ╰───╯         
 
 #### Further examples
 
-More detailed examples and tutorial notebooks are provided on the
-project page
+A detailed tutorial on the application with `CUDA-Q` is available on the
+[CUDA-Q
+documentation](https://nvidia.github.io/cuda-quantum/latest/applications/python/unitary_compilation_diffusion_models.html).
+
+More examples and tutorial notebooks are provided on the project page
 [\[tutorials\]](https://florianfuerrutter.github.io/genQC/examples/tutorials.html)
 or in the directory `src/examples/`.
 
