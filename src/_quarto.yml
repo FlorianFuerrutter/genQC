@@ -25,6 +25,7 @@ website:
   favicon: "webpage/assets/logo.png"
   open-graph: true
   repo-actions: [issue, source]
+  repo-subdir: "src"
   back-to-top-navigation: true
   page-navigation: true
   

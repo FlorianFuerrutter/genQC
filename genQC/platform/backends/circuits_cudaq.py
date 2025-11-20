@@ -119,16 +119,19 @@ class CircuitsCudaqBackend(BaseBackend):
 
         return True
   
-    def genqc_to_backend(self, instructions: CircuitInstructions) -> cudaq.kernel:
+    def genqc_to_backend(self, 
+                         instructions: CircuitInstructions,
+                         **kwargs) -> cudaq.kernel:
         """Convert given genQC `CircuitInstructions` to a `cudaq.kernel`."""
 
         _params = torch.tensor([
                                 instruction.params if instruction.params else torch.nan 
                                 for instruction in instructions.data
                                ])   # ... [seq, nP]
-            
-        assert _params.shape[1] == 1  #only support nP=1 for now
-        _params = _params.squeeze()
+
+        if not torch.isnan(_params).any():
+            assert _params.shape[1] == 1  #only support nP=1 for now
+            _params = _params.squeeze()
 
         #--------------------
         
@@ -190,8 +193,15 @@ class CircuitsCudaqBackend(BaseBackend):
             
         return U
 
-    def draw(self, kernel: cudaq.kernel, num_qubits: int, **kwargs) -> None:
+    def draw(self, parametrizedCudaqKernel: ParametrizedCudaqKernel, num_qubits: int, return_str: bool = False, **kwargs) -> None:
         """Draw the given `cudaq.kernel` using cudaq.""" 
+
+        kernel, thetas = parametrizedCudaqKernel.kernel, parametrizedCudaqKernel.params
+        
         c    = [0] * (2**num_qubits)
         c[0] = 1
-        print(cudaq.draw(kernel, c))
+
+        s = cudaq.draw(kernel, c, thetas)
+        if return_str:
+            return s
+        print(s)

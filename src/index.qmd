@@ -89,7 +89,7 @@ from genQC.platform.simulation import Simulator, CircuitBackendType
 device = infer_torch_device()
 
 pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained( # <1>
-                            repo_id="Floki00/cirdit_multimodal_compile_3to5qubit", # <1> 
+                            repo_id="Floki00/cirdit_multimodal_compile_3to5qubit_v1.1", # <1> 
                             device=device)  # <1>
 
 pipeline.scheduler.set_timesteps(40)   # <2>
@@ -112,17 +112,18 @@ out_tensor, params = generate_compilation_tensors(pipeline, # <4>
 
 vocabulary = {g:i+1 for i, g in enumerate(pipeline.gate_pool)} # <5>
 tokenizer  = CircuitTokenizer(vocabulary)                      # <5>
-simulator  = Simulator(CircuitBackendType.QISKIT)              # <5>
+simulator  = Simulator(CircuitBackendType.CUDAQ)               # <5>
 
 qc_list, _ = decode_tensors_to_backend(simulator, tokenizer, out_tensor, params) # <5>
 
-qc_list[0].draw("mpl")
+simulator.backend.draw(qc_list[0], num_qubits=4) # <6>
 ```
 1. Load a pre-trained Diffusion model. 
 2. Set inference parameters.
 3. Specify QFT unitary.
 4. Generate tokenized circuits.
 5. Decode tensors to circuits.
+6. Plot a generated circuit.
 :::
 
 :::
