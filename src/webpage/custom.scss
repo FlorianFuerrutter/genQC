@@ -160,6 +160,10 @@ a {
     border-radius: 0px;
 }
 
+.navbar-brand {
+	overflow: unset;
+}
+
 .navbar-brand img { 
   max-height: 45px;
   width: auto;

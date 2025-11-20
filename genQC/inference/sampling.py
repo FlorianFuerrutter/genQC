@@ -306,7 +306,9 @@ def decode_tensors_to_backend(simulator: Simulator,
                               params: Optional[torch.Tensor] = None, 
                               silent: bool = True,
                               n_jobs: int = 1,
-                              filter_errs: bool = True) -> tuple[Sequence[any], int]:
+                              filter_errs: bool = True,
+                              return_tensors: bool = False,
+                    ) -> tuple[Sequence[any], int] | tuple[Sequence[any], int, torch.Tensor]:
     tensors = tensors.cpu()
 
     if exists(params):
@@ -333,8 +335,14 @@ def decode_tensors_to_backend(simulator: Simulator,
         backend_obj_list = [pot_qc for pot_qc in pot_qcs if exists(pot_qc)]
         err_cnt          = sum(1 for pot_qc in pot_qcs if not_exists(pot_qc))
         assert len(backend_obj_list) + err_cnt == len(pot_qcs)
+
+        if return_tensors:
+            tensors = tensors[torch.tensor([exists(pot_qc) for pot_qc in pot_qcs])]
+        
     else:
         backend_obj_list = pot_qcs
         err_cnt = None
-    
+
+    if return_tensors:
+        return backend_obj_list, err_cnt, tensors
     return backend_obj_list, err_cnt

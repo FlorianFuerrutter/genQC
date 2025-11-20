@@ -162,6 +162,7 @@ body {
 
 .container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   max-width: 1267px;
@@ -282,6 +283,7 @@ body {
 
 .figure {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   // height: 100vh;
