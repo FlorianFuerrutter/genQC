@@ -75,9 +75,9 @@ class PipelineIO(abc.ABC):
     def from_config_file(config_path, device: torch.device, save_path: str=None): return None 
 
     @classmethod
-    def from_pretrained(cls, repo_id: str, device: torch.device, use_auth_token: bool = False, **kwargs):  
+    def from_pretrained(cls, repo_id: str, device: torch.device, **kwargs):  
         """Load a model pipeline directly from Huggingface."""
-        model_path = snapshot_download(repo_id=repo_id, repo_type="model", allow_patterns=["*.pt", "*.yaml", "*.safetensors"], use_auth_token=use_auth_token, **kwargs) 
+        model_path = snapshot_download(repo_id=repo_id, repo_type="model", allow_patterns=["*.pt", "*.yaml", "*.safetensors"], **kwargs) 
         pipeline   = cls.from_config_file(model_path+"/", device)  
         return pipeline
 
