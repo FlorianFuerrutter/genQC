@@ -1,11 +1,51 @@
+# ============================================================================ #
+# Copyright (c) 2026 onwards, Florian Fürrutter.                               #
+#                                                                              #
+# This source code and the accompanying materials are made available under     #
+# the terms of the Apache License 2.0 which accompanies this distribution.     #
+# ============================================================================ #
+
 [build-system]
-requires = ["setuptools>=64.0"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="genQC"
-requires-python=">=3.10"
-dynamic = [ "keywords", "description", "version", "dependencies", "optional-dependencies", "readme", "license", "authors", "classifiers", "entry-points", "scripts", "urls"]
+name = "genQC"
+dynamic = ["version"]
+description = "Generative quantum circuits"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "Florian Fuerrutter", email = "f.fuerrutter@gmail.com"}]
+keywords = ['quantum-information', 'diffusion-model', 'generative-model']
+classifiers = [
+	"Natural Language :: English", 
+	"Intended Audience :: Science/Research",
+	"Intended Audience :: Developers", 
+	"Development Status :: 3 - Alpha", 
+	"Programming Language :: Python :: 3", 
+	"Programming Language :: Python :: 3 :: Only",
+	"Topic :: Scientific/Engineering",
+]
+dependencies = ['torch', 'numpy', 'matplotlib', 'scipy', 'omegaconf', 'qiskit', 'tqdm', 'joblib', 'open_clip_torch', 'ipywidgets', 'pylatexenc', 'safetensors', 'tensordict', 'huggingface_hub']
 
-[tool.uv]
-cache-keys = [{ file = "pyproject.toml" }, { file = "settings.ini" }, { file = "setup.py" }]
+[project.urls]
+Repository = "https://github.com/FlorianFuerrutter/genQC"
+Documentation = "https://FlorianFuerrutter.github.io/genQC"
+
+[project.entry-points.nbdev]
+genQC = "genQC._modidx:d"
+
+[project.optional-dependencies]
+dev = ['jupyterlab', 'nbdev', 'cudaq', 'pennylane']
+
+[tool.setuptools.dynamic]
+version = {attr = "genQC.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["genQC"]
+
+[tool.nbdev]
+nbs_path = 'src'
+readme_nb = 'get_started.ipynb'
+custom_sidebar = true
