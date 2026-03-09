@@ -4,11 +4,28 @@ on:
     branches: [main]
   workflow_dispatch:
 env:
-  OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES
+  OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES     
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: answerdotai/workflows/quarto-ghp@master
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          version: "3.12"
+          python-version: 3.12
+      - name: Install Dependencies and Build Docs
+        shell: bash
+        run: |
+          set -ux
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          nbdev-docs
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_orphan: true
+          publish_dir: ./_docs
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          publish_branch: gh-pages
