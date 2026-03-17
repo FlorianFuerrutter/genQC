@@ -1,0 +1,59 @@
+#--------------------------------------
+ARG base_image=ubuntu:22.04
+FROM $base_image
+ARG arch=x86_64
+
+# is needed by  tzdada which sets sth for tzdata
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=America/Los_Angeles
+
+RUN echo 1a-AAAAAAAAAAAAAAAAAAAAAAAAAAAAA  OS update   && \
+    apt-get update && \
+    apt-get install -y  locales autoconf automake gcc g++ make vim wget  ssh  openssh-server sudo   git emacs aptitude build-essential xterm python3-pip   python3-tk python3-scipy python3-dev iputils-ping net-tools screen feh hdf5-tools python3-bitstring  graphviz  tzdata x11-apps gfortran curl&& \
+    apt-get clean all
+
+# Install MPICH
+# WORKDIR /tmp
+# ARG MPICH_VERSION=4.2.3
+# ARG MPICH_PREFIX=mpich-$MPICH_VERSION
+
+# RUN wget https://www.mpich.org/static/downloads/$MPICH_VERSION/$MPICH_PREFIX.tar.gz
+# RUN tar xvzf $MPICH_PREFIX.tar.gz
+# RUN cd $MPICH_PREFIX && \
+# ./configure && \
+# make -j 8 && \
+# make install && \
+# make clean && \
+# cd .. && \
+# rm -rf $MPICH_PREFIX
+
+# RUN /sbin/ldconfig
+ENV PIP_ROOT_USER_ACTION=ignore
+# - - - - - - - CUSTOM CODE for nbdev
+RUN echo 1b-AAAAAAAAAAAAAAAAAAAAAAAAAAAAA  nbdev   && \
+    pip3 install jupyterlab nbdev
+
+RUN sudo nbdev_install_quarto
+RUN pip3 install jupyterlab-quarto
+
+# - - - - - - - GenQC env
+RUN pip3 install --upgrade pip && \
+    pip3 install cudaq && \
+    pip3 install torch==2.4.0 \
+    numpy==2.1.0 \
+    matplotlib==3.9.2 \
+    scipy==1.14.1 \
+    pandas==2.2.2 \
+    omegaconf==2.3.0 \
+    qiskit==1.2.0 \
+    tqdm==4.66.5 \
+    joblib==1.4.2 \
+    open-clip-torch==2.26.1 \
+    ipywidgets==8.1.5 \
+    pylatexenc==2.10 \
+    huggingface_hub==0.24.6
+
+RUN pip3 install -e .
+# added later
+#WORKDIR /root/cuda_quantum
+#ENTRYPOINT ["bash", "-l"]
