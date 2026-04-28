@@ -23,10 +23,13 @@ QFT.](https://github.com/FlorianFuerrutter/genQC/blob/main/src/webpage/assets/qf
 
 ## 📰 News
 
-- 🔥 \[2025-06-02\] Paper release: [Synthesis of discrete-continuous
+- 🔥 \[2026-04-22\] Paper publication: [Synthesis of discrete-continuous
+  quantum circuits with multimodal diffusion
+  models](https://doi.org/10.1088/2632-2153/ae5b21).
+- \[2025-06-02\] Paper arXiv release: [Synthesis of discrete-continuous
   quantum circuits with multimodal diffusion
   models](https://www.arxiv.org/abs/2506.01666).
-- 🔥 \[2025-06-01\] *Discrete-continuous circuits with multimodal
+- \[2025-06-01\] *Discrete-continuous circuits with multimodal
   diffusion* - model released on [Hugging Face:
   huggingface.co/collections/Floki00](https://huggingface.co/collections/Floki00/discrete-continuous-circuits-with-multimodal-diffusion-6839c4e4553e56b957bbd5bf).
 
@@ -63,6 +66,7 @@ unitary, using parameterized circuits.
 import torch
 from genQC.pipeline.multimodal_diffusion_pipeline import MultimodalDiffusionPipeline_ParametrizedCompilation
 from genQC.inference.sampling import generate_compilation_tensors, decode_tensors_to_backend
+from genQC.scheduler.scheduler_dpm import DPMScheduler
 from genQC.utils.misc_utils import infer_torch_device, set_seed
 from genQC.platform.tokenizer.circuits_tokenizer import CircuitTokenizer
 from genQC.benchmark.bench_compilation import SpecialUnitaries
@@ -73,6 +77,9 @@ device = infer_torch_device()
 pipeline = MultimodalDiffusionPipeline_ParametrizedCompilation.from_pretrained(
                                 repo_id="Floki00/cirdit_multimodal_compile_3to5qubit_v1.1", 
                                 device=device)
+
+pipeline.scheduler   = DPMScheduler.from_scheduler(pipeline.scheduler)
+pipeline.scheduler_w = DPMScheduler.from_scheduler(pipeline.scheduler_w)
 
 pipeline.scheduler.set_timesteps(40) 
 pipeline.scheduler_w.set_timesteps(40) 
@@ -101,27 +108,27 @@ qc_list, _ = decode_tensors_to_backend(simulator, tokenizer, out_tensor, params)
 simulator.backend.draw(qc_list[0], num_qubits=4)
 ```
 
-                                                                            »
-    q0 : ────────────────────────●────────────────────●───────────●───────╳─»
-                                 │         ╭───╮      │      ╭────┴─────╮ │ »
-    q1 : ────────────────────────┼───────╳─┤ h ├──────┼──────┤ r1(1.25) ├─┼─»
-                                 │       │ ╰───╯╭─────┴─────╮╰──────────╯ │ »
-    q2 : ───────────●────────────┼───────╳──────┤ r1(6.253) ├─────────────┼─»
-         ╭───╮╭─────┴─────╮╭─────┴─────╮        ╰───────────╯             │ »
-    q3 : ┤ h ├┤ r1(1.571) ├┤ r1(7.191) ├──────────────────────────────────╳─»
-         ╰───╯╰───────────╯╰───────────╯                                    »
+                                                                                »
+    q0 : ─────────────────────────────●─────────────────────────────────●───────»
+                                      │                   ╭───╮         │       »
+    q1 : ─────────────────────────────┼────────────●──────┤ h ├─╳───────┼───────»
+                           ╭───╮╭─────┴─────╮╭─────┴─────╮╰───╯ │       │       »
+    q2 : ───────────●──────┤ h ├┤ r1(7.214) ├┤ r1(1.734) ├──────╳───────┼───────»
+         ╭───╮╭─────┴─────╮╰───╯╰───────────╯╰───────────╯        ╭─────┴──────╮»
+    q3 : ┤ h ├┤ r1(1.618) ├───────────────────────────────────────┤ r1(0.4644) ├»
+         ╰───╯╰───────────╯                                       ╰────────────╯»
 
     ################################################################################
 
-                     
-    ─────────────────
-                     
-    ─────●───────────
-    ╭────┴─────╮╭───╮
-    ┤ r1(1.59) ├┤ h ├
-    ╰──┬───┬───╯╰───╯
-    ───┤ h ├─────────
-       ╰───╯         
+                              
+    ──────╳───────────────────
+          │                   
+    ──●───┼───────────────────
+    ╭─┴─╮ │                   
+    ┤ x ├─┼───────●───────────
+    ╰─┬─╯ │ ╭─────┴─────╮╭───╮
+    ──●───╳─┤ r1(7.758) ├┤ h ├
+            ╰───────────╯╰───╯
 
 #### Further examples
 
@@ -197,18 +204,36 @@ License
 We kindly ask you to cite our paper if any of the previous material was
 useful for your work.
 
+#### Synthesis of discrete-continuous quantum circuits with multimodal diffusion models
+
+``` latex
+@article{furrutter2025synthesis,
+    title = {Synthesis of discrete–continuous quantum circuits with multimodal diffusion models},
+    author = {Fürrutter, Florian and Chandani, Zohim and Hamamura, Ikko and Briegel, Hans J and Muñoz-Gil, Gorka},
+    doi = {10.1088/2632-2153/ae5b21},
+    url = {https://doi.org/10.1088/2632-2153/ae5b21},
+    year = {2026},
+    month = {apr},
+    publisher = {IOP Publishing},
+    journal = {Machine Learning: Science and Technology},
+    volume = {7},
+    number = {2},
+    pages = {025065},   
+}
+```
+
 #### Quantum circuit synthesis with diffusion models
 
 ``` latex
 @article{furrutter2024quantum,
-  title={Quantum circuit synthesis with diffusion models},
-  author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
-  journal={Nature Machine Intelligence},
-  doi = {https://doi.org/10.1038/s42256-024-00831-9},
-  vol = {6},
-  pages = {515-–524},
-  pages={1--10},
-  year={2024},
-  publisher={Nature Publishing Group UK London}
+    title={Quantum circuit synthesis with diffusion models},
+    author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
+    journal={Nature Machine Intelligence},
+    doi = {https://doi.org/10.1038/s42256-024-00831-9},
+    vol = {6},
+    pages = {515-–524},
+    pages={1--10},
+    year={2024},
+    publisher={Nature Publishing Group UK London}
 }
 ```

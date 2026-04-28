@@ -19,6 +19,12 @@ theme:
 <div class="has-text-centered">
 <div class="publication-links">
 
+<!-- PDF Link. -->
+<span class="link-block">
+<a href="https://doi.org/10.1088/2632-2153/ae5b21" class="external-link button is-normal is-rounded is-dark">
+<span class="icon"><i class="bi bi-file-pdf"></i></i></span>
+<span>Article</span></a></span>
+
 <!-- arxiv Link. -->
 <span class="link-block">
 <a href="https://www.arxiv.org/abs/2506.01666" class="external-link button is-normal is-rounded is-dark">
@@ -52,7 +58,25 @@ theme:
 :::
 ::: {.abstract}
 <h4>Abstract</h4>
-<p>Efficiently compiling quantum operations remains a major bottleneck in scaling quantum computing. Today’s state-of-the-art methods achieve low compilation error by combining search algorithms with gradient-based parameter optimization, but they incur long runtimes and require multiple calls to quantum hardware or expensive classical simulations, making their scaling prohibitive. Recently, machine-learning models have emerged as an alternative, though they are currently restricted to discrete gate sets. Here, we introduce a multimodal denoising diffusion model that simultaneously generates a circuit’s structure and its continuous parameters for compiling a target unitary. It leverages two independent diffusion processes, one for discrete gate selection and one for parameter prediction. We benchmark the model over different experiments, analyzing the method’s accuracy across varying qubit counts, circuit depths, and proportions of parameterized gates. Finally, by exploiting its rapid circuit generation, we create large datasets of circuits for particular operations and use these to extract valuable heuristics that can help us discover new insights into quantum circuit synthesis.</p>
+<p>Efficiently compiling quantum operations remains a major bottleneck in scaling quantum computing. Today's state-of-the-art methods achieve low compilation error by combining search algorithms with gradient-based parameter optimization, but they incur long runtimes and require multiple calls to quantum hardware or expensive classical simulations, making their scaling prohibitive. Recently, machine-learning models have emerged as an alternative, though they are currently restricted to discrete gate sets. Here, we introduce a multimodal denoising diffusion model that simultaneously generates a circuit's structure and its continuous parameters for compiling a target unitary. It leverages two independent diffusion processes, one for discrete gate selection and one for parameter prediction. We benchmark the model over different experiments, analyzing the method's accuracy across varying qubit counts and circuit depths, showcasing the ability of the method to outperform existing approaches in gate counts and under noisy conditions. Additionally, we show that a simple post-optimization scheme allows us to significantly improve the generated ansätze. Finally, by exploiting its rapid circuit generation, we create large datasets of circuits for particular operations and use these to extract valuable heuristics that can help us discover new insights into quantum circuit synthesis.</p>
+:::
+::: {.cite}
+<h4>BibTeX</h4>
+``` latex
+@article{furrutter2025synthesis,
+	title = {Synthesis of discrete–continuous quantum circuits with multimodal diffusion models},
+	author = {Fürrutter, Florian and Chandani, Zohim and Hamamura, Ikko and Briegel, Hans J and Muñoz-Gil, Gorka},
+	doi = {10.1088/2632-2153/ae5b21},
+	url = {https://doi.org/10.1088/2632-2153/ae5b21},
+	year = {2026},
+	month = {apr},
+	publisher = {IOP Publishing},
+	journal = {Machine Learning: Science and Technology},
+	volume = {7},
+	number = {2},
+	pages = {025065},	
+}
+```
 :::
 :::
 
@@ -113,15 +137,15 @@ theme:
 <h4>BibTeX</h4>
 ``` latex
 @article{furrutter2024quantum,
-  title={Quantum circuit synthesis with diffusion models},
-  author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
-  journal={Nature Machine Intelligence},
-  doi = {https://doi.org/10.1038/s42256-024-00831-9},
-  vol = {6},
-  pages = {515-–524},
-  pages={1--10},
-  year={2024},
-  publisher={Nature Publishing Group UK London}
+	title={Quantum circuit synthesis with diffusion models},
+	author={F{\"u}rrutter, Florian and Mu{\~n}oz-Gil, Gorka and Briegel, Hans J},
+	journal={Nature Machine Intelligence},
+	doi = {https://doi.org/10.1038/s42256-024-00831-9},
+	vol = {6},
+	pages = {515-–524},
+	pages={1--10},
+	year={2024},
+	publisher={Nature Publishing Group UK London}
 }
 ```
 :::
